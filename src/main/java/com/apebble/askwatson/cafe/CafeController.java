@@ -1,12 +1,11 @@
 package com.apebble.askwatson.cafe;
 
+import com.apebble.askwatson.comm.response.CommonResponse;
+import com.apebble.askwatson.comm.response.ListResponse;
 import com.apebble.askwatson.comm.response.ResponseService;
 import com.apebble.askwatson.comm.response.SingleResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -22,11 +21,28 @@ public class CafeController {
     }
 
     // 방탈출 카페 전체 조회
+    @GetMapping(value="/cafes")
+    public ListResponse<Cafe> getCafes() {
+        return responseService.getListResponse(cafeService.getCafes());
+    }
 
     // 방탈출 카페 단건 조회
+    @GetMapping(value = "/cafe/{cafeId}")
+    public SingleResponse<Cafe> getCafe(@PathVariable Long cafeId) {
+        return responseService.getSingleResponse(cafeService.getOneCafe(cafeId));
+    }
 
     // 방탈출 카페 수정
+    @PutMapping(value = "/cafe/{cafeId}")
+    public SingleResponse<Cafe> modifyCafe(@PathVariable Long cafeId, @ModelAttribute CafeParams params) {
+        return responseService.getSingleResponse(cafeService.modifyCafe(cafeId, params));
+    }
 
     // 방탈출 카페 삭제
+    @DeleteMapping(value = "/cafe/{cafeId}")
+    public CommonResponse deleteCafe(@PathVariable Long cafeId) {
+        cafeService.deleteCafe(cafeId);
+        return responseService.getSuccessResponse();
+    }
 
 }
