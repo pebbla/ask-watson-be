@@ -19,18 +19,18 @@ public class User extends BaseTime {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;                // pk
 
-    private String userName;        // 회원 이름
-
-    private String nickName;        // 회원 별명
-
-    private String phoneNum;        // 회원 전화번호
-
     private String pw;              // 회원 비밀번호
 
-    private Date birth;             // 회원 생일
+    private String userName;        // 회원 이름
 
-    private char gender;            // 회원 성별
+    private String userNickName;        // 회원 별명
 
-    private boolean marketingAgreeYn;   // 마케팅 수신 동의 여부
+    private String userPhoneNum;        // 회원 전화번호
+
+    private Date userBirth;             // 회원 생일
+
+    private char userGender;            // 회원 성별 (F:여, M:남)
+
+    private Boolean marketingAgreeYn;   // 마케팅 수신 동의 여부
 }
 
