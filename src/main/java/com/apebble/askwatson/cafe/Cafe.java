@@ -1,5 +1,6 @@
 package com.apebble.askwatson.cafe;
 
+import com.apebble.askwatson.comm.BaseTime;
 import com.apebble.askwatson.theme.Theme;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
@@ -15,7 +16,7 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class Cafe {
+public class Cafe extends BaseTime {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;                        // pk
 
@@ -28,6 +29,7 @@ public class Cafe {
 
     private String company;                 // 방탈출카페 체인명
 
+    @Singular("theme")
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "cafe")
     @JsonIgnore @JsonManagedReference
     private List<Theme> themeList = new ArrayList<>();      // 방탈출 테마 리스트(fk)

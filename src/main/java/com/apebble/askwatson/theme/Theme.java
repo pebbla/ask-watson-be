@@ -3,7 +3,6 @@ package com.apebble.askwatson.theme;
 import com.apebble.askwatson.cafe.Cafe;
 import com.apebble.askwatson.comm.BaseTime;
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -28,7 +27,6 @@ public class Theme extends BaseTime {
 
     private String category;            // 카테고리
 
-    @Column(nullable = false)
     private double difficulty;          // 난이도
 
     private int timeLimit;              // 제한시간
@@ -41,7 +39,7 @@ public class Theme extends BaseTime {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cafe_id")
-    @JsonIgnore @JsonBackReference
+    @JsonBackReference
     private Cafe cafe;                  // 방탈출 카페
 
     public void setCafe(Cafe cafe) {

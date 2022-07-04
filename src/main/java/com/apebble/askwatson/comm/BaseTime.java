@@ -16,10 +16,10 @@ import java.time.LocalDateTime;
 public abstract class BaseTime {
     @Column(updatable = false)
     @CreatedDate
-    private LocalDateTime createdDate;  //생성시간
+    private LocalDateTime createdAt;  //생성시간
 
     @Column(insertable = false)
     @LastModifiedDate
-    private LocalDateTime modifiedDate; //수정시간
+    private LocalDateTime modifiedAt; //수정시간
 }
 

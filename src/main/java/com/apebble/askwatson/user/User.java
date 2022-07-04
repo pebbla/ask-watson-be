@@ -31,6 +31,6 @@ public class User extends BaseTime {
 
     private char userGender;            // 회원 성별 (F:여, M:남)
 
-    private boolean marketingAgreeYn;   // 마케팅 수신 동의 여부
+    private Boolean marketingAgreeYn;   // 마케팅 수신 동의 여부
 }
 
