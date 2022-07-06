@@ -39,7 +39,7 @@ public class FaqController {
     }
 
     // 자주묻는질문 삭제
-    @DeleteMapping(value = "/faq/{faqId}")
+    @DeleteMapping(value = "/admin/faq/{faqId}")
     public CommonResponse deleteCafe(@PathVariable Long faqId) {
         faqService.deleteFaq(faqId);
         return responseService.getSuccessResponse();
