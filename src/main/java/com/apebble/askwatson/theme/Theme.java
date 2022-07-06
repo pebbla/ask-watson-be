@@ -4,6 +4,7 @@ import com.apebble.askwatson.cafe.Cafe;
 import com.apebble.askwatson.comm.BaseTime;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
@@ -31,10 +32,10 @@ public class Theme extends BaseTime {
 
     private int timeLimit;              // 제한시간
 
-    @Builder.Default
+    @Builder.Default @ColumnDefault("0")
     private int likeCount=0;            // 좋아요 수
 
-    @Builder.Default
+    @Builder.Default @ColumnDefault("0")
     private int escapeCount=0;          // 탈출 횟수
 
     @ManyToOne(fetch = FetchType.LAZY)
