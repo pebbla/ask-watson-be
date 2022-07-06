@@ -44,5 +44,4 @@ public class CafeController {
         cafeService.deleteCafe(cafeId);
         return responseService.getSuccessResponse();
     }
-
 }
