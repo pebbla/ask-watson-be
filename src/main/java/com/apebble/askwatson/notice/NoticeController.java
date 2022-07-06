@@ -28,9 +28,9 @@ public class NoticeController {
     }
 
     // 공지사항 단건 조회
-    @GetMapping(value="/notices/{noticeId}")
-    public ListResponse<Notice> getNoticeById() {
-        return responseService.getListResponse(noticeService.getNotices());
+    @GetMapping(value="/notice/{noticeId}")
+    public SingleResponse<Notice> getOneNotice(@PathVariable Long noticeId) {
+        return responseService.getSingleResponse(noticeService.getOneNotice(noticeId));
     }
 
     // 공지사항 수정
