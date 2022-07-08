@@ -13,7 +13,7 @@ public class ThemeController {
     private final ResponseService responseService;
 
     // 방탈출 테마 등록
-    @PostMapping(value="/admin/cafe/{cafeId}/theme")
+    @PostMapping(value="/admin/cafes/{cafeId}/themes")
     public SingleResponse<Theme> createTheme(@PathVariable Long cafeId, @ModelAttribute ThemeParams params) {
         return responseService.getSingleResponse(themeService.createTheme(cafeId, params));
     }

@@ -16,7 +16,7 @@ public class NoticeController {
     private final ResponseService responseService;
 
     // 공지사항 등록
-    @PostMapping(value="/admin/notice")
+    @PostMapping(value="/admin/notices")
     public SingleResponse<Notice> createNotice(@ModelAttribute NoticeParams params) {
         return responseService.getSingleResponse(noticeService.createNotice(params));
     }
@@ -28,19 +28,19 @@ public class NoticeController {
     }
 
     // 공지사항 단건 조회
-    @GetMapping(value="/notice/{noticeId}")
+    @GetMapping(value="/notices/{noticeId}")
     public SingleResponse<Notice> getOneNotice(@PathVariable Long noticeId) {
         return responseService.getSingleResponse(noticeService.getOneNotice(noticeId));
     }
 
     // 공지사항 수정
-    @PutMapping(value = "/admin/notice/{noticeId}")
+    @PutMapping(value = "/admin/notices/{noticeId}")
     public SingleResponse<Notice> modifyNotice(@PathVariable Long noticeId, @ModelAttribute NoticeParams params) {
         return responseService.getSingleResponse(noticeService.modifyNotice(noticeId, params));
     }
 
     // 공지사항 삭제
-    @DeleteMapping(value = "/admin/notice/{noticeId}")
+    @DeleteMapping(value = "/admin/notices/{noticeId}")
     public CommonResponse deleteNotice(@PathVariable Long noticeId) {
         noticeService.deleteNotice(noticeId);
         return responseService.getSuccessResponse();
