@@ -2,7 +2,7 @@ package com.apebble.askwatson.theme;
 
 import com.apebble.askwatson.cafe.Cafe;
 import com.apebble.askwatson.comm.BaseTime;
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -40,7 +40,7 @@ public class Theme extends BaseTime {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cafe_id")
-    @JsonBackReference
+    @JsonIgnore
     private Cafe cafe;                  // 방탈출 카페
 
     public void setCafe(Cafe cafe) {
