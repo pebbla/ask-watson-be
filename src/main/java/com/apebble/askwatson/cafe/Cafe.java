@@ -3,7 +3,6 @@ package com.apebble.askwatson.cafe;
 import com.apebble.askwatson.comm.BaseTime;
 import com.apebble.askwatson.theme.Theme;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.*;
 
 import javax.persistence.*;
@@ -30,8 +29,8 @@ public class Cafe extends BaseTime {
     private String company;                 // 방탈출카페 체인명
 
     @Singular("theme")
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "cafe")
-    @JsonIgnore @JsonManagedReference
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "cafe", cascade = CascadeType.ALL)
+    @JsonIgnore
     private List<Theme> themeList = new ArrayList<>();      // 방탈출 테마 리스트(fk)
 
     public void addTheme(Theme theme) {
