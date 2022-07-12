@@ -36,13 +36,13 @@ public class ThemeController {
     }
 
     // 테마 단건 조회
-    @GetMapping(value = "/theme/{themeId}")
+    @GetMapping(value = "/themes/{themeId}")
     public SingleResponse<ThemeDto.Response> getTheme(@PathVariable Long themeId) {
         return responseService.getSingleResponse(new ThemeDto.Response(themeService.getOneTheme(themeId)));
     }
 
     // 카페별 테마 조회
-    @GetMapping(value = "/cafe/{cafeId}/themes")
+    @GetMapping(value = "/cafes/{cafeId}/themes")
     public ListResponse<Theme> getThemesByCafe(@PathVariable Long cafeId) {
 //        List<Theme> themes = themeService.getThemesByCafe(cafeId);
 //        List<ThemeDto.Response> res = new ArrayList<>();
@@ -55,13 +55,13 @@ public class ThemeController {
     }
 
     // 테마 수정
-    @PutMapping(value = "/theme/{themeId}")
+    @PutMapping(value = "/themes/{themeId}")
     public SingleResponse<ThemeDto.Response> modifyTheme(@PathVariable Long themeId, @ModelAttribute ThemeParams params) {
         return responseService.getSingleResponse(new ThemeDto.Response(themeService.modifyTheme(themeId, params)));
     }
 
     // 테마 삭제
-    @DeleteMapping(value = "/theme/{themeId}")
+    @DeleteMapping(value = "/themes/{themeId}")
     public CommonResponse deleteTheme(@PathVariable Long themeId) {
         themeService.deleteTheme(themeId);
         return responseService.getSuccessResponse();
