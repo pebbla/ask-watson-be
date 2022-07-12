@@ -15,7 +15,7 @@ public class CafeController {
     private final ResponseService responseService;
 
     // 방탈출 카페 등록
-    @PostMapping(value="/admin/cafe")
+    @PostMapping(value="/admin/cafes")
     public SingleResponse<Cafe> createCafe(@ModelAttribute CafeParams params) {
         return responseService.getSingleResponse(cafeService.createCafe(params));
     }
@@ -27,19 +27,19 @@ public class CafeController {
     }
 
     // 방탈출 카페 단건 조회
-    @GetMapping(value = "/cafe/{cafeId}")
+    @GetMapping(value = "/cafes/{cafeId}")
     public SingleResponse<Cafe> getCafe(@PathVariable Long cafeId) {
         return responseService.getSingleResponse(cafeService.getOneCafe(cafeId));
     }
 
     // 방탈출 카페 수정
-    @PutMapping(value = "/cafe/{cafeId}")
+    @PutMapping(value = "/cafes/{cafeId}")
     public SingleResponse<Cafe> modifyCafe(@PathVariable Long cafeId, @ModelAttribute CafeParams params) {
         return responseService.getSingleResponse(cafeService.modifyCafe(cafeId, params));
     }
 
     // 방탈출 카페 삭제
-    @DeleteMapping(value = "/cafe/{cafeId}")
+    @DeleteMapping(value = "/cafes/{cafeId}")
     public CommonResponse deleteCafe(@PathVariable Long cafeId) {
         cafeService.deleteCafe(cafeId);
         return responseService.getSuccessResponse();
