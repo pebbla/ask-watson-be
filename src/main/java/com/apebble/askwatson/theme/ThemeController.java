@@ -18,15 +18,9 @@ public class ThemeController {
     private final ResponseService responseService;
 
     // 방탈출 테마 등록
-<<<<<<< HEAD
     @PostMapping(value="/admin/cafes/{cafeId}/themes")
     public SingleResponse<Theme> createTheme(@PathVariable Long cafeId, @ModelAttribute ThemeParams params) {
         return responseService.getSingleResponse(themeService.createTheme(cafeId, params));
-=======
-    @PostMapping(value="/admin/cafe/{cafeId}/theme")
-    public SingleResponse<ThemeDto.Response> createTheme(@PathVariable Long cafeId, @ModelAttribute ThemeParams params) {
-        return responseService.getSingleResponse(new ThemeDto.Response(themeService.createTheme(cafeId, params)));
->>>>>>> 3cb2c53 (Theme DTO 생성, 적용)
     }
 
     // 테마 목록 전체 조회
