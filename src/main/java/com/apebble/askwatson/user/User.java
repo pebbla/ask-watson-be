@@ -21,8 +21,6 @@ public class User extends BaseTime {
 
     private String userPassword;        // 회원 비밀번호
 
-    private String userName;            // 회원 이름
-
     private String userNickName;        // 회원 별명
 
     private String userPhoneNum;        // 회원 전화번호
