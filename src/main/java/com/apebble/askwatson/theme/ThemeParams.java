@@ -8,7 +8,7 @@ public class ThemeParams {
 
     private String themeExplanation;
 
-    private String category;
+    private Long categoryId;
 
     private double difficulty;
 

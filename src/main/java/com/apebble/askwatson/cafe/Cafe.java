@@ -1,5 +1,7 @@
 package com.apebble.askwatson.cafe;
 
+import com.apebble.askwatson.cafe.company.Company;
+import com.apebble.askwatson.cafe.location.Location;
 import com.apebble.askwatson.comm.BaseTime;
 import com.apebble.askwatson.theme.Theme;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -17,16 +19,18 @@ import java.util.List;
 @NoArgsConstructor
 public class Cafe extends BaseTime {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;                        // pk
+    private Long id;                    // pk
 
     @Column(length = 20)
-    private String cafeName;                // 방탈출카페명
+    private String cafeName;            // 방탈출카페명
 
-    private String cafePhoneNum;            // 방탈출카페 전화번호
+    private String cafePhoneNum;        // 방탈출카페 전화번호
 
-    private String locationSort;            // 방탈출카페 지역
+    @ManyToOne @JoinColumn(name = "location_id")
+    private Location location;          // 방탈출카페 지역
 
-    private String company;                 // 방탈출카페 체인명
+    @ManyToOne @JoinColumn(name = "company_id")
+    private Company company;           // 방탈출카페 체인명
 
     @Singular("theme")
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "cafe", cascade = CascadeType.ALL)

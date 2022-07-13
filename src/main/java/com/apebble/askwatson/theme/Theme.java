@@ -2,6 +2,7 @@ package com.apebble.askwatson.theme;
 
 import com.apebble.askwatson.cafe.Cafe;
 import com.apebble.askwatson.comm.BaseTime;
+import com.apebble.askwatson.theme.category.Category;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
@@ -26,7 +27,9 @@ public class Theme extends BaseTime {
     @Column(length = 100, nullable = false)
     private String themeExplanation;    // 테마 설명
 
-    private String category;            // 카테고리
+    @ManyToOne
+    @JoinColumn(name = "category_id")
+    private Category category;            // 카테고리
 
     private double difficulty;          // 난이도
 
