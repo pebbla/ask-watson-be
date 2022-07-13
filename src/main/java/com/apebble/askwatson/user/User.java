@@ -17,11 +17,9 @@ import java.util.Date;
 public class User extends BaseTime {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;                // pk
+    private Long id;                    // pk
 
-    private String pw;              // 회원 비밀번호
-
-    private String userName;        // 회원 이름
+    private String userPassword;        // 회원 비밀번호
 
     private String userNickName;        // 회원 별명
 
