@@ -3,7 +3,10 @@ package com.apebble.askwatson.theme;
 import com.apebble.askwatson.cafe.Cafe;
 import com.apebble.askwatson.cafe.CafeJpaRepository;
 import com.apebble.askwatson.comm.exception.CafeNotFoundException;
+import com.apebble.askwatson.comm.exception.CategoryNotFoundException;
 import com.apebble.askwatson.comm.exception.ThemeNotFoundException;
+import com.apebble.askwatson.theme.category.Category;
+import com.apebble.askwatson.theme.category.CategoryJpaRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -17,11 +20,13 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ThemeService {
     private final CafeJpaRepository cafeJpaRepository;
+    private final CategoryJpaRepository categoryJpaRepository;
     private final ThemeJpaRepository themeJpaRepository;
 
     // 방탈출 테마 등록
     public Theme createTheme(Long cafeId, ThemeParams params) {
         Cafe cafe = cafeJpaRepository.findById(cafeId).orElseThrow(CafeNotFoundException::new);
+        Category category = categoryJpaRepository.findById(params.getCategoryId()).orElseThrow(CategoryNotFoundException::new);
 
         Theme theme = Theme.builder()
                 .cafe(cafe)
@@ -29,7 +34,7 @@ public class ThemeService {
                 .themeExplanation(params.getThemeExplanation())
                 .timeLimit(params.getTimeLimit())
                 .difficulty(params.getDifficulty())
-                .category(params.getCategory())
+                .category(category)
                 .build();
 
         return themeJpaRepository.save(theme);
@@ -54,9 +59,10 @@ public class ThemeService {
     // 테마 수정
     public Theme modifyTheme(Long themeId, ThemeParams params) {
         Theme theme = themeJpaRepository.findById(themeId).orElseThrow(ThemeNotFoundException::new);
+        Category category = categoryJpaRepository.findById(params.getCategoryId()).orElseThrow(CategoryNotFoundException::new);
 
         theme.setThemeName(params.getThemeName());
-        theme.setCategory(params.getCategory());
+        theme.setCategory(category);
         theme.setThemeExplanation(params.getThemeExplanation());
         theme.setDifficulty(params.getDifficulty());
         theme.setTimeLimit(params.getTimeLimit());

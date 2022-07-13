@@ -1,6 +1,7 @@
 package com.apebble.askwatson.theme;
 
 import com.apebble.askwatson.cafe.Cafe;
+import com.apebble.askwatson.theme.category.Category;
 import lombok.*;
 
 @Getter @Setter
@@ -11,7 +12,7 @@ public class ThemeDto {
         private Long id;
         private String themeName;
         private String themeExplanation;
-        private String category;
+        private Category category;
         private double difficulty;
         private int timeLimit;
         private int likeCount;
@@ -36,15 +37,15 @@ public class ThemeDto {
         private Long id;
         private String cafeName;
         private String cafePhoneNum;
-        private String locationSort;
-        private String company;
+        private Long locationId;
+        private Long companyId;
 
         public CafeDto(Cafe entity) {
             this.id = entity.getId();
             this.cafeName = entity.getCafeName();
             this.cafePhoneNum = entity.getCafePhoneNum();
-            this.locationSort = entity.getLocationSort();
-            this.company = entity.getCompany();
+            this.locationId = entity.getLocation().getId();
+            this.companyId = entity.getCompany().getId();
         }
     }
 }
