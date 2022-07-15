@@ -42,7 +42,7 @@ public class ReportService {
         return reportJpaRepository.findAll();
     }
 
-    // 처리 안된 신고 전체 조회
+    // 처리 여부에 따른 신고 목록 조정
     public List<Report> getReportsByHandledYn(Boolean handledYn) {
         return reportJpaRepository.findByHandledYn(handledYn);
     }
