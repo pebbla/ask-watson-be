@@ -24,7 +24,7 @@ public class EscapeComplete {
     @JsonIgnore
     private User user;                      // 탈출 완료한 회원
 
-    @OneToOne @JoinColumn(name = "themeId")
+    @OneToOne @JoinColumn(name = "theme_id")
     private Theme theme;                    // 탈출 완료한 테마
 
     @DateTimeFormat(pattern = "yyyy-MM-dd")
