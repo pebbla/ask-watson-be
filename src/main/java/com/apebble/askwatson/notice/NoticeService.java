@@ -22,7 +22,6 @@ public class NoticeService {
                 .title(params.getTitle())
                 .content(params.getContent())
                 .build();
-
         return noticeJpaRepository.save(notice);
     }
 
@@ -39,7 +38,6 @@ public class NoticeService {
     // 공지사항 수정
     public Notice modifyNotice(Long noticeId, NoticeParams params) {
         Notice notice = noticeJpaRepository.findById(noticeId).orElseThrow(NoticeNotFoundException::new);
-
         notice.setTitle(params.getTitle());
         notice.setContent(params.getContent());
         return notice;
