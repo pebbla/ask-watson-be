@@ -20,16 +20,15 @@ public class ReportController {
         return responseService.getSingleResponse(reportService.createReport(userId, reviewId, params));
     }
 
-    // 신고 전체 조회
-    @GetMapping(value = "/reports")
-    public ListResponse<Report> getAllReports() {
-        return responseService.getListResponse(reportService.getAllReports());
-    }
+    // 신고 목록 조회
+    @GetMapping(value = "/admin/reports")
+    public ListResponse<Report> getReports(@RequestParam(name="handledyn", required = false) Boolean handledYn) {
+        if(handledYn == null) {
+            return responseService.getListResponse(reportService.getAllReports());
+        } else {
+            return responseService.getListResponse(reportService.getReportsByHandledYn(handledYn));
+        }
 
-    // 처리 안된 신고 목록 조회
-    @GetMapping(value = "/reports/unhandled")
-    public ListResponse<Report> getUnhandledReports() {
-        return responseService.getListResponse(reportService.getUnhandledReports());
     }
 
     // 신고 처리 상태 변경

@@ -43,8 +43,8 @@ public class ReportService {
     }
 
     // 처리 안된 신고 전체 조회
-    public List<Report> getUnhandledReports() {
-        return reportJpaRepository.findByHandledYn(false);
+    public List<Report> getReportsByHandledYn(Boolean handledYn) {
+        return reportJpaRepository.findByHandledYn(handledYn);
     }
 
     // 신고 처리 상태 변경
