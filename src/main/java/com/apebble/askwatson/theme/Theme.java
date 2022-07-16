@@ -36,7 +36,7 @@ public class Theme extends BaseTime {
     private int timeLimit;              // 제한시간
 
     @Builder.Default @ColumnDefault("0")
-    private int likeCount=0;            // 좋아요 수
+    private int heartCount=0;            // 좋아요 수
 
     @Builder.Default @ColumnDefault("0")
     private int escapeCount=0;          // 탈출 횟수
