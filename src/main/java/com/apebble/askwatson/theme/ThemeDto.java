@@ -15,7 +15,7 @@ public class ThemeDto {
         private Category category;
         private double difficulty;
         private int timeLimit;
-        private int likeCount;
+        private int heartCount;
         private int escapeCount;
         private CafeDto cafe;
 
@@ -26,7 +26,7 @@ public class ThemeDto {
             this.category = entity.getCategory();
             this.difficulty = entity.getDifficulty();
             this.timeLimit = entity.getTimeLimit();
-            this.likeCount = entity.getLikeCount();
+            this.heartCount = entity.getHeartCount();
             this.escapeCount = entity.getEscapeCount();
             this.cafe = new CafeDto(entity.getCafe());
         }

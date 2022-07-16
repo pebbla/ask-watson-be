@@ -1,4 +1,4 @@
-package com.apebble.askwatson.like;
+package com.apebble.askwatson.heart;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -8,7 +8,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.apebble.askwatson.comm.exception.LikeNotFoundException;
+import com.apebble.askwatson.comm.exception.HeartNotFoundException;
 import com.apebble.askwatson.comm.exception.ThemeNotFoundException;
 import com.apebble.askwatson.theme.Theme;
 import com.apebble.askwatson.theme.ThemeJpaRepository;
@@ -18,38 +18,37 @@ import com.apebble.askwatson.theme.ThemeJpaRepository;
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class LikeService {
+public class HeartService {
 
-    private final LikeJpaRepository likeJpaRepository;
+    private final HeartJpaRepository heartJpaRepository;
     private final ThemeJpaRepository themeJpaRepository;
 
     
     // 좋아요 등록
-    public Likes createLike(Long userId, Long themeId) {
+    public Heart createHeart(Long userId, Long themeId) {
         Theme theme = themeJpaRepository.findById(themeId).orElseThrow(ThemeNotFoundException::new);
-        Likes likes = Likes.builder()
+        Heart heart = Heart.builder()
                 .userId(userId)
                 .theme(theme)
                 .build();
-        theme.setLikeCount(theme.getLikeCount() + 1);
-        return likeJpaRepository.save(likes);
+        theme.setHeartCount(theme.getHeartCount() + 1);
+        return heartJpaRepository.save(heart);
     }
 
 
     // 좋아요 해제
-    public void deleteLike(Long themeId, Long likesId) {
-        Likes likes = likeJpaRepository.findById(likesId).orElseThrow(LikeNotFoundException::new);
+    public void deleteHeart(Long themeId, Long heartId) {
+        Heart heart = heartJpaRepository.findById(heartId).orElseThrow(HeartNotFoundException::new);
         Theme theme = themeJpaRepository.findById(themeId).orElseThrow(ThemeNotFoundException::new);
-        theme.setLikeCount(theme.getLikeCount() - 1);
-        likeJpaRepository.delete(likes);
+        theme.setHeartCount(theme.getHeartCount() - 1);
+        heartJpaRepository.delete(heart);
     }
 
 
     // 좋아요 목록 조회
-    //TODO : ThemeDto 가 뭔지 조금 더 고민하기
-    public List<Likes> getLikeThemeList(Long userId){
-        List<Likes> likeList = likeJpaRepository.findByUserId(userId);
-        return likeList;
+    public List<Heart> getHeartsByUserId(Long userId){
+        List<Heart> heartList = heartJpaRepository.findByUserId(userId);
+        return heartList;
     }
     
 }

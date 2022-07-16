@@ -1,11 +1,10 @@
-package com.apebble.askwatson.like;
+package com.apebble.askwatson.heart;
 
 import lombok.*;
 
 import javax.persistence.*;
 
 import com.apebble.askwatson.theme.Theme;
-import com.apebble.askwatson.user.User;
 
 @Entity
 @Builder
@@ -13,15 +12,12 @@ import com.apebble.askwatson.user.User;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class Likes {
+public class Heart {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;                // pk
 
-    // @ManyToOne
-    // @JoinColumn(name = "user_id")
-    // private User user;
     private Long userId;            //유저 아이디
 
     @ManyToOne                      // 테마 아이디
