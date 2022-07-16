@@ -57,7 +57,7 @@ public class ReviewController {
     }
 
     // 리뷰 삭제
-    @DeleteMapping(value = "/user/{userId}/reviews/{reviewId}")
+    @DeleteMapping(value = "/reviews/{reviewId}")
     public CommonResponse deleteReview(@PathVariable Long userId, @PathVariable Long reviewId) {
         reivewService.deleteReview(reviewId);
         return responseService.getSuccessResponse();
