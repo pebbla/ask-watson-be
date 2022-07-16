@@ -5,6 +5,8 @@ import lombok.*;
 import javax.persistence.*;
 
 import com.apebble.askwatson.theme.Theme;
+import com.apebble.askwatson.user.User;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Builder
@@ -18,7 +20,10 @@ public class Heart {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;                // pk
 
-    private Long userId;            //유저 아이디
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    @JsonIgnore
+    private User user;
 
     @ManyToOne                      // 테마 아이디
     @JoinColumn(name = "theme_id")
