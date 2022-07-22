@@ -1,5 +1,6 @@
 package com.apebble.askwatson.heart;
 
+import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
 
 import java.util.ArrayList;
@@ -12,6 +13,7 @@ import com.apebble.askwatson.comm.response.ResponseService;
 import com.apebble.askwatson.comm.response.SingleResponse;
 
 
+@Api(tags = {"좋아요"})
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(value = "/v1")

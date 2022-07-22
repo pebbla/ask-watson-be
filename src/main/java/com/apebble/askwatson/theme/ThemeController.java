@@ -4,12 +4,14 @@ import com.apebble.askwatson.comm.response.CommonResponse;
 import com.apebble.askwatson.comm.response.ListResponse;
 import com.apebble.askwatson.comm.response.ResponseService;
 import com.apebble.askwatson.comm.response.SingleResponse;
+import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Api(tags = {"테마"})
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(value = "/v1")

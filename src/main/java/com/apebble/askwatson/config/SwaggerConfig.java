@@ -21,7 +21,7 @@ public class SwaggerConfig {
                 .useDefaultResponseMessages(false)
                 .apiInfo(apiInfo())
                 .select()
-                .apis(RequestHandlerSelectors.basePackage("com.example.demo"))
+                .apis(RequestHandlerSelectors.basePackage("com.apebble.askwatson"))
                 .paths(PathSelectors.any())
                 .build();
     }
