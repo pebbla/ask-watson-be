@@ -18,6 +18,12 @@ public class ExceptionAdvice {
 
     private final ResponseService responseService;
 
+    
+
+    /**
+     * 404 : Not Found
+     */
+    
     @ExceptionHandler(FaqNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     protected CommonResponse faqNotFoundException(){
