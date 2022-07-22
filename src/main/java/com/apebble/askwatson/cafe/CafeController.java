@@ -22,8 +22,8 @@ public class CafeController {
 
     // 방탈출 카페 전체 조회
     @GetMapping(value="/cafes")
-    public ListResponse<Cafe> getCafes() {
-        return responseService.getListResponse(cafeService.getCafes());
+    public ListResponse<Cafe> getCafes(@RequestParam(name="location", required = false) Long locationId, @RequestParam(name="company", required = false) Long companyId) {
+        return responseService.getListResponse(cafeService.getCafes(locationId, companyId));
     }
 
     // 방탈출 카페 단건 조회
