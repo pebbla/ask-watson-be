@@ -28,9 +28,9 @@ public class SwaggerConfig {
 
     private ApiInfo apiInfo() {
         return new ApiInfoBuilder()
-                .title("SpringBoot + React Boilerplate API")
+                .title("SpringBoot + pebbla API")
                 .version("1.0.0")
-                .description("스프링부트의 swagger api 입니다.")
+                .description("왓슨에게 물어보세요  swagger api 입니다.")
                 .build();
     }
 }
