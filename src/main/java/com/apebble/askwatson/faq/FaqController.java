@@ -33,7 +33,7 @@ public class FaqController {
     }
 
     // 자주묻는질문 수정
-    @PutMapping(value = "/faqs/{faqId}")
+    @PutMapping(value = "/admin/faqs/{faqId}")
     public SingleResponse<Faq> modifyFaq(@PathVariable Long faqId, @ModelAttribute FaqParams params) {
         return responseService.getSingleResponse( faqService.modifyFaq(faqId, params));
     }

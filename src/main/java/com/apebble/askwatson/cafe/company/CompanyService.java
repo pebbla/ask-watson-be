@@ -25,13 +25,13 @@ public class CompanyService {
     }
 
     // 회사 전체 조회
-    public List<Company> getCategories() {
+    public List<Company> getCompanies() {
         return companyJpaRepository.findAll();
     }
 
     // 회사 수정
     public Company modifyCompany(Long companyId, CompanyParams params) {
-        Company company =companyJpaRepository.findById(companyId).orElseThrow(CompanyNotFoundException::new);
+        Company company = companyJpaRepository.findById(companyId).orElseThrow(CompanyNotFoundException::new);
        company.setCompanyName(params.getCompanyName());
 
         return company;
@@ -39,7 +39,7 @@ public class CompanyService {
 
     // 회사 삭제
     public void deleteCompany(Long companyId) {
-        Company company =companyJpaRepository.findById(companyId).orElseThrow(CompanyNotFoundException::new);
+        Company company = companyJpaRepository.findById(companyId).orElseThrow(CompanyNotFoundException::new);
        companyJpaRepository.delete(company);
     }
 }

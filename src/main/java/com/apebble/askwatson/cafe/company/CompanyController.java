@@ -22,8 +22,8 @@ public class CompanyController {
 
     // 회사 목록 전체 조회
     @GetMapping(value = "/companies")
-    public ListResponse<Company> getCategories() {
-        return responseService.getListResponse(companyService.getCategories());
+    public ListResponse<Company> getCompanies() {
+        return responseService.getListResponse(companyService.getCompanies());
     }
 
     // 회사 수정
@@ -34,7 +34,7 @@ public class CompanyController {
 
     // 회사 삭제
     @DeleteMapping(value = "/admin/companies/{companyId}")
-    public CommonResponse deleteTheme(@PathVariable Long companyId) {
+    public CommonResponse deleteCompany(@PathVariable Long companyId) {
         companyService.deleteCompany(companyId);
         return responseService.getSuccessResponse();
     }

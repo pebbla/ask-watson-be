@@ -20,21 +20,21 @@ public class CategoryController {
         return responseService.getSingleResponse(categoryService.createCategory(params));
     }
 
-    // 테마 목록 전체 조회
+    // 카테고리 목록 전체 조회
     @GetMapping(value = "/categories")
     public ListResponse<Category> getCategories() {
         return responseService.getListResponse(categoryService.getCategories());
     }
 
-    // 테마 수정
+    // 카테고리 수정
     @PutMapping(value = "/admin/categories/{categoryId}")
     public SingleResponse<Category> modifyCategory(@PathVariable Long categoryId, @ModelAttribute CategoryParams params) {
         return responseService.getSingleResponse(categoryService.modifyCategory(categoryId, params));
     }
 
-    // 테마 삭제
+    // 카테고리 삭제
     @DeleteMapping(value = "/admin/categories/{categoryId}")
-    public CommonResponse deleteTheme(@PathVariable Long categoryId) {
+    public CommonResponse deleteCategory(@PathVariable Long categoryId) {
         categoryService.deleteCategory(categoryId);
         return responseService.getSuccessResponse();
     }
