@@ -62,7 +62,7 @@ public class ThemeService {
         if(locationId != null) location = locationJpaRepository.findById(locationId).orElseThrow(LocationNotFoundException::new);
         if(categoryId != null) category = categoryJpaRepository.findById(categoryId).orElseThrow(CafeNotFoundException::new);
 
-        return difficultyRange.size() == 0
+        return difficultyRange == null || difficultyRange.size() == 0
                 ? convertToThemeDtoList(themeJpaRepository.findThemesByFilters(cafe, location, category, null, null))
                 : convertToThemeDtoList(themeJpaRepository.findThemesByFilters(cafe, location, category, difficultyRange.get(0), difficultyRange.get(1)));
     }

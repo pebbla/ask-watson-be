@@ -33,7 +33,7 @@ public class ThemeDto {
     }
 
     @Getter @NoArgsConstructor
-    public static class CafeDto {
+    private static class CafeDto {
         private Long id;
         private String cafeName;
         private String cafePhoneNum;
