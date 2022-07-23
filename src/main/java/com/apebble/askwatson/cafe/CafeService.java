@@ -40,8 +40,16 @@ public class CafeService {
     }
 
     // 방탈출 카페 전체 조회
-    public List<Cafe> getCafes() {
-        return cafeJpaRepository.findAll();
+    public List<Cafe> getCafes(Long locationId, Long companyId) {
+        Location location = null;
+        Company company = null;
+
+        if(locationId != null)
+            location = locationJpaRepository.findById(locationId).orElseThrow(LocationNotFoundException::new);
+        if(companyId != null)
+            company = companyJpaRepository.findById(companyId).orElseThrow(CompanyNotFoundException::new);
+
+        return cafeJpaRepository.findCafesByLocationAndCompany(location, company);
     }
 
     // 방탈출 카페 단건 조회

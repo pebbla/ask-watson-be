@@ -2,8 +2,11 @@ package com.apebble.askwatson.theme;
 
 import com.apebble.askwatson.cafe.Cafe;
 import com.apebble.askwatson.cafe.CafeJpaRepository;
+import com.apebble.askwatson.cafe.location.Location;
+import com.apebble.askwatson.cafe.location.LocationJpaRepository;
 import com.apebble.askwatson.comm.exception.CafeNotFoundException;
 import com.apebble.askwatson.comm.exception.CategoryNotFoundException;
+import com.apebble.askwatson.comm.exception.LocationNotFoundException;
 import com.apebble.askwatson.comm.exception.ThemeNotFoundException;
 import com.apebble.askwatson.theme.category.Category;
 import com.apebble.askwatson.theme.category.CategoryJpaRepository;
@@ -14,6 +17,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+import static java.util.stream.Collectors.toList;
+
 @Slf4j
 @Service
 @Transactional
@@ -22,6 +27,7 @@ public class ThemeService {
     private final CafeJpaRepository cafeJpaRepository;
     private final CategoryJpaRepository categoryJpaRepository;
     private final ThemeJpaRepository themeJpaRepository;
+    private final LocationJpaRepository locationJpaRepository;
 
     // 방탈출 테마 등록
     public Theme createTheme(Long cafeId, ThemeParams params) {
@@ -47,17 +53,28 @@ public class ThemeService {
     }
 
     // 테마 목록 전체 조회
-    public List<Theme> getAllThemes() {
-        return themeJpaRepository.findAll();
+    public List<ThemeDto.Response> getThemes(Long cafeId, Long locationId, Long categoryId, List<Double> difficultyRange) {
+        Cafe cafe = null;
+        Location location = null;
+        Category category = null;
+
+        if(cafeId != null) cafe = cafeJpaRepository.findById(cafeId).orElseThrow(CafeNotFoundException::new);
+        if(locationId != null) location = locationJpaRepository.findById(locationId).orElseThrow(LocationNotFoundException::new);
+        if(categoryId != null) category = categoryJpaRepository.findById(categoryId).orElseThrow(CafeNotFoundException::new);
+
+        return difficultyRange.size() == 0
+                ? convertToThemeDtoList(themeJpaRepository.findThemesByFilters(cafe, location, category, null, null))
+                : convertToThemeDtoList(themeJpaRepository.findThemesByFilters(cafe, location, category, difficultyRange.get(0), difficultyRange.get(1)));
     }
 
+
     // 테마 단건 조회
-    public Theme getOneTheme(Long themeId) {
-        return themeJpaRepository.findById(themeId).orElseThrow(ThemeNotFoundException::new);
+    public ThemeDto.Response getOneTheme(Long themeId) {
+        return convertToThemeDto(themeJpaRepository.findById(themeId).orElseThrow(ThemeNotFoundException::new));
     }
 
     // 테마 수정
-    public Theme modifyTheme(Long themeId, ThemeParams params) {
+    public ThemeDto.Response modifyTheme(Long themeId, ThemeParams params) {
         Theme theme = themeJpaRepository.findById(themeId).orElseThrow(ThemeNotFoundException::new);
         Category category = categoryJpaRepository.findById(params.getCategoryId()).orElseThrow(CategoryNotFoundException::new);
 
@@ -67,12 +84,20 @@ public class ThemeService {
         theme.setDifficulty(params.getDifficulty());
         theme.setTimeLimit(params.getTimeLimit());
 
-        return theme;
+        return convertToThemeDto(theme);
     }
 
     // 테마 삭제
     public void deleteTheme(Long themeId) {
         Theme theme = themeJpaRepository.findById(themeId).orElseThrow(ThemeNotFoundException::new);
         themeJpaRepository.delete(theme);
+    }
+
+    public List<ThemeDto.Response> convertToThemeDtoList(List<Theme> themeList){
+        return themeList.stream().map(ThemeDto.Response::new).collect(toList());
+    }
+
+    public ThemeDto.Response convertToThemeDto(Theme theme){
+        return new ThemeDto.Response(theme);
     }
 }

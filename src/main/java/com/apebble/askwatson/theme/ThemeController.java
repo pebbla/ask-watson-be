@@ -7,7 +7,6 @@ import com.apebble.askwatson.comm.response.SingleResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -25,39 +24,30 @@ public class ThemeController {
 
     // 테마 목록 전체 조회
     @GetMapping(value = "/themes")
-    public ListResponse<ThemeDto.Response> getAllThemes() {
-        List<Theme> themes = themeService.getAllThemes();
-        List<ThemeDto.Response> res = new ArrayList<>();
-        themes.forEach(theme -> {
-            ThemeDto.Response themeDto = new ThemeDto.Response(theme);
-            res.add(themeDto);
-        });
-        return responseService.getListResponse(res);
+    public ListResponse<ThemeDto.Response> getThemes(@RequestParam(name="cafe", required = false) Long cafeId,
+                                                     @RequestParam(name="location", required = false) Long locationId,
+                                                     @RequestParam(name="category", required = false) Long categoryId,
+                                                     @RequestParam(name="difficultyrange", required = false) List<Double> difficultyRange) {
+
+        return responseService.getListResponse(themeService.getThemes(cafeId, locationId, categoryId, difficultyRange));
     }
 
     // 테마 단건 조회
     @GetMapping(value = "/themes/{themeId}")
     public SingleResponse<ThemeDto.Response> getTheme(@PathVariable Long themeId) {
-        return responseService.getSingleResponse(new ThemeDto.Response(themeService.getOneTheme(themeId)));
+        return responseService.getSingleResponse(themeService.getOneTheme(themeId));
     }
 
     // 카페별 테마 조회
     @GetMapping(value = "/cafes/{cafeId}/themes")
     public ListResponse<Theme> getThemesByCafe(@PathVariable Long cafeId) {
-//        List<Theme> themes = themeService.getThemesByCafe(cafeId);
-//        List<ThemeDto.Response> res = new ArrayList<>();
-//        themes.forEach(theme -> {
-//            ThemeDto.Response themeDto = new ThemeDto.Response(theme);
-//            res.add(themeDto);
-//        });
-//        return responseService.getListResponse(res);
         return responseService.getListResponse(themeService.getThemesByCafe(cafeId));
     }
 
     // 테마 수정
     @PutMapping(value = "/themes/{themeId}")
     public SingleResponse<ThemeDto.Response> modifyTheme(@PathVariable Long themeId, @ModelAttribute ThemeParams params) {
-        return responseService.getSingleResponse(new ThemeDto.Response(themeService.modifyTheme(themeId, params)));
+        return responseService.getSingleResponse(themeService.modifyTheme(themeId, params));
     }
 
     // 테마 삭제
