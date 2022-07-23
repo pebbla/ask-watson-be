@@ -52,8 +52,7 @@ public class HeartService {
 
     // 좋아요 목록 조회
     public List<Heart> getHeartsByUserId(Long userId){
-        User user = userJpaRepository.findById(userId).orElseThrow(UserNotFoundException::new);
-        List<Heart> heartList = heartJpaRepository.findByUser(user);
+        List<Heart> heartList = heartJpaRepository.findByUserId(userId);
         return heartList;
     }
     
