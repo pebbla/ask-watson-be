@@ -3,11 +3,13 @@ import com.apebble.askwatson.comm.response.CommonResponse;
 import com.apebble.askwatson.comm.response.ListResponse;
 import com.apebble.askwatson.comm.response.ResponseService;
 import com.apebble.askwatson.comm.response.SingleResponse;
+import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
+@Api(tags = {"자주묻는질문"})
 @RequestMapping(value = "/v1")
 public class FaqController {
 

@@ -11,3 +11,4 @@ spring:
       show-ddl: true
     database: mysql
     database-platform: org.hibernate.dialect.MySQL8Dialect
+
