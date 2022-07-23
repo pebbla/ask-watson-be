@@ -1,0 +1,41 @@
+package com.apebble.askwatson.theme.category;
+
+import com.apebble.askwatson.comm.response.CommonResponse;
+import com.apebble.askwatson.comm.response.ListResponse;
+import com.apebble.askwatson.comm.response.ResponseService;
+import com.apebble.askwatson.comm.response.SingleResponse;
+import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.*;
+
+@RestController
+@RequiredArgsConstructor
+@RequestMapping(value = "/v1")
+public class CategoryController {
+    private final CategoryService categoryService;
+    private final ResponseService responseService;
+
+    // 카테고리 등록
+    @PostMapping(value="/admin/categories")
+    public SingleResponse<Category> createCategory(@ModelAttribute CategoryParams params) {
+        return responseService.getSingleResponse(categoryService.createCategory(params));
+    }
+
+    // 테마 목록 전체 조회
+    @GetMapping(value = "/categories")
+    public ListResponse<Category> getCategories() {
+        return responseService.getListResponse(categoryService.getCategories());
+    }
+
+    // 테마 수정
+    @PutMapping(value = "/admin/categories/{categoryId}")
+    public SingleResponse<Category> modifyCategory(@PathVariable Long categoryId, @ModelAttribute CategoryParams params) {
+        return responseService.getSingleResponse(categoryService.modifyCategory(categoryId, params));
+    }
+
+    // 테마 삭제
+    @DeleteMapping(value = "/admin/categories/{categoryId}")
+    public CommonResponse deleteTheme(@PathVariable Long categoryId) {
+        categoryService.deleteCategory(categoryId);
+        return responseService.getSuccessResponse();
+    }
+}
