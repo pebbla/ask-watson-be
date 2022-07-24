@@ -6,6 +6,7 @@ import com.apebble.askwatson.comm.response.ResponseService;
 import com.apebble.askwatson.comm.response.SingleResponse;
 import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
+import org.locationtech.jts.io.ParseException;
 import org.springframework.web.bind.annotation.*;
 
 @Api(tags = {"카페"})
@@ -18,25 +19,25 @@ public class CafeController {
 
     // 방탈출 카페 등록
     @PostMapping(value="/admin/cafes")
-    public SingleResponse<Cafe> createCafe(@ModelAttribute CafeParams params) {
+    public SingleResponse<CafeDto.Response> createCafe(@ModelAttribute CafeParams params) throws ParseException {
         return responseService.getSingleResponse(cafeService.createCafe(params));
     }
 
     // 방탈출 카페 전체 조회
     @GetMapping(value="/cafes")
-    public ListResponse<Cafe> getCafes(@RequestParam(name="location", required = false) Long locationId, @RequestParam(name="company", required = false) Long companyId) {
+    public ListResponse<CafeDto.Response> getCafes(@RequestParam(name="location", required = false) Long locationId, @RequestParam(name="company", required = false) Long companyId) {
         return responseService.getListResponse(cafeService.getCafes(locationId, companyId));
     }
 
     // 방탈출 카페 단건 조회
     @GetMapping(value = "/cafes/{cafeId}")
-    public SingleResponse<Cafe> getCafe(@PathVariable Long cafeId) {
+    public SingleResponse<CafeDto.Response> getCafe(@PathVariable Long cafeId) {
         return responseService.getSingleResponse(cafeService.getOneCafe(cafeId));
     }
 
     // 방탈출 카페 수정
     @PutMapping(value = "/cafes/{cafeId}")
-    public SingleResponse<Cafe> modifyCafe(@PathVariable Long cafeId, @ModelAttribute CafeParams params) {
+    public SingleResponse<CafeDto.Response> modifyCafe(@PathVariable Long cafeId, @ModelAttribute CafeParams params) {
         return responseService.getSingleResponse(cafeService.modifyCafe(cafeId, params));
     }
 
@@ -46,5 +47,4 @@ public class CafeController {
         cafeService.deleteCafe(cafeId);
         return responseService.getSuccessResponse();
     }
-    
 }

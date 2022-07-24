@@ -3,7 +3,9 @@ package com.apebble.askwatson.cafe;
 import com.apebble.askwatson.cafe.company.Company;
 import com.apebble.askwatson.cafe.location.Location;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.locationtech.jts.geom.Point;
 
 @Getter @Setter
 public class CafeDto {
@@ -15,6 +17,7 @@ public class CafeDto {
         private String cafePhoneNum;
         private Location location;
         private Company company;
+        private PointDto geography;
 
         public Response(Cafe entity) {
             this.id = entity.getId();
@@ -22,6 +25,18 @@ public class CafeDto {
             this.cafePhoneNum = entity.getCafePhoneNum();
             this.location = entity.getLocation();
             this.company = entity.getCompany();
+            this.geography = new PointDto(entity.getGeography());
+        }
+    }
+
+    @Getter @NoArgsConstructor
+    private static class PointDto {
+        private Double longitude;
+        private Double latitude;
+
+        public PointDto(Point entity) {
+            this.longitude = entity.getX();
+            this.latitude = entity.getY();
         }
     }
 }
