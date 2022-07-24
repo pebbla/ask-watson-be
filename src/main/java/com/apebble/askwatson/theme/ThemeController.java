@@ -47,13 +47,13 @@ public class ThemeController {
     }
 
     // 테마 수정
-    @PutMapping(value = "/themes/{themeId}")
+    @PutMapping(value = "/admin/themes/{themeId}")
     public SingleResponse<ThemeDto.Response> modifyTheme(@PathVariable Long themeId, @ModelAttribute ThemeParams params) {
         return responseService.getSingleResponse(themeService.modifyTheme(themeId, params));
     }
 
     // 테마 삭제
-    @DeleteMapping(value = "/themes/{themeId}")
+    @DeleteMapping(value = "/admin/themes/{themeId}")
     public CommonResponse deleteTheme(@PathVariable Long themeId) {
         themeService.deleteTheme(themeId);
         return responseService.getSuccessResponse();

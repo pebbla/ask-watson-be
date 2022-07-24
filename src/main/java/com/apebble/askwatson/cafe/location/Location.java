@@ -10,6 +10,7 @@ import javax.persistence.Id;
 @Entity
 @Builder
 @Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 public class Location {
