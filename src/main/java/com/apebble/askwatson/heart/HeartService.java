@@ -52,7 +52,8 @@ public class HeartService {
 
     // 좋아요 목록 조회
     public List<Heart> getHeartsByUserId(Long userId){
-        return heartJpaRepository.findByUserId(userId);
+        List<Heart> heartList = heartJpaRepository.findByUserId(userId);
+        return heartList;
     }
     
 }
