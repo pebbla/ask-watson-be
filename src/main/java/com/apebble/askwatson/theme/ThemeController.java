@@ -26,10 +26,10 @@ public class ThemeController {
 
     // 테마 목록 전체 조회
     @GetMapping(value = "/themes")
-    public ListResponse<ThemeDto.Response> getThemes(@RequestParam(name="cafe", required = false) Long cafeId,
-                                                     @RequestParam(name="location", required = false) Long locationId,
-                                                     @RequestParam(name="category", required = false) Long categoryId,
-                                                     @RequestParam(name="difficultyrange", required = false) List<Double> difficultyRange) {
+    public ListResponse<ThemeDto.Response> getThemes(@RequestParam(required = false) Long cafeId,
+                                                     @RequestParam(required = false) Long locationId,
+                                                     @RequestParam(required = false) Long categoryId,
+                                                     @RequestParam(required = false) List<Double> difficultyRange) {
 
         return responseService.getListResponse(themeService.getThemes(cafeId, locationId, categoryId, difficultyRange));
     }

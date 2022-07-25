@@ -33,7 +33,7 @@ public class EscapeCompleteController {
 
     // 탈출 완료 일시 수정
     @PatchMapping(value = "/user/escapecompletes/{escapeCompleteId}")
-    public SingleResponse<EscapeComplete> modifyEscapeCompleteDt(@PathVariable Long escapeCompleteId, @RequestParam(name="escapecompletedt") String escapeCompleteDtStr) {
+    public SingleResponse<EscapeComplete> modifyEscapeCompleteDt(@PathVariable Long escapeCompleteId, @RequestParam(name="escapeCompleteDt") String escapeCompleteDtStr) {
         LocalDate escapeCompleteDt = LocalDate.parse(escapeCompleteDtStr, DateTimeFormatter.ISO_DATE);
         return responseService.getSingleResponse(escapeCompleteService.modifyEscapeCompleteDt(escapeCompleteId, escapeCompleteDt));
     }

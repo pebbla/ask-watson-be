@@ -24,7 +24,7 @@ public class ReportController {
 
     // 신고 목록 조회
     @GetMapping(value = "/admin/reports")
-    public ListResponse<Report> getReports(@RequestParam(name="handledyn", required = false) Boolean handledYn) {
+    public ListResponse<Report> getReports(@RequestParam(required = false) Boolean handledYn) {
         if(handledYn == null) {
             return responseService.getListResponse(reportService.getAllReports());
         } else {
@@ -35,7 +35,7 @@ public class ReportController {
 
     // 신고 처리 상태 변경
     @PatchMapping(value = "/admin/reports/{reportId}")
-    public CommonResponse modifyReportHandledYn(@PathVariable Long reportId, @RequestParam(name="handledyn") Boolean handledYn) {
+    public CommonResponse modifyReportHandledYn(@PathVariable Long reportId, @RequestParam Boolean handledYn) {
         reportService.modifyReportHandledYn(reportId, handledYn);
         return responseService.getSuccessResponse();
     }
