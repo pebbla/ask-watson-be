@@ -27,7 +27,7 @@ public class ReivewService {
     private final ThemeJpaRepository themeJpaRepository;
 
     // 리뷰 등록
-    public Review createReview(Long userId, Long themeId, ReviewParmas params) {
+    public Review createReview(Long userId, Long themeId, ReviewParams params) {
         User user = userJpaRepository.findById(userId).orElseThrow(UserNotFoundException::new);
         Theme theme = themeJpaRepository.findById(themeId).orElseThrow(ThemeNotFoundException::new);
         Review review = Review.builder()
@@ -59,7 +59,7 @@ public class ReivewService {
     }
 
     // 리뷰 수정
-    public Review modifyReview(Long reviewId, ReviewParmas params) {
+    public Review modifyReview(Long reviewId, ReviewParams params) {
         Review review = reviewJpaRepository.findById(reviewId).orElseThrow(ReviewNotFoundException::new);
         review.setRating(params.getRating());
         review.setDifficulty(params.getDifficulty());
