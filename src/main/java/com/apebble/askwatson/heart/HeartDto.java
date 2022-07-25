@@ -6,7 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Getter @Setter
-public class HeartDTO {
+public class HeartDto {
 
     @Getter @Setter
     public static class Response {

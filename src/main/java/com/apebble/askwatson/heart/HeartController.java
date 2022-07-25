@@ -3,9 +3,6 @@ package com.apebble.askwatson.heart;
 import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.springframework.web.bind.annotation.*;
 import com.apebble.askwatson.comm.response.CommonResponse;
 import com.apebble.askwatson.comm.response.ListResponse;
@@ -17,7 +14,7 @@ import com.apebble.askwatson.comm.response.SingleResponse;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(value = "/v1")
-public class HeartContorller {
+public class HeartController {
 
     private final HeartService heartService;
     private final ResponseService responseService;
@@ -40,13 +37,7 @@ public class HeartContorller {
 
     // 좋아요 목록
     @GetMapping(value="/user/{userId}/hearts")
-    public ListResponse<HeartDTO.Response> getHeartByUserId(@PathVariable Long userId) {
-        List<Heart> heartList = heartService.getHeartsByUserId(userId);
-        List<HeartDTO.Response> res = new ArrayList<>(); 
-        heartList.forEach(heart -> {
-            HeartDTO.Response heartDTO = new HeartDTO.Response(heart);
-            res.add(heartDTO);
-        });
-        return responseService.getListResponse(res);
+    public ListResponse<HeartDto.Response> getHeartByUserId(@PathVariable Long userId) {
+        return responseService.getListResponse(heartService.getHeartsByUserId(userId));
     }
 }
