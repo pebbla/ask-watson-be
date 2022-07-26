@@ -17,6 +17,12 @@ public interface ThemeJpaRepository extends JpaRepository<Theme, Long> {
             "and (:#{#options.categoryId} is null or t.category.id=:#{#options.categoryId}) " +
             "and (:#{#options.difficultyRangeFrom} is null or (:#{#options.difficultyRangeFrom} <= t.difficulty)) " +
             "and (:#{#options.difficultyRangeTo} is null or (t.difficulty <= :#{#options.difficultyRangeTo})) " +
+            "and (:#{#options.priceRangeFrom} is null or (:#{#options.priceRangeFrom} <= t.price)) " +
+            "and (:#{#options.priceRangeTo} is null or (t.price <= :#{#options.priceRangeTo})) " +
+            "and (:#{#options.deviceRatioRangeFrom} is null or (:#{#options.deviceRatioRangeFrom} <= t.deviceRatio)) " +
+            "and (:#{#options.deviceRatioRangeTo} is null or (t.deviceRatio <= :#{#options.deviceRatioRangeTo})) " +
+            "and (:#{#options.activityRangeFrom} is null or (:#{#options.activityRangeFrom} <= t.activity)) " +
+            "and (:#{#options.activityRangeTo} is null or (t.activity <= :#{#options.activityRangeTo})) " +
             "and (:#{#options.minNumPeople} is null or (:#{#options.minNumPeople} <= t.minNumPeople)) ")
     Page<Theme> findThemesByOptions(@Param("options") ThemeSearchOptions options, Pageable pageable);
 }
