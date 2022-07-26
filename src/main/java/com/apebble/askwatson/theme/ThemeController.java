@@ -1,14 +1,11 @@
 package com.apebble.askwatson.theme;
 
-import com.apebble.askwatson.comm.response.CommonResponse;
-import com.apebble.askwatson.comm.response.ListResponse;
-import com.apebble.askwatson.comm.response.ResponseService;
-import com.apebble.askwatson.comm.response.SingleResponse;
+import com.apebble.askwatson.comm.response.*;
 import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @Api(tags = {"테마"})
 @RestController
@@ -26,12 +23,9 @@ public class ThemeController {
 
     // 테마 목록 전체 조회
     @GetMapping(value = "/themes")
-    public ListResponse<ThemeDto.Response> getThemes(@RequestParam(required = false) Long cafeId,
-                                                     @RequestParam(required = false) Long locationId,
-                                                     @RequestParam(required = false) Long categoryId,
-                                                     @RequestParam(required = false) List<Double> difficultyRange) {
-
-        return responseService.getListResponse(themeService.getThemes(cafeId, locationId, categoryId, difficultyRange));
+    public PageResponse<ThemeDto.Response> getThemes(
+            @ModelAttribute ThemeSearchOptions searchOptions, @PageableDefault(size=20) Pageable pageable) {
+        return responseService.getPageResponse(themeService.getThemes(searchOptions, pageable));
     }
 
     // 테마 단건 조회
