@@ -1,6 +1,7 @@
 package com.apebble.askwatson.comm.response;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -8,9 +9,7 @@ import java.util.List;
 @Service
 @Slf4j
 public class ResponseService{
-
-
-    // success 단건 응답
+    // 단건 Response
     public<T> SingleResponse<T> getSingleResponse(T data){
         SingleResponse<T> singleResponse=new SingleResponse();
         singleResponse.data=data;
@@ -18,7 +17,7 @@ public class ResponseService{
         return singleResponse;
     }
 
-    // success 리스트 응답
+    // 리스트 Response
     public<T> ListResponse<T> getListResponse(List<T> dataList){
         ListResponse<T> listResponse = new ListResponse();
         listResponse.dataList=dataList;
@@ -26,7 +25,21 @@ public class ResponseService{
         return listResponse;
     }
 
-    // error bool 응답
+    // 페이지 Response
+    public<T> PageResponse<T> getPageResponse(Page<T> pageData){
+        PageResponse<T> pageResponse=new PageResponse<>();
+        pageResponse.content=pageData.getContent();
+        pageResponse.pageable=pageData.getPageable();
+        pageResponse.totalPages=pageData.getTotalPages();
+        pageResponse.totalElements=pageData.getTotalElements();
+        pageResponse.empty=pageData.isEmpty();
+        pageResponse.numberOfElements=pageData.getNumberOfElements();
+        pageResponse.size=pageData.getSize();
+        setSuccessResponse(pageResponse);
+        return pageResponse;
+    }
+
+    // error bool Response
     public CommonResponse getErrorResponse(int code, String message){
         CommonResponse response= new CommonResponse();
         response.success=false;
@@ -35,7 +48,7 @@ public class ResponseService{
         return response;
     }
 
-    // success bool 응답
+    // success bool Response
     public CommonResponse getSuccessResponse(){
         CommonResponse response=new CommonResponse();
         setSuccessResponse(response);
