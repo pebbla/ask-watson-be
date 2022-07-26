@@ -31,7 +31,7 @@ public class Review extends BaseTime {
 
     private double timeTaken;       // 걸린시간
 
-    private Integer usedHintNum;     // 사용한 힌트 갯수
+    private Integer usedHintNum;    // 사용한 힌트 갯수
 
     private double rating;          // 별점
 
