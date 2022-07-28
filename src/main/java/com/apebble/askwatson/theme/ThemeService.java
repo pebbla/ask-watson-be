@@ -39,6 +39,8 @@ public class ThemeService {
                 .timeLimit(params.getTimeLimit())
                 .difficulty(params.getDifficulty())
                 .category(category)
+                .minNumPeople(params.getMinNumPeople())
+                .price(params.getPrice())
                 .build();
 
         return themeJpaRepository.save(theme);
@@ -75,6 +77,8 @@ public class ThemeService {
         theme.setThemeExplanation(params.getThemeExplanation());
         theme.setDifficulty(params.getDifficulty());
         theme.setTimeLimit(params.getTimeLimit());
+        theme.setMinNumPeople(params.getMinNumPeople());
+        theme.setPrice(params.getPrice());
 
         return convertToThemeDto(theme);
     }

@@ -13,4 +13,8 @@ public class ThemeParams {
     private double difficulty;
 
     private int timeLimit;
+
+    private int minNumPeople;
+
+    private int price;
 }
