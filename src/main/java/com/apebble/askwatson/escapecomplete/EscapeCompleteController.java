@@ -20,26 +20,26 @@ public class EscapeCompleteController {
     private final EscapeCompleteService escapeCompleteService;
 
     // 유저 탈출 완료
-    @PostMapping(value = "/user/{userId}/themes/{themeId}")
+    @PostMapping(value = "/user/{userId}/themes/{themeId}/escape-completes")
     public SingleResponse<EscapeComplete> createEscapeComplete(@PathVariable Long userId, @PathVariable Long themeId) {
         return responseService.getSingleResponse(escapeCompleteService.createEscapeComplete(userId, themeId));
     }
 
     // 사용자별 탈출완료 목록 조회
-    @GetMapping(value = "/user/{userId}/escapecompletes")
+    @GetMapping(value = "/user/{userId}/escape-completes")
     public ListResponse<EscapeComplete> getEscapeCompletesByUser(@PathVariable Long userId) {
         return responseService.getListResponse(escapeCompleteService.getEscapeCompletesByUserId(userId));
     }
 
     // 탈출 완료 일시 수정
-    @PatchMapping(value = "/user/escapecompletes/{escapeCompleteId}")
+    @PatchMapping(value = "/user/escape-completes/{escapeCompleteId}")
     public SingleResponse<EscapeComplete> modifyEscapeCompleteDt(@PathVariable Long escapeCompleteId, @RequestParam(name="escapeCompleteDt") String escapeCompleteDtStr) {
         LocalDate escapeCompleteDt = LocalDate.parse(escapeCompleteDtStr, DateTimeFormatter.ISO_DATE);
         return responseService.getSingleResponse(escapeCompleteService.modifyEscapeCompleteDt(escapeCompleteId, escapeCompleteDt));
     }
 
     // 탈출 완료 취소
-    @DeleteMapping(value = "/user/escapecompletes/{escapeCompleteId}")
+    @DeleteMapping(value = "/user/escape-completes/{escapeCompleteId}")
     public CommonResponse cancelEscapeComplete(@PathVariable Long escapeCompleteId) {
         escapeCompleteService.deleteEscapeComplete(escapeCompleteId);
         return responseService.getSuccessResponse();
