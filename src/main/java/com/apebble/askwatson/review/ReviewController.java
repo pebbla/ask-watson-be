@@ -30,7 +30,7 @@ public class ReviewController {
     // 리뷰 등록
     @PostMapping(value = "/user/{userId}/themes/{themeId}/reviews")
     public SingleResponse<Review> createReview(@PathVariable Long userId, @PathVariable Long themeId,
-            @ModelAttribute ReviewParmas params) {
+            @ModelAttribute ReviewParams params) {
         return responseService.getSingleResponse(reivewService.createReview(userId, themeId, params));
     }
 
@@ -53,14 +53,14 @@ public class ReviewController {
     }
 
     // 리뷰 수정
-    @PutMapping(value = "/user/{userId}/reviews/{reviewId}")
-    public SingleResponse<Review> modifyReview(@PathVariable Long reviewId, @ModelAttribute ReviewParmas params) {
+    @PutMapping(value = "/user/reviews/{reviewId}")
+    public SingleResponse<Review> modifyReview(@PathVariable Long reviewId, @ModelAttribute ReviewParams params) {
         return responseService.getSingleResponse(reivewService.modifyReview(reviewId, params));
     }
 
     // 리뷰 삭제
     @DeleteMapping(value = "/reviews/{reviewId}")
-    public CommonResponse deleteReview(@PathVariable Long userId, @PathVariable Long reviewId) {
+    public CommonResponse deleteReview(@PathVariable Long reviewId) {
         reivewService.deleteReview(reviewId);
         return responseService.getSuccessResponse();
     }

@@ -17,6 +17,10 @@ public class ThemeDto {
         private int timeLimit;
         private int heartCount;
         private int escapeCount;
+        private int minNumPeople;
+        private int price;
+        private double deviceRatio;
+        private double activity;
         private CafeDto cafe;
 
         public Response(Theme entity) {
@@ -28,6 +32,10 @@ public class ThemeDto {
             this.timeLimit = entity.getTimeLimit();
             this.heartCount = entity.getHeartCount();
             this.escapeCount = entity.getEscapeCount();
+            this.minNumPeople = entity.getMinNumPeople();
+            this.price = entity.getPrice();
+            this.deviceRatio = entity.getDeviceRatio();
+            this.activity = entity.getActivity();
             this.cafe = new CafeDto(entity.getCafe());
         }
     }
