@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 
 import com.apebble.askwatson.comm.response.CommonResponse;
@@ -95,7 +96,6 @@ public class ExceptionAdvice {
         return responseService.getErrorResponse(404, "탈출 완료를 찾을 수 없습니다.");
     }
 
-
     @ExceptionHandler(LocationNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     protected CommonResponse locationNotFoundException(){
@@ -108,6 +108,13 @@ public class ExceptionAdvice {
         return responseService.getErrorResponse(404, "회사를 찾을 수 없습니다.");
     }
 
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    @ResponseStatus(HttpStatus.METHOD_NOT_ALLOWED)
+    protected CommonResponse companyNotFoundExcepti(){
+        return responseService.getErrorResponse(405, "연관 관계 문제로 삭제할 수 없습니다.");
+    }
+
+    
     //TODO : 런칭 시 주석제거, -> 포스트맨, 스웨거에서 에러메세지 보기위함
 //    @ExceptionHandler({ Exception.class })
 //    protected CommonResponse handleServerException(Exception ex) {

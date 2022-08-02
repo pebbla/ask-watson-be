@@ -1,8 +1,10 @@
 package com.apebble.askwatson.cafe.location;
 
+import com.apebble.askwatson.comm.exception.DataIntegrityViolationException;
 import com.apebble.askwatson.comm.exception.LocationNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -39,7 +41,7 @@ public class LocationService {
     }
 
     // 위치 삭제
-    public void deleteLocation(Long locationId) {
+    public void deleteLocation(Long locationId) throws DataIntegrityViolationException {
         Location location =locationJpaRepository.findById(locationId).orElseThrow(LocationNotFoundException::new);
         locationJpaRepository.delete(location);
     }
