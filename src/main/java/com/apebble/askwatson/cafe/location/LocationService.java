@@ -18,7 +18,8 @@ public class LocationService {
     // 위치 등록
     public Location createLocation(LocationParams params) {
         Location location = Location.builder()
-                .locationName(params.getLocationName())
+                .state(params.getState())
+                .city(params.getCity())
                 .build();
 
         return locationJpaRepository.save(location);
@@ -32,14 +33,14 @@ public class LocationService {
     // 위치 수정
     public Location modifyLocation(Long locationId, LocationParams params) {
         Location location =locationJpaRepository.findById(locationId).orElseThrow(LocationNotFoundException::new);
-       location.setLocationName(params.getLocationName());
-
+        location.setState(params.getState());
+        location.setCity(params.getCity());
         return location;
     }
 
     // 위치 삭제
     public void deleteLocation(Long locationId) {
         Location location =locationJpaRepository.findById(locationId).orElseThrow(LocationNotFoundException::new);
-       locationJpaRepository.delete(location);
+        locationJpaRepository.delete(location);
     }
 }
