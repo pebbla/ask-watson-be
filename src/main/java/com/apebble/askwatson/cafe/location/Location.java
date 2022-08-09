@@ -18,5 +18,7 @@ public class Location {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;                        // pk
 
-    private String locationName;            // 위치 이름
+    private String state;                   // 대분류(행정구역)
+
+    private String city;                    // 소분류(도시명)
 }

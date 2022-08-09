@@ -7,6 +7,7 @@ import com.apebble.askwatson.cafe.location.Location;
 import com.apebble.askwatson.cafe.location.LocationJpaRepository;
 import com.apebble.askwatson.comm.exception.CafeNotFoundException;
 import com.apebble.askwatson.comm.exception.CompanyNotFoundException;
+import com.apebble.askwatson.comm.exception.DataIntegrityViolationException;
 import com.apebble.askwatson.comm.exception.LocationNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -82,7 +83,7 @@ public class CafeService {
     }
 
     // 방탈출 카페 삭제
-    public void deleteCafe(Long cafeId) {
+    public void deleteCafe(Long cafeId) throws DataIntegrityViolationException {
         Cafe cafe = cafeJpaRepository.findById(cafeId).orElseThrow(CafeNotFoundException::new);
         cafeJpaRepository.delete(cafe);
     }

@@ -1,6 +1,8 @@
 package com.apebble.askwatson.cafe.company;
 
 import com.apebble.askwatson.comm.exception.CompanyNotFoundException;
+import com.apebble.askwatson.comm.exception.DataIntegrityViolationException;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -38,7 +40,7 @@ public class CompanyService {
     }
 
     // 회사 삭제
-    public void deleteCompany(Long companyId) {
+    public void deleteCompany(Long companyId) throws DataIntegrityViolationException {
         Company company = companyJpaRepository.findById(companyId).orElseThrow(CompanyNotFoundException::new);
        companyJpaRepository.delete(company);
     }

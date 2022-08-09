@@ -6,6 +6,7 @@ import com.apebble.askwatson.cafe.company.CompanyJpaRepository;
 import com.apebble.askwatson.cafe.location.LocationJpaRepository;
 import com.apebble.askwatson.comm.exception.CafeNotFoundException;
 import com.apebble.askwatson.comm.exception.CategoryNotFoundException;
+import com.apebble.askwatson.comm.exception.DataIntegrityViolationException;
 import com.apebble.askwatson.comm.exception.ThemeNotFoundException;
 import com.apebble.askwatson.theme.category.Category;
 import com.apebble.askwatson.theme.category.CategoryJpaRepository;
@@ -84,7 +85,7 @@ public class ThemeService {
     }
 
     // 테마 삭제
-    public void deleteTheme(Long themeId) {
+    public void deleteTheme(Long themeId) throws DataIntegrityViolationException {
         Theme theme = themeJpaRepository.findById(themeId).orElseThrow(ThemeNotFoundException::new);
         themeJpaRepository.delete(theme);
     }

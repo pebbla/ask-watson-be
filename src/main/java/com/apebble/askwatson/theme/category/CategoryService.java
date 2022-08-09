@@ -1,6 +1,8 @@
 package com.apebble.askwatson.theme.category;
 
 import com.apebble.askwatson.comm.exception.CategoryNotFoundException;
+import com.apebble.askwatson.comm.exception.DataIntegrityViolationException;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -38,7 +40,7 @@ public class CategoryService {
     }
 
     // 카테고리 삭제
-    public void deleteCategory(Long categoryId) {
+    public void deleteCategory(Long categoryId) throws DataIntegrityViolationException {
         Category category = categoryJpaRepository.findById(categoryId).orElseThrow(CategoryNotFoundException::new);
         categoryJpaRepository.delete(category);
     }
