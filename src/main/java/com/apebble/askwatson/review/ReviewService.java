@@ -3,6 +3,8 @@ package com.apebble.askwatson.review;
 import java.util.List;
 
 import javax.transaction.Transactional;
+
+import com.apebble.askwatson.cafe.Cafe;
 import org.springframework.stereotype.Service;
 
 import com.apebble.askwatson.comm.exception.ReviewNotFoundException;
@@ -20,8 +22,7 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class ReivewService {
-
+public class ReviewService {
     private final ReviewJpaRepository reviewJpaRepository;
     private final UserJpaRepository userJpaRepository;
     private final ThemeJpaRepository themeJpaRepository;
@@ -30,6 +31,7 @@ public class ReivewService {
     public Review createReview(Long userId, Long themeId, ReviewParams params) {
         User user = userJpaRepository.findById(userId).orElseThrow(UserNotFoundException::new);
         Theme theme = themeJpaRepository.findById(themeId).orElseThrow(ThemeNotFoundException::new);
+
         Review review = Review.builder()
             .user(user)
             .rating(params.getRating())
@@ -41,21 +43,33 @@ public class ReivewService {
             .content(params.getContent())
             .theme(theme)
             .build();
-        reflectNewReviewInTheme(review, theme);
+
+        reflectNewReviewInCafeAndTheme(params, theme);
+
         return reviewJpaRepository.save(review);
     }
 
-    private void reflectNewReviewInTheme(Review review, Theme theme) {
-        // 리뷰 -> 테마 반영해야할 것: rating, deviceRatio, activity
+    private void reflectNewReviewInCafeAndTheme(ReviewParams review, Theme theme) {
+        reflectNewReviewInCafe(review, theme.getCafe());
+        reflectNewReviewInTheme(review, theme);
+    }
 
+    private void reflectNewReviewInCafe(ReviewParams review, Cafe cafe) {
+        int reviewCount = cafe.getReviewCount();
+        double newRating = calculateNewValue(cafe.getRating(), review.getRating(), reviewCount);
+
+        cafe.updateCafeByReview(newRating);
+        cafe.incReviewCount();
+    }
+
+    private void reflectNewReviewInTheme(ReviewParams review, Theme theme) {
         int reviewCount = theme.getReviewCount();
-
         double newRating = calculateNewValue(theme.getRating(), review.getRating(), reviewCount);
         double newDeviceRatio = calculateNewValue(theme.getDeviceRatio(), review.getDeviceRatio(), reviewCount);
         double newActivity = calculateNewValue(theme.getActivity(), review.getActivity(), reviewCount);
 
         theme.updateThemeByReview(newRating, newDeviceRatio, newActivity);
-        theme.setReviewCount(reviewCount + 1);
+        theme.incReviewCount();
     }
 
     private double calculateNewValue(double oldValue, double newValue, int reviewCount) {
@@ -81,42 +95,52 @@ public class ReivewService {
     // 리뷰 수정
     public Review modifyReview(Long reviewId, ReviewParams params) {
         Review review = reviewJpaRepository.findById(reviewId).orElseThrow(ReviewNotFoundException::new);
-        Review oldReview = review;
+        reflectModifiedReviewInCafeAndTheme(review, params, review.getTheme());
         review.update(params);
-        reflectModifiedReviewInTheme(oldReview, review, review.getTheme());
         return review;
     }
 
-    private void reflectModifiedReviewInTheme(Review oldReview, Review newReview, Theme theme) {
-        // 전체 평균에서 이전 리뷰 반영 안되게
-        reflectDeletedReviewInTheme(oldReview, theme);
-
-        // 새 리뷰 반영
-        reflectNewReviewInTheme(newReview, theme);
+    private void reflectModifiedReviewInCafeAndTheme(Review oldReview, ReviewParams newReview, Theme theme) {
+        reflectReviewDeletionInCafeAndTheme(oldReview, theme);
+        reflectNewReviewInCafeAndTheme(newReview, theme);
     }
 
     // 리뷰 삭제
     public void deleteReview(Long reviewId) {
         Review review = reviewJpaRepository.findById(reviewId).orElseThrow(ReviewNotFoundException::new);
-        reflectDeletedReviewInTheme(review, review.getTheme());
+        reflectReviewDeletionInCafeAndTheme(review, review.getTheme());
         reviewJpaRepository.delete(review);
     }
 
-    private void reflectDeletedReviewInTheme(Review review, Theme theme) {
+    private void reflectReviewDeletionInCafeAndTheme(Review review, Theme theme) {
+        reflectReviewDeletionInCafe(review, theme.getCafe());
+        reflectReviewDeletionInTheme(review, theme);
+    }
+
+    private void reflectReviewDeletionInCafe(Review review, Cafe cafe) {
+        int reviewCount = cafe.getReviewCount();
+        double deletedRating=0;
+
+        if(reviewCount > 1) {
+            deletedRating = calculateDeletedValue(cafe.getRating(), review.getRating(),reviewCount);
+        }
+
+        cafe.updateCafeByReview(deletedRating);
+        cafe.decReviewCount();
+    }
+
+    private void reflectReviewDeletionInTheme(Review review, Theme theme) {
         int reviewCount = theme.getReviewCount();
+        double deletedRating=0, deletedDeviceRatio=0, deletedActivity=0;
 
-        double deletedRating, deletedDeviceRatio, deletedActivity;
-
-        if(reviewCount == 1) {
-            deletedRating = deletedDeviceRatio = deletedActivity = 0;
-        } else {
+        if(reviewCount > 1) {
             deletedRating = calculateDeletedValue(theme.getRating(), review.getRating(), reviewCount);
             deletedDeviceRatio = calculateDeletedValue(theme.getDeviceRatio(), review.getDeviceRatio(), reviewCount);
             deletedActivity = calculateDeletedValue(theme.getActivity(), review.getActivity(), reviewCount);
         }
 
         theme.updateThemeByReview(deletedRating, deletedDeviceRatio, deletedActivity);
-        theme.setReviewCount(reviewCount - 1);
+        theme.decReviewCount();
     }
 
     private double calculateDeletedValue(double oldValue, double valueToDelete, int reviewCount) {

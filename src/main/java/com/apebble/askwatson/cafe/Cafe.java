@@ -40,8 +40,8 @@ public class Cafe extends BaseTime {
     @Builder.Default @ColumnDefault("0")
     private int reviewCount=0;                      // 리뷰 수
 
-    @Builder.Default @ColumnDefault("-1")
-    private double rating=-1;                       // 평균 별점
+    @Builder.Default @ColumnDefault("0")
+    private double rating=0;                       // 평균 별점
 
     @Builder.Default @ColumnDefault("0")
     private boolean isEnglishPossible=false;        // 영어 가능 여부
@@ -54,5 +54,17 @@ public class Cafe extends BaseTime {
     public void addTheme(Theme theme) {
         this.themeList.add(theme);
         if(theme.getCafe() != this) theme.setCafe(this);
+    }
+
+    public void updateCafeByReview(double newRating) {
+        this.rating = newRating;
+    }
+
+    public void incReviewCount() {
+        this.reviewCount++;
+    }
+
+    public void decReviewCount() {
+        this.reviewCount--;
     }
 }

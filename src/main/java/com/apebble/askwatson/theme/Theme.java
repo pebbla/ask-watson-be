@@ -73,4 +73,12 @@ public class Theme extends BaseTime {
         this.deviceRatio = newDeviceRatio;
         this.activity = newActivity;
     }
+
+    public void incReviewCount() {
+        this.reviewCount++;
+    }
+
+    public void decReviewCount() {
+        this.reviewCount--;
+    }
 }
