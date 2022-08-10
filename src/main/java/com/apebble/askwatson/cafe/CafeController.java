@@ -1,12 +1,11 @@
 package com.apebble.askwatson.cafe;
 
-import com.apebble.askwatson.comm.response.CommonResponse;
-import com.apebble.askwatson.comm.response.ListResponse;
-import com.apebble.askwatson.comm.response.ResponseService;
-import com.apebble.askwatson.comm.response.SingleResponse;
+import com.apebble.askwatson.comm.response.*;
 import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
 import org.locationtech.jts.io.ParseException;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
 
 @Api(tags = {"카페"})
@@ -25,8 +24,9 @@ public class CafeController {
 
     // 방탈출 카페 전체 조회
     @GetMapping(value="/cafes")
-    public ListResponse<CafeDto.Response> getCafes(@RequestParam(required = false) Long locationId, @RequestParam(required = false) Long companyId) {
-        return responseService.getListResponse(cafeService.getCafes(locationId, companyId));
+    public PageResponse<CafeDto.Response> getCafes(
+            @ModelAttribute CafeSearchOptions searchOptions, @PageableDefault(size=20) Pageable pageable) {
+        return responseService.getPageResponse(cafeService.getCafes(searchOptions, pageable));
     }
 
     // 방탈출 카페 단건 조회

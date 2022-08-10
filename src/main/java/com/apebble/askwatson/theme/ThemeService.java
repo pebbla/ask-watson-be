@@ -2,8 +2,6 @@ package com.apebble.askwatson.theme;
 
 import com.apebble.askwatson.cafe.Cafe;
 import com.apebble.askwatson.cafe.CafeJpaRepository;
-import com.apebble.askwatson.cafe.company.CompanyJpaRepository;
-import com.apebble.askwatson.cafe.location.LocationJpaRepository;
 import com.apebble.askwatson.comm.exception.CafeNotFoundException;
 import com.apebble.askwatson.comm.exception.CategoryNotFoundException;
 import com.apebble.askwatson.comm.exception.DataIntegrityViolationException;
