@@ -47,14 +47,14 @@ public class Theme extends BaseTime {
     @Builder.Default @ColumnDefault("0")
     private int reviewCount=0;                  // 리뷰 수
 
-    @Builder.Default @ColumnDefault("-1")
-    private double rating=-1;                   // 평균 별점
+    @Builder.Default @ColumnDefault("0")
+    private double rating=0;                   // 평균 별점
 
-    @Builder.Default @ColumnDefault("-1")
-    private double deviceRatio=-1;              // 장치 비율(적음, 보통, 많음)
+    @Builder.Default @ColumnDefault("0")
+    private double deviceRatio=0;              // 장치 비율(적음, 보통, 많음)
 
-    @Builder.Default @ColumnDefault("-1")
-    private double activity=-1;                 // 활동성(낮음, 보통, 높음)
+    @Builder.Default @ColumnDefault("0")
+    private double activity=0;                 // 활동성(낮음, 보통, 높음)
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cafe_id")
@@ -66,5 +66,11 @@ public class Theme extends BaseTime {
 
         if(!cafe.getThemeList().contains(this))
             cafe.getThemeList().add(this);
+    }
+
+    public void updateThemeByReview(double newRating, double newDeviceRatio, double newActivity) {
+        this.rating = newRating;
+        this.deviceRatio = newDeviceRatio;
+        this.activity = newActivity;
     }
 }

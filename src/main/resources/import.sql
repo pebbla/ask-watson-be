@@ -62,4 +62,4 @@ INSERT INTO theme(theme_name,theme_explanation,category_id,difficulty,time_limit
 INSERT INTO theme(theme_name,theme_explanation,category_id,difficulty,time_limit,cafe_id,min_num_people,price) VALUES('더클루3','더클루테마3입니당',1,4.2,70,2,1,30000);
 INSERT INTO theme(theme_name,theme_explanation,category_id,difficulty,time_limit,cafe_id,min_num_people,price) VALUES('더클루4','더클루테마4입니당',1,4.7,70,2,1,40000);
 
-INSERT INTO review(rating,content,theme_id, difficulty, time_taken, used_hint_num, user_id) VALUES (3.5, '리뷰입니다', 1, 3.5, 50, 4, 2);
+영-- INSERT INTO review(rating,content,theme_id, difficulty, time_taken, used_hint_num, user_id) VALUES (3.5, '리뷰입니다', 1, 3.5, 50, 4, 2);
