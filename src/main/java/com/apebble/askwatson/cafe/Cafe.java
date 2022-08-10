@@ -41,7 +41,7 @@ public class Cafe extends BaseTime {
     private int reviewCount=0;                      // 리뷰 수
 
     @Builder.Default @ColumnDefault("0")
-    private double rating=0;                       // 평균 별점
+    private double rating=0;                        // 평균 별점
 
     @Builder.Default @ColumnDefault("0")
     private boolean isEnglishPossible=false;        // 영어 가능 여부
