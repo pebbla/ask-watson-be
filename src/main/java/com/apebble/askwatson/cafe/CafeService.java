@@ -14,12 +14,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.locationtech.jts.geom.Point;
 import org.locationtech.jts.io.ParseException;
 import org.locationtech.jts.io.WKTReader;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
-
-import static java.util.stream.Collectors.toList;
 
 @Slf4j
 @Service
@@ -51,16 +49,13 @@ public class CafeService {
     }
 
     // 방탈출 카페 전체 조회
-    public List<CafeDto.Response> getCafes(Long locationId, Long companyId) {
-        Location location = null;
-        Company company = null;
+    public Page<CafeDto.Response> getCafes(CafeSearchOptions searchOptions, Pageable pageable) {
+        Page<Cafe> cafeList;
+        cafeList = (searchOptions == null)
+                ? cafeJpaRepository.findAll(pageable)
+                : cafeJpaRepository.findCafesByOptions(searchOptions, pageable);
 
-        if(locationId != null)
-            location = locationJpaRepository.findById(locationId).orElseThrow(LocationNotFoundException::new);
-        if(companyId != null)
-            company = companyJpaRepository.findById(companyId).orElseThrow(CompanyNotFoundException::new);
-
-        return convertToCafeDtoList(cafeJpaRepository.findCafesByLocationAndCompany(location, company));
+        return convertToCafeDtoPage(cafeList);
     }
 
     // 방탈출 카페 단건 조회
@@ -88,8 +83,8 @@ public class CafeService {
         cafeJpaRepository.delete(cafe);
     }
 
-    public List<CafeDto.Response> convertToCafeDtoList(List<Cafe> cafeList){
-        return cafeList.stream().map(CafeDto.Response::new).collect(toList());
+    public Page<CafeDto.Response> convertToCafeDtoPage(Page<Cafe> cafeList){
+        return cafeList.map(CafeDto.Response::new);
     }
 
     public CafeDto.Response convertToCafeDto(Cafe cafe){

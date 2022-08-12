@@ -5,14 +5,17 @@ import lombok.Data;
 @Data
 public class ReviewParams {
 
-    private double rating;          // 별점
+    private double difficulty;              // 난이도
 
-    private double difficulty;      // 난이도
+    private double timeTaken;               // 걸린시간
 
-    private double timeTaken;       // 걸린시간
+    private Integer usedHintNum;            // 사용한 힌트 갯수
 
-    private Integer usedHintNum;     // 사용한 힌트 갯수
+    private double rating;                  // 별점
 
-    private String content;         // 내용
-    
+    private double deviceRatio;             // 장치 비율(1, 3, 5)
+
+    private double activity;                // 활동성(1, 3, 5)
+
+    private String content;                 // 내용
 }

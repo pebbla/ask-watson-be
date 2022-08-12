@@ -15,4 +15,6 @@ public class CafeParams {
     private Double latitude;
 
     private Double longitude;
+
+    private Boolean isEnglishPossible;
 }

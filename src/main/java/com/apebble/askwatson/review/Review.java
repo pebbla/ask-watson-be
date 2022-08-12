@@ -35,10 +35,24 @@ public class Review extends BaseTime {
 
     private double rating;          // 별점
 
+    private double deviceRatio;             // 장치 비율(1, 3, 5)
+
+    private double activity;                // 활동성(1, 3, 5)
+
     private String content;         // 내용
 
     @ManyToOne                      // 테마 
     @JoinColumn(name = "theme_id")
     @JsonIgnore
     private Theme theme;
+
+    public void update(ReviewParams params) {
+       this.difficulty = params.getDifficulty();
+       this.timeTaken = params.getTimeTaken();
+       this.usedHintNum = params.getUsedHintNum();
+       this.rating = params.getRating();
+       this.deviceRatio = params.getDeviceRatio();
+       this.activity = params.getActivity();
+       this.content = params.getContent();
+    }
 }

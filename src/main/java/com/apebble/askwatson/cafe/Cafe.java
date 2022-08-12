@@ -6,6 +6,7 @@ import com.apebble.askwatson.comm.BaseTime;
 import com.apebble.askwatson.theme.Theme;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
 import org.locationtech.jts.geom.Point;
 
 import javax.persistence.*;
@@ -36,6 +37,15 @@ public class Cafe extends BaseTime {
     @Column(nullable = false, columnDefinition = "GEOMETRY")
     private Point geography;                        // 방탈출카페 위치정보(경도, 위도)
 
+    @Builder.Default @ColumnDefault("0")
+    private int reviewCount=0;                      // 리뷰 수
+
+    @Builder.Default @ColumnDefault("0")
+    private double rating=0;                        // 평균 별점
+
+    @Builder.Default @ColumnDefault("0")
+    private boolean isEnglishPossible=false;        // 영어 가능 여부
+
     @Singular("theme")
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "cafe", cascade = CascadeType.ALL)
     @JsonIgnore
@@ -44,5 +54,17 @@ public class Cafe extends BaseTime {
     public void addTheme(Theme theme) {
         this.themeList.add(theme);
         if(theme.getCafe() != this) theme.setCafe(this);
+    }
+
+    public void updateCafeByReview(double newRating) {
+        this.rating = newRating;
+    }
+
+    public void incReviewCount() {
+        this.reviewCount++;
+    }
+
+    public void decReviewCount() {
+        this.reviewCount--;
     }
 }
