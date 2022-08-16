@@ -19,4 +19,8 @@ public class Category {
     private Long id;                        // pk
 
     private String categoryName;            // 카테고리명
+
+    public void update(CategoryParams params) {
+        this.categoryName = params.getCategoryName();
+    }
 }

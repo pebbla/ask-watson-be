@@ -46,7 +46,7 @@ public class EscapeCompleteService {
     // 탈출 완료 일시 수정
     public EscapeComplete modifyEscapeCompleteDt(Long escapeCompleteId, LocalDate newEcDt) {
         EscapeComplete escapeComplete = escapeCompleteJpaRepository.findById(escapeCompleteId).orElseThrow(EscapeCompleteNotFoundException::new);
-        escapeComplete.setEscapeCompleteDt(newEcDt);
+        escapeComplete.update(newEcDt);
 
         return escapeComplete;
     }

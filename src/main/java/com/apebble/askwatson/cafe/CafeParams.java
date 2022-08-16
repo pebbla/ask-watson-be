@@ -12,9 +12,9 @@ public class CafeParams {
 
     private Long companyId;
 
-    private Double latitude;
-
     private Double longitude;
+
+    private Double latitude;
 
     private Boolean isEnglishPossible;
 }

@@ -22,4 +22,8 @@ public class Faq extends BaseTime {
 
     private String content;         // 내용
 
+    public void update(FaqParams params) {
+        this.title = params.getTitle();
+        this.content = params.getContent();
+    }
 }

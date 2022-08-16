@@ -35,8 +35,8 @@ public class LocationService {
     // 위치 수정
     public Location modifyLocation(Long locationId, LocationParams params) {
         Location location =locationJpaRepository.findById(locationId).orElseThrow(LocationNotFoundException::new);
-        location.setState(params.getState());
-        location.setCity(params.getCity());
+        location.update(params);
+
         return location;
     }
 

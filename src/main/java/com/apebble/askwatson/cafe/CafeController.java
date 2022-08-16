@@ -37,7 +37,7 @@ public class CafeController {
 
     // 방탈출 카페 수정
     @PutMapping(value = "/cafes/{cafeId}")
-    public SingleResponse<CafeDto.Response> modifyCafe(@PathVariable Long cafeId, @ModelAttribute CafeParams params) {
+    public SingleResponse<CafeDto.Response> modifyCafe(@PathVariable Long cafeId, @ModelAttribute CafeParams params) throws ParseException {
         return responseService.getSingleResponse(cafeService.modifyCafe(cafeId, params));
     }
 

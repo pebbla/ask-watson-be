@@ -3,11 +3,13 @@ package com.apebble.askwatson.cafe;
 import com.apebble.askwatson.cafe.company.Company;
 import com.apebble.askwatson.cafe.location.Location;
 import com.apebble.askwatson.comm.BaseTime;
+import com.apebble.askwatson.comm.util.GeographyConverter;
 import com.apebble.askwatson.theme.Theme;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 import org.locationtech.jts.geom.Point;
+import org.locationtech.jts.io.ParseException;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -66,5 +68,14 @@ public class Cafe extends BaseTime {
 
     public void decReviewCount() {
         this.reviewCount--;
+    }
+
+    public void update(CafeParams params, Location location, Company company) throws ParseException{
+        this.cafeName = params.getCafeName();
+        this.cafePhoneNum = params.getCafePhoneNum();
+        this.location = location;
+        this.company = company;
+        this.geography = GeographyConverter.strToPoint(params.getLongitude(), params.getLatitude());
+        this.isEnglishPossible = params.getIsEnglishPossible();
     }
 }

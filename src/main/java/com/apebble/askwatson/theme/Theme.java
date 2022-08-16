@@ -81,4 +81,14 @@ public class Theme extends BaseTime {
     public void decReviewCount() {
         this.reviewCount--;
     }
+
+    public void update(ThemeParams params, Category category) {
+        this.themeName = params.getThemeName();
+        this.themeExplanation = params.getThemeExplanation();
+        this.category = category;
+        this.difficulty = params.getDifficulty();
+        this.timeLimit = params.getTimeLimit();
+        this.minNumPeople = params.getMinNumPeople();
+        this.price = params.getPrice();
+    }
 }

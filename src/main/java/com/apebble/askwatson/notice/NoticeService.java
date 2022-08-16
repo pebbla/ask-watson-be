@@ -38,8 +38,7 @@ public class NoticeService {
     // 공지사항 수정
     public Notice modifyNotice(Long noticeId, NoticeParams params) {
         Notice notice = noticeJpaRepository.findById(noticeId).orElseThrow(NoticeNotFoundException::new);
-        notice.setTitle(params.getTitle());
-        notice.setContent(params.getContent());
+        notice.update(params);
         return notice;
     }
 

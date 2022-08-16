@@ -1,4 +1,5 @@
 package com.apebble.askwatson.notice;
+
 import com.apebble.askwatson.comm.BaseTime;
 import lombok.*;
 import javax.persistence.*;
@@ -16,4 +17,9 @@ public class Notice extends BaseTime {
     private String title;               // 제목
 
     private String content;             // 내용
+
+    public void update(NoticeParams params) {
+        this.title = params.getTitle();
+        this.content = params.getContent();
+    }
 }

@@ -19,4 +19,8 @@ public class Company {
     private Long id;                        // pk
 
     private String companyName;             // 회사 이름
+
+    public void update(CompanyParams params) {
+        this.companyName = params.getCompanyName();
+    }
 }
