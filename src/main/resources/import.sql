@@ -46,8 +46,8 @@ INSERT INTO category(category_name) VALUES ('기타');
 INSERT INTO admin(admin_account,admin_name,admin_password) VALUES ('hssarah','이한슬','qwer1234');
 INSERT INTO admin(admin_account,admin_name,admin_password) VALUES ('arock1998','최아록','qwer1234');
 
-INSERT INTO user(user_password,user_nickname,user_phone_num,user_birth,user_gender,marketing_agree_yn) VALUES ('qwer', '우영우', '010-1511-2662', '1995/04/02', '0', 0);
-INSERT INTO user(user_password,user_nickname,user_phone_num,user_birth,user_gender,marketing_agree_yn) VALUES ('1234', '홍길동', '010-1111-2222', '1900/01/01', '1', 0);
+INSERT INTO user(user_password,user_nickname,user_phone_num,user_birth,user_gender,marketing_agree_yn) VALUES ('qwer', '우영우', '010-1511-2662', '1995-04-02', 'F', 1);
+INSERT INTO user(user_password,user_nickname,user_phone_num,user_birth,user_gender,marketing_agree_yn) VALUES ('1234', '홍길동', '010-1111-2222', '1900-01-01', 'M', 1);
 
 INSERT INTO cafe(cafe_name,cafe_phone_num,location_id,company_id,geography) VALUES ('포인트나인 강남점','02-1919-1919',1, 1, POINT(127.127730, 38.439801));
 INSERT INTO cafe(cafe_name,cafe_phone_num,location_id,company_id,geography) VALUES ('더클루 강남점','02-2323-1111',1, 2, POINT(127.127730, 38.439801));
@@ -61,5 +61,3 @@ INSERT INTO theme(theme_name,theme_explanation,category_id,difficulty,time_limit
 INSERT INTO theme(theme_name,theme_explanation,category_id,difficulty,time_limit,cafe_id,min_num_people,price) VALUES('더클루2','더클루테마2입니당',1,4.3,70,2,1,21000);
 INSERT INTO theme(theme_name,theme_explanation,category_id,difficulty,time_limit,cafe_id,min_num_people,price) VALUES('더클루3','더클루테마3입니당',1,4.2,70,2,1,30000);
 INSERT INTO theme(theme_name,theme_explanation,category_id,difficulty,time_limit,cafe_id,min_num_people,price) VALUES('더클루4','더클루테마4입니당',1,4.7,70,2,1,40000);
-
--- INSERT INTO review(rating,content,theme_id, difficulty, time_taken, used_hint_num, user_id) VALUES (3.5, '리뷰입니다', 1, 3.5, 50, 4, 2);
