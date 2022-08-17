@@ -4,12 +4,10 @@ import com.apebble.askwatson.comm.response.CommonResponse;
 import com.apebble.askwatson.comm.response.ListResponse;
 import com.apebble.askwatson.comm.response.ResponseService;
 import com.apebble.askwatson.comm.response.SingleResponse;
+import com.apebble.askwatson.comm.util.DateConverter;
 import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
-
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 
 @Api(tags = {"탈출완료"})
 @RestController
@@ -34,8 +32,8 @@ public class EscapeCompleteController {
     // 탈출 완료 일시 수정
     @PatchMapping(value = "/user/escape-completes/{escapeCompleteId}")
     public SingleResponse<EscapeComplete> modifyEscapeCompleteDt(@PathVariable Long escapeCompleteId, @RequestParam(name="escapeCompleteDt") String escapeCompleteDtStr) {
-        LocalDate escapeCompleteDt = LocalDate.parse(escapeCompleteDtStr, DateTimeFormatter.ISO_DATE);
-        return responseService.getSingleResponse(escapeCompleteService.modifyEscapeCompleteDt(escapeCompleteId, escapeCompleteDt));
+        return responseService.getSingleResponse(escapeCompleteService.modifyEscapeCompleteDt(
+                escapeCompleteId, DateConverter.strToLocalDate(escapeCompleteDtStr)));
     }
 
     // 탈출 완료 취소
