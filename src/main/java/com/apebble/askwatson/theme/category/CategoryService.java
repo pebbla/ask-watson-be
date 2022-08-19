@@ -34,7 +34,7 @@ public class CategoryService {
     // 카테고리 수정
     public Category modifyCategory(Long categoryId, CategoryParams params) {
         Category category = categoryJpaRepository.findById(categoryId).orElseThrow(CategoryNotFoundException::new);
-        category.setCategoryName(params.getCategoryName());
+        category.update(params);
 
         return category;
     }

@@ -30,4 +30,8 @@ public class EscapeComplete {
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
     private LocalDate escapeCompleteDt;     // 탈출 완료 일시 (Default: 오늘 날짜)
+
+    public void update(LocalDate escapeCompleteDt) {
+        this.escapeCompleteDt = escapeCompleteDt;
+    }
 }

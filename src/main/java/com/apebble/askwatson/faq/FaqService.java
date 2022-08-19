@@ -1,4 +1,5 @@
 package com.apebble.askwatson.faq;
+
 import com.apebble.askwatson.comm.exception.FaqNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -36,8 +37,7 @@ public class FaqService {
     // 방탈출 카페 수정
     public Faq modifyFaq(Long faqId, FaqParams params) {
         Faq faq = faqJpaRepository.findById(faqId).orElseThrow(FaqNotFoundException::new);
-        faq.setTitle(params.getTitle());
-        faq.setContent(params.getContent());
+        faq.update(params);
         return faq;
     }
 

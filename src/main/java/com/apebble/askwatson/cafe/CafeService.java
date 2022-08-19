@@ -9,11 +9,10 @@ import com.apebble.askwatson.comm.exception.CafeNotFoundException;
 import com.apebble.askwatson.comm.exception.CompanyNotFoundException;
 import com.apebble.askwatson.comm.exception.DataIntegrityViolationException;
 import com.apebble.askwatson.comm.exception.LocationNotFoundException;
+import com.apebble.askwatson.comm.util.GeographyConverter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.locationtech.jts.geom.Point;
 import org.locationtech.jts.io.ParseException;
-import org.locationtech.jts.io.WKTReader;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -33,16 +32,13 @@ public class CafeService {
         Location location = locationJpaRepository.findById(params.getLocationId()).orElseThrow(LocationNotFoundException::new);
         Company company = companyJpaRepository.findById(params.getCompanyId()).orElseThrow(CompanyNotFoundException::new);
 
-        // WKTReader를 통해 WKT를 실제 타입으로 변환
-        String pointWKT = String.format("POINT(%s %s)", params.getLongitude(), params.getLatitude());
-        Point point = (Point) new WKTReader().read(pointWKT);
-
         Cafe cafe = Cafe.builder()
                 .cafeName(params.getCafeName())
                 .cafePhoneNum(params.getCafePhoneNum())
                 .company(company)
                 .location(location)
-                .geography(point)
+                .geography(GeographyConverter.strToPoint(params.getLongitude(), params.getLatitude()))
+                .isEnglishPossible(params.getIsEnglishPossible())
                 .build();
 
         return convertToCafeDto(cafeJpaRepository.save(cafe));
@@ -64,15 +60,12 @@ public class CafeService {
     }
 
     // 방탈출 카페 수정
-    public CafeDto.Response modifyCafe(Long cafeId, CafeParams params) {
+    public CafeDto.Response modifyCafe(Long cafeId, CafeParams params) throws ParseException{
         Cafe cafe = cafeJpaRepository.findById(cafeId).orElseThrow(CafeNotFoundException::new);
         Location location = locationJpaRepository.findById(params.getLocationId()).orElseThrow(LocationNotFoundException::new);
         Company company = companyJpaRepository.findById(params.getCompanyId()).orElseThrow(CompanyNotFoundException::new);
 
-        cafe.setCafeName(params.getCafeName());
-        cafe.setCafePhoneNum(params.getCafePhoneNum());
-        cafe.setCompany(company);
-        cafe.setLocation(location);
+        cafe.update(params, location, company);
 
         return convertToCafeDto(cafe);
     }

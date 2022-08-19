@@ -21,4 +21,9 @@ public class Location {
     private String state;                   // 대분류(행정구역)
 
     private String city;                    // 소분류(도시명)
+
+    public void update(LocationParams params) {
+        this.state = params.getState();
+        this.city = params.getCity();
+    }
 }

@@ -34,14 +34,13 @@ public class CompanyService {
     // 회사 수정
     public Company modifyCompany(Long companyId, CompanyParams params) {
         Company company = companyJpaRepository.findById(companyId).orElseThrow(CompanyNotFoundException::new);
-       company.setCompanyName(params.getCompanyName());
-
+        company.update(params);
         return company;
     }
 
     // 회사 삭제
     public void deleteCompany(Long companyId) throws DataIntegrityViolationException {
         Company company = companyJpaRepository.findById(companyId).orElseThrow(CompanyNotFoundException::new);
-       companyJpaRepository.delete(company);
+        companyJpaRepository.delete(company);
     }
 }

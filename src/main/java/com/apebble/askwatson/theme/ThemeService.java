@@ -71,13 +71,7 @@ public class ThemeService {
         Theme theme = themeJpaRepository.findById(themeId).orElseThrow(ThemeNotFoundException::new);
         Category category = categoryJpaRepository.findById(params.getCategoryId()).orElseThrow(CategoryNotFoundException::new);
 
-        theme.setThemeName(params.getThemeName());
-        theme.setCategory(category);
-        theme.setThemeExplanation(params.getThemeExplanation());
-        theme.setDifficulty(params.getDifficulty());
-        theme.setTimeLimit(params.getTimeLimit());
-        theme.setMinNumPeople(params.getMinNumPeople());
-        theme.setPrice(params.getPrice());
+        theme.update(params, category);
 
         return convertToThemeDto(theme);
     }
