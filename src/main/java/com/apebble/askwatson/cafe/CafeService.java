@@ -17,6 +17,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
+import static java.util.stream.Collectors.toList;
+
 @Slf4j
 @Service
 @Transactional
@@ -55,6 +59,11 @@ public class CafeService {
         return convertToCafeDtoPage(cafeList);
     }
 
+    // 방탈출 카페 전체 조회(리스트 - 관리자웹 개발용)
+    public List<CafeDto.Response> getCafeList() {
+        return convertToCafeDtoList(cafeJpaRepository.findAll());
+    }
+
     // 방탈출 카페 단건 조회
     public CafeDto.Response getOneCafe(Long cafeId) {
         return convertToCafeDto(cafeJpaRepository.findById(cafeId).orElseThrow(CafeNotFoundException::new));
@@ -79,6 +88,10 @@ public class CafeService {
 
     public Page<CafeDto.Response> convertToCafeDtoPage(Page<Cafe> cafeList){
         return cafeList.map(CafeDto.Response::new);
+    }
+
+    public List<CafeDto.Response> convertToCafeDtoList(List<Cafe> cafeList){
+        return cafeList.stream().map(CafeDto.Response::new).collect(toList());
     }
 
     public CafeDto.Response convertToCafeDto(Cafe cafe){
