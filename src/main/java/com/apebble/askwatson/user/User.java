@@ -22,8 +22,6 @@ public class User extends BaseTime {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;                    // pk
 
-    private String userPassword;        // 회원 비밀번호
-
     private String userNickname;        // 회원 별명
 
     private String userPhoneNum;        // 회원 전화번호
@@ -37,11 +35,9 @@ public class User extends BaseTime {
     private Boolean marketingAgreeYn;   // 마케팅 수신 동의 여부
 
     public void update(UserParams params) {
-        this.userPassword = params.getUserPassword();
         this.userNickname = params.getUserNickname();
         this.userPhoneNum = params.getUserPhoneNum();
         this.userBirth = DateConverter.strToLocalDate(params.getUserBirth());
-        this.userGender = params.getUserGender();
         this.marketingAgreeYn = params.getMarketingAgreeYn();
     }
 }

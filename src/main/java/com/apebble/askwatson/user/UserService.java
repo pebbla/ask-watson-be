@@ -19,7 +19,6 @@ public class UserService {
     // 회원 등록
     public User createUser(UserParams params) {
         User user = User.builder()
-                .userPassword(params.getUserPassword())
                 .userNickname(params.getUserNickname())
                 .userPhoneNum(params.getUserPhoneNum())
                 .userBirth(DateConverter.strToLocalDate(params.getUserBirth()))
