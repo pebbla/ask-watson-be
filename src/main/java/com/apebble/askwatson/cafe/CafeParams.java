@@ -8,6 +8,10 @@ public class CafeParams {
 
     private String cafePhoneNum;
 
+    private String website;
+
+    private String address;
+
     private Long locationId;
 
     private Long companyId;

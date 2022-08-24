@@ -17,6 +17,8 @@ public class CafeDto {
         private String cafePhoneNum;
         private Location location;
         private Company company;
+        private String website;
+        private String address;
         private PointDto geography;
         private int reviewCount;
         private double rating;
@@ -27,6 +29,8 @@ public class CafeDto {
             this.cafeName = entity.getCafeName();
             this.cafePhoneNum = entity.getCafePhoneNum();
             this.location = entity.getLocation();
+            this.website = entity.getWebsite();
+            this.address = entity.getAddress();
             this.company = entity.getCompany();
             this.geography = new PointDto(entity.getGeography());
             this.reviewCount = entity.getReviewCount();

@@ -1,6 +1,5 @@
 package com.apebble.askwatson.cafe;
 
-
 import com.apebble.askwatson.cafe.company.Company;
 import com.apebble.askwatson.cafe.company.CompanyJpaRepository;
 import com.apebble.askwatson.cafe.location.Location;
@@ -36,6 +35,8 @@ public class CafeService {
                 .cafeName(params.getCafeName())
                 .cafePhoneNum(params.getCafePhoneNum())
                 .company(company)
+                .website(params.getWebsite())
+                .address(params.getAddress())
                 .location(location)
                 .geography(GeographyConverter.strToPoint(params.getLongitude(), params.getLatitude()))
                 .isEnglishPossible(params.getIsEnglishPossible())
