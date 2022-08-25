@@ -38,6 +38,8 @@ public class Theme extends BaseTime {
 
     private int price;                          // 가격
 
+    private String reservationUrl;              // 예약하기 url
+
     @Builder.Default @ColumnDefault("0")
     private int heartCount=0;                   // 좋아요 수
 
@@ -90,5 +92,6 @@ public class Theme extends BaseTime {
         this.timeLimit = params.getTimeLimit();
         this.minNumPeople = params.getMinNumPeople();
         this.price = params.getPrice();
+        this.reservationUrl = params.getReservationUrl();
     }
 }

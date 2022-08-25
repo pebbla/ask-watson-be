@@ -17,4 +17,6 @@ public class ThemeParams {
     private int minNumPeople;
 
     private int price;
+
+    private String reservationUrl;
 }

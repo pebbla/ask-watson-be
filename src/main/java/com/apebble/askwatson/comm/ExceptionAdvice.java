@@ -110,7 +110,7 @@ public class ExceptionAdvice {
 
     @ExceptionHandler(DataIntegrityViolationException.class)
     @ResponseStatus(HttpStatus.METHOD_NOT_ALLOWED)
-    protected CommonResponse companyNotFoundExcepti(){
+    protected CommonResponse dataIntegrityViolationException(){
         return responseService.getErrorResponse(405, "연관 관계 문제로 삭제할 수 없습니다.");
     }
 
