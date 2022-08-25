@@ -25,8 +25,8 @@ public class Cafe extends BaseTime {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;                                            // pk
 
-    @Column(length = 20)
-    private String cafeName;                                    // 방탈출카페 이름
+    @Column(length = 64)
+    private String cafeName;                        // 방탈출카페명
 
     private String cafePhoneNum;                                // 방탈출카페 전화번호
 

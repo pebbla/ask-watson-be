@@ -42,13 +42,13 @@ public class CafeController {
     }
 
     // 방탈출 카페 수정
-    @PutMapping(value = "/cafes/{cafeId}")
+    @PutMapping(value = "/admin/cafes/{cafeId}")
     public SingleResponse<CafeDto.Response> modifyCafe(@PathVariable Long cafeId, @ModelAttribute CafeParams params) throws ParseException {
         return responseService.getSingleResponse(cafeService.modifyCafe(cafeId, params));
     }
 
     // 방탈출 카페 삭제
-    @DeleteMapping(value = "/cafes/{cafeId}")
+    @DeleteMapping(value = "/admin/cafes/{cafeId}")
     public CommonResponse deleteCafe(@PathVariable Long cafeId) {
         cafeService.deleteCafe(cafeId);
         return responseService.getSuccessResponse();

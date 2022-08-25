@@ -1,5 +1,6 @@
 package com.apebble.askwatson.review;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import javax.transaction.Transactional;
@@ -7,9 +8,13 @@ import javax.transaction.Transactional;
 import com.apebble.askwatson.cafe.Cafe;
 import org.springframework.stereotype.Service;
 
+import com.apebble.askwatson.comm.exception.EscapeCompleteNotFoundException;
 import com.apebble.askwatson.comm.exception.ReviewNotFoundException;
 import com.apebble.askwatson.comm.exception.ThemeNotFoundException;
 import com.apebble.askwatson.comm.exception.UserNotFoundException;
+import com.apebble.askwatson.comm.util.DateConverter;
+import com.apebble.askwatson.escapecomplete.EscapeComplete;
+import com.apebble.askwatson.escapecomplete.EscapeCompleteJpaRepository;
 import com.apebble.askwatson.theme.Theme;
 import com.apebble.askwatson.theme.ThemeJpaRepository;
 import com.apebble.askwatson.user.User;
@@ -26,12 +31,14 @@ public class ReviewService {
     private final ReviewJpaRepository reviewJpaRepository;
     private final UserJpaRepository userJpaRepository;
     private final ThemeJpaRepository themeJpaRepository;
+    private final EscapeCompleteJpaRepository escapeCompleteJpaRepository;
 
     // 리뷰 등록
     public Review createReview(Long userId, Long themeId, ReviewParams params) {
         User user = userJpaRepository.findById(userId).orElseThrow(UserNotFoundException::new);
         Theme theme = themeJpaRepository.findById(themeId).orElseThrow(ThemeNotFoundException::new);
-
+        EscapeComplete escapeComplete = escapeCompleteJpaRepository.findByUserIdAndThemeId(userId, themeId);
+        
         Review review = Review.builder()
             .user(user)
             .rating(params.getRating())
@@ -45,6 +52,8 @@ public class ReviewService {
             .build();
 
         reflectNewReviewInCafeAndTheme(params, theme);
+        LocalDate parseLocalDate = DateConverter.strToLocalDate(params.getEscapeCompleteDate());
+        escapeComplete.update(parseLocalDate);
 
         return reviewJpaRepository.save(review);
     }

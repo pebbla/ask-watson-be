@@ -1,5 +1,7 @@
 package com.apebble.askwatson.review;
 
+import java.time.LocalDate;
+
 import lombok.Data;
 
 @Data
@@ -18,4 +20,6 @@ public class ReviewParams {
     private double activity;                // 활동성(1, 3, 5)
 
     private String content;                 // 내용
+
+    private String escapeCompleteDate;            // 탈출 날짜
 }
