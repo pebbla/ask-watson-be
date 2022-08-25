@@ -30,7 +30,6 @@ public class EscapeCompleteService {
         EscapeComplete escapeComplete = EscapeComplete.builder()
                 .user(user)
                 .theme(theme)
-                .escapeCompleteDt(LocalDate.now())
                 .build();
 
         theme.setEscapeCount(theme.getEscapeCount()+1);

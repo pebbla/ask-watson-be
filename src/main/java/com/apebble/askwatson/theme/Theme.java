@@ -21,7 +21,7 @@ public class Theme extends BaseTime {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;                            // pk
 
-    @Column(length = 20)
+    @Column(length = 64)
     private String themeName;                   // 테마명
 
     @Column(length = 100, nullable = false)
