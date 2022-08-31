@@ -40,6 +40,8 @@ public class Cafe extends BaseTime {
 
     private String address;                                     // 방탈출카페 주소
 
+    private String imageUrl;                                    // 방탈출카페 이미지 url
+
     @Column(nullable = false, columnDefinition = "GEOMETRY")
     private Point geography;                                    // 방탈출카페 위치정보(경도, 위도)
 
@@ -81,6 +83,7 @@ public class Cafe extends BaseTime {
         this.company = company;
         this.website = params.getWebsite();
         this.address = params.getAddress();
+        this.imageUrl = params.getImageUrl();
         this.geography = GeographyConverter.strToPoint(params.getLongitude(), params.getLatitude());
         this.isEnglishPossible = params.getIsEnglishPossible();
     }

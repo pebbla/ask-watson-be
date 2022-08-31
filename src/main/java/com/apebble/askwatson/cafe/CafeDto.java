@@ -19,6 +19,7 @@ public class CafeDto {
         private Company company;
         private String website;
         private String address;
+        private String imageUrl;
         private PointDto geography;
         private int reviewCount;
         private double rating;
@@ -31,6 +32,7 @@ public class CafeDto {
             this.location = entity.getLocation();
             this.website = entity.getWebsite();
             this.address = entity.getAddress();
+            this.imageUrl = entity.getImageUrl();
             this.company = entity.getCompany();
             this.geography = new PointDto(entity.getGeography());
             this.reviewCount = entity.getReviewCount();

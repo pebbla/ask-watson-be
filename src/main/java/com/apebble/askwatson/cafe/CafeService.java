@@ -41,6 +41,7 @@ public class CafeService {
                 .company(company)
                 .website(params.getWebsite())
                 .address(params.getAddress())
+                .imageUrl(params.getImageUrl())
                 .location(location)
                 .geography(GeographyConverter.strToPoint(params.getLongitude(), params.getLatitude()))
                 .isEnglishPossible(params.getIsEnglishPossible())

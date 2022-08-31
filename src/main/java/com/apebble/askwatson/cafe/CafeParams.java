@@ -12,6 +12,8 @@ public class CafeParams {
 
     private String address;
 
+    private String imageUrl;
+
     private Long locationId;
 
     private Long companyId;
