@@ -18,20 +18,20 @@ public class CafeController {
 
     // 방탈출 카페 등록
     @PostMapping(value="/admin/cafes")
-    public SingleResponse<CafeDto.Response> createCafe(@ModelAttribute CafeParams params) throws ParseException {
+    public SingleResponse<CafeDto.Response> createCafe(@RequestBody CafeParams params) throws ParseException {
         return responseService.getSingleResponse(cafeService.createCafe(params));
     }
 
     // 방탈출 카페 전체 조회
     @GetMapping(value="/cafes")
     public PageResponse<CafeDto.Response> getCafes(
-            @ModelAttribute CafeSearchOptions searchOptions, @PageableDefault(size=20) Pageable pageable) {
+            @RequestBody CafeSearchOptions searchOptions, @PageableDefault(size=20) Pageable pageable) {
         return responseService.getPageResponse(cafeService.getCafes(searchOptions, pageable));
     }
 
     // 방탈출 카페 전체 조회(리스트 - 관리자웹 개발용)
     @GetMapping(value="/admin/cafes")
-    public ListResponse<CafeDto.Response> getCafeList(@ModelAttribute CafeSearchOptions searchOptions) {
+    public ListResponse<CafeDto.Response> getCafeList(@RequestBody CafeSearchOptions searchOptions) {
         return responseService.getListResponse(cafeService.getCafeList(searchOptions));
     }
 
@@ -43,7 +43,8 @@ public class CafeController {
 
     // 방탈출 카페 수정
     @PutMapping(value = "/admin/cafes/{cafeId}")
-    public SingleResponse<CafeDto.Response> modifyCafe(@PathVariable Long cafeId, @ModelAttribute CafeParams params) throws ParseException {
+    public SingleResponse<CafeDto.Response> modifyCafe(@PathVariable Long cafeId, @RequestBody CafeParams params) throws ParseException {
+        System.out.println(params);
         return responseService.getSingleResponse(cafeService.modifyCafe(cafeId, params));
     }
 

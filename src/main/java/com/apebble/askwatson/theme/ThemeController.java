@@ -17,14 +17,14 @@ public class ThemeController {
 
     // 방탈출 테마 등록
     @PostMapping(value="/admin/cafes/{cafeId}/themes")
-    public SingleResponse<Theme> createTheme(@PathVariable Long cafeId, @ModelAttribute ThemeParams params) {
+    public SingleResponse<Theme> createTheme(@PathVariable Long cafeId, @RequestBody ThemeParams params) {
         return responseService.getSingleResponse(themeService.createTheme(cafeId, params));
     }
 
     // 테마 목록 전체 조회
     @GetMapping(value = "/themes")
     public PageResponse<ThemeDto.Response> getThemes(
-            @ModelAttribute ThemeSearchOptions searchOptions, @PageableDefault(size=20) Pageable pageable) {
+            @RequestBody ThemeSearchOptions searchOptions, @PageableDefault(size=20) Pageable pageable) {
         return responseService.getPageResponse(themeService.getThemes(searchOptions, pageable));
     }
 
@@ -42,7 +42,7 @@ public class ThemeController {
 
     // 테마 수정
     @PutMapping(value = "/admin/themes/{themeId}")
-    public SingleResponse<ThemeDto.Response> modifyTheme(@PathVariable Long themeId, @ModelAttribute ThemeParams params) {
+    public SingleResponse<ThemeDto.Response> modifyTheme(@PathVariable Long themeId, @RequestBody ThemeParams params) {
         return responseService.getSingleResponse(themeService.modifyTheme(themeId, params));
     }
 

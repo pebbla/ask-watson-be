@@ -18,7 +18,7 @@ public class ReportController {
 
     // 신고 등록
     @PostMapping(value = "/user/{userId}/reviews/{reviewId}/reports")
-    public SingleResponse<Report> createReport(@PathVariable Long userId, @PathVariable Long reviewId, @ModelAttribute ReportParams params) {
+    public SingleResponse<Report> createReport(@PathVariable Long userId, @PathVariable Long reviewId, @RequestBody ReportParams params) {
         return responseService.getSingleResponse(reportService.createReport(userId, reviewId, params));
     }
 

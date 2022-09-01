@@ -18,7 +18,7 @@ public class CategoryController {
 
     // 카테고리 등록
     @PostMapping(value="/admin/categories")
-    public SingleResponse<Category> createCategory(@ModelAttribute CategoryParams params) {
+    public SingleResponse<Category> createCategory(@RequestBody CategoryParams params) {
         return responseService.getSingleResponse(categoryService.createCategory(params));
     }
 
@@ -30,7 +30,7 @@ public class CategoryController {
 
     // 카테고리 수정
     @PutMapping(value = "/admin/categories/{categoryId}")
-    public SingleResponse<Category> modifyCategory(@PathVariable Long categoryId, @ModelAttribute CategoryParams params) {
+    public SingleResponse<Category> modifyCategory(@PathVariable Long categoryId, @RequestBody CategoryParams params) {
         return responseService.getSingleResponse(categoryService.modifyCategory(categoryId, params));
     }
 

@@ -18,7 +18,7 @@ public class UserController {
 
     // 회원 등록
     @PostMapping(value = "/users")
-    public SingleResponse<User> createUser(@ModelAttribute UserParams params) {
+    public SingleResponse<User> createUser(@RequestBody UserParams params) {
         return responseService.getSingleResponse(userService.createUser(params));
     }
 
@@ -30,7 +30,7 @@ public class UserController {
 
     // 회원정보 수정
     @PutMapping(value = "/users/{userId}")
-    public SingleResponse<User> modifyUser(@PathVariable Long userId, @ModelAttribute UserParams params) {
+    public SingleResponse<User> modifyUser(@PathVariable Long userId, @RequestBody UserParams params) {
         return responseService.getSingleResponse(userService.modifyUser(userId, params));
     }
 
