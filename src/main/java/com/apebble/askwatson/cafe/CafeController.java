@@ -25,13 +25,13 @@ public class CafeController {
     // 방탈출 카페 전체 조회
     @GetMapping(value="/cafes")
     public PageResponse<CafeDto.Response> getCafes(
-            @RequestBody CafeSearchOptions searchOptions, @PageableDefault(size=20) Pageable pageable) {
+            @ModelAttribute CafeSearchOptions searchOptions, @PageableDefault(size=20) Pageable pageable) {
         return responseService.getPageResponse(cafeService.getCafes(searchOptions, pageable));
     }
 
     // 방탈출 카페 전체 조회(리스트 - 관리자웹 개발용)
     @GetMapping(value="/admin/cafes")
-    public ListResponse<CafeDto.Response> getCafeList(@RequestBody CafeSearchOptions searchOptions) {
+    public ListResponse<CafeDto.Response> getCafeList(@ModelAttribute CafeSearchOptions searchOptions) {
         return responseService.getListResponse(cafeService.getCafeList(searchOptions));
     }
 

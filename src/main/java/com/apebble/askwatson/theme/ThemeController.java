@@ -24,7 +24,7 @@ public class ThemeController {
     // 테마 목록 전체 조회
     @GetMapping(value = "/themes")
     public PageResponse<ThemeDto.Response> getThemes(
-            @RequestBody ThemeSearchOptions searchOptions, @PageableDefault(size=20) Pageable pageable) {
+            @ModelAttribute ThemeSearchOptions searchOptions, @PageableDefault(size=20) Pageable pageable) {
         return responseService.getPageResponse(themeService.getThemes(searchOptions, pageable));
     }
 
