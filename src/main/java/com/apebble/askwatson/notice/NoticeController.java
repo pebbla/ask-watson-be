@@ -19,7 +19,7 @@ public class NoticeController {
 
     // 공지사항 등록
     @PostMapping(value="/admin/notices")
-    public SingleResponse<Notice> createNotice(@ModelAttribute NoticeParams params) {
+    public SingleResponse<Notice> createNotice(@RequestBody NoticeParams params) {
         return responseService.getSingleResponse(noticeService.createNotice(params));
     }
 
@@ -37,7 +37,7 @@ public class NoticeController {
 
     // 공지사항 수정
     @PutMapping(value = "/admin/notices/{noticeId}")
-    public SingleResponse<Notice> modifyNotice(@PathVariable Long noticeId, @ModelAttribute NoticeParams params) {
+    public SingleResponse<Notice> modifyNotice(@PathVariable Long noticeId, @RequestBody NoticeParams params) {
         return responseService.getSingleResponse(noticeService.modifyNotice(noticeId, params));
     }
 

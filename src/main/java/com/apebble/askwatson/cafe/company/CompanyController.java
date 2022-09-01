@@ -18,7 +18,7 @@ public class CompanyController {
 
     // 회사 등록
     @PostMapping(value="/admin/companies")
-    public SingleResponse<Company> createCompany(@ModelAttribute CompanyParams params) {
+    public SingleResponse<Company> createCompany(@RequestBody CompanyParams params) {
         return responseService.getSingleResponse(companyService.createCompany(params));
     }
 
@@ -30,7 +30,7 @@ public class CompanyController {
 
     // 회사 수정
     @PutMapping(value = "/admin/companies/{companyId}")
-    public SingleResponse<Company> modifyCompany(@PathVariable Long companyId, @ModelAttribute CompanyParams params) {
+    public SingleResponse<Company> modifyCompany(@PathVariable Long companyId, @RequestBody CompanyParams params) {
         return responseService.getSingleResponse(companyService.modifyCompany(companyId, params));
     }
 

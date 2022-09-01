@@ -18,7 +18,7 @@ public class FaqController {
 
     // 자주묻는질문 등록
     @PostMapping(value="/admin/faqs")
-    public SingleResponse<Faq> createFaq(@ModelAttribute FaqParams params) {
+    public SingleResponse<Faq> createFaq(@RequestBody FaqParams params) {
         return responseService.getSingleResponse(faqService.createFaq(params));
     }
 
@@ -36,7 +36,7 @@ public class FaqController {
 
     // 자주묻는질문 수정
     @PutMapping(value = "/admin/faqs/{faqId}")
-    public SingleResponse<Faq> modifyFaq(@PathVariable Long faqId, @ModelAttribute FaqParams params) {
+    public SingleResponse<Faq> modifyFaq(@PathVariable Long faqId, @RequestBody FaqParams params) {
         return responseService.getSingleResponse( faqService.modifyFaq(faqId, params));
     }
 
