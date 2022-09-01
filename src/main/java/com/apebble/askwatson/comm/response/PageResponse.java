@@ -9,7 +9,7 @@ import java.util.List;
 @Getter
 @Setter
 public class PageResponse<T> extends CommonResponse {
-    List<T> content;
+    List<T> data;
     Pageable pageable;
     int totalPages;
     long totalElements;

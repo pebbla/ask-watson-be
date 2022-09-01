@@ -20,7 +20,7 @@ public class ResponseService{
     // 리스트 Response
     public<T> ListResponse<T> getListResponse(List<T> dataList){
         ListResponse<T> listResponse = new ListResponse();
-        listResponse.dataList=dataList;
+        listResponse.data=dataList;
         setSuccessResponse(listResponse);
         return listResponse;
     }
@@ -28,7 +28,7 @@ public class ResponseService{
     // 페이지 Response
     public<T> PageResponse<T> getPageResponse(Page<T> pageData){
         PageResponse<T> pageResponse=new PageResponse<>();
-        pageResponse.content=pageData.getContent();
+        pageResponse.data=pageData.getContent();
         pageResponse.pageable=pageData.getPageable();
         pageResponse.totalPages=pageData.getTotalPages();
         pageResponse.totalElements=pageData.getTotalElements();
