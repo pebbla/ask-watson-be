@@ -41,6 +41,7 @@ public class CafeService {
                 .company(company)
                 .website(params.getWebsite())
                 .address(params.getAddress())
+                .imageUrl(params.getImageUrl())
                 .location(location)
                 .geography(GeographyConverter.strToPoint(params.getLongitude(), params.getLatitude()))
                 .isEnglishPossible(params.getIsEnglishPossible())
@@ -60,8 +61,11 @@ public class CafeService {
     }
 
     // 방탈출 카페 전체 조회(리스트 - 관리자웹 개발용)
-    public List<CafeDto.Response> getCafeList() {
-        return convertToCafeDtoList(cafeJpaRepository.findAll());
+    public List<CafeDto.Response> getCafeList(CafeSearchOptions searchOptions) {
+       List<Cafe> cafeList = (searchOptions == null)
+                ? cafeJpaRepository.findAll()
+                : cafeJpaRepository.findCafeListByOptions(searchOptions);
+        return convertToCafeDtoList(cafeList);
     }
 
     // 방탈출 카페 단건 조회

@@ -19,4 +19,6 @@ public class ThemeParams {
     private int price;
 
     private String reservationUrl;
+
+    private String imageUrl;
 }

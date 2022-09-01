@@ -18,6 +18,7 @@ public class ThemeDto {
         private int minNumPeople;
         private int price;
         private String reservationUrl;
+        private String imageUrl;
         private int heartCount;
         private int escapeCount;
         private int reviewCount;
@@ -36,6 +37,7 @@ public class ThemeDto {
             this.minNumPeople = entity.getMinNumPeople();
             this.price = entity.getPrice();
             this.reservationUrl = entity.getReservationUrl();
+            this.imageUrl = entity.getImageUrl();
             this.heartCount = entity.getHeartCount();
             this.escapeCount = entity.getEscapeCount();
             this.reviewCount = entity.getReviewCount();

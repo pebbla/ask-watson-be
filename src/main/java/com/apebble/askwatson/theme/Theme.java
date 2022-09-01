@@ -40,6 +40,8 @@ public class Theme extends BaseTime {
 
     private String reservationUrl;              // 예약하기 url
 
+    private String imageUrl;                    // 방탈출테마 이미지 url
+
     @Builder.Default @ColumnDefault("0")
     private int heartCount=0;                   // 좋아요 수
 

@@ -7,6 +7,8 @@ import java.util.List;
 
 @Data
 public class ThemeSearchOptions {
+    private String searchWord;                  // 검색어
+
     private List<Long> companyIds;              // 회사별 조건
 
     private Long locationId;                    // 위치별 조건

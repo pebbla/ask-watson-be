@@ -41,6 +41,7 @@ public class ThemeService {
                 .minNumPeople(params.getMinNumPeople())
                 .price(params.getPrice())
                 .reservationUrl(params.getReservationUrl())
+                .imageUrl(params.getImageUrl())
                 .build();
 
         return themeJpaRepository.save(theme);
