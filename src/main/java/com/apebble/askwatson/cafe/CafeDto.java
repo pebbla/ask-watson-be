@@ -1,6 +1,5 @@
 package com.apebble.askwatson.cafe;
 
-import com.apebble.askwatson.cafe.company.Company;
 import com.apebble.askwatson.cafe.location.Location;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,7 +15,6 @@ public class CafeDto {
         private String cafeName;
         private String cafePhoneNum;
         private Location location;
-        private Company company;
         private String website;
         private String address;
         private String imageUrl;
@@ -33,7 +31,6 @@ public class CafeDto {
             this.website = entity.getWebsite();
             this.address = entity.getAddress();
             this.imageUrl = entity.getImageUrl();
-            this.company = entity.getCompany();
             this.geography = new PointDto(entity.getGeography());
             this.reviewCount = entity.getReviewCount();
             this.rating = entity.getRating();

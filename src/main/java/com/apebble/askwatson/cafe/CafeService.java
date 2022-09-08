@@ -1,11 +1,8 @@
 package com.apebble.askwatson.cafe;
 
-import com.apebble.askwatson.cafe.company.Company;
-import com.apebble.askwatson.cafe.company.CompanyJpaRepository;
 import com.apebble.askwatson.cafe.location.Location;
 import com.apebble.askwatson.cafe.location.LocationJpaRepository;
 import com.apebble.askwatson.comm.exception.CafeNotFoundException;
-import com.apebble.askwatson.comm.exception.CompanyNotFoundException;
 import com.apebble.askwatson.comm.exception.DataIntegrityViolationException;
 import com.apebble.askwatson.comm.exception.LocationNotFoundException;
 import com.apebble.askwatson.comm.util.GeographyConverter;
@@ -28,17 +25,14 @@ import static java.util.stream.Collectors.toList;
 public class CafeService {
     private final CafeJpaRepository cafeJpaRepository;
     private final LocationJpaRepository locationJpaRepository;
-    private final CompanyJpaRepository companyJpaRepository;
 
     // 방탈출 카페 등록
     public CafeDto.Response createCafe(CafeParams params) throws ParseException {
         Location location = locationJpaRepository.findById(params.getLocationId()).orElseThrow(LocationNotFoundException::new);
-        Company company = companyJpaRepository.findById(params.getCompanyId()).orElseThrow(CompanyNotFoundException::new);
 
         Cafe cafe = Cafe.builder()
                 .cafeName(params.getCafeName())
                 .cafePhoneNum(params.getCafePhoneNum())
-                .company(company)
                 .website(params.getWebsite())
                 .address(params.getAddress())
                 .imageUrl(params.getImageUrl())
@@ -78,9 +72,8 @@ public class CafeService {
     public CafeDto.Response modifyCafe(Long cafeId, CafeParams params) throws ParseException{
         Cafe cafe = cafeJpaRepository.findById(cafeId).orElseThrow(CafeNotFoundException::new);
         Location location = locationJpaRepository.findById(params.getLocationId()).orElseThrow(LocationNotFoundException::new);
-        Company company = companyJpaRepository.findById(params.getCompanyId()).orElseThrow(CompanyNotFoundException::new);
 
-        cafe.update(params, location, company);
+        cafe.update(params, location);
 
         return convertToCafeDto(cafe);
     }

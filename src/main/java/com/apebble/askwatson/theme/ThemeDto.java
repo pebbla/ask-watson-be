@@ -54,14 +54,12 @@ public class ThemeDto {
         private String cafeName;
         private String cafePhoneNum;
         private Long locationId;
-        private Long companyId;
 
         public CafeDto(Cafe entity) {
             this.id = entity.getId();
             this.cafeName = entity.getCafeName();
             this.cafePhoneNum = entity.getCafePhoneNum();
             this.locationId = entity.getLocation().getId();
-            this.companyId = entity.getCompany().getId();
         }
     }
 }
