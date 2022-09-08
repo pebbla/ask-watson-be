@@ -102,12 +102,6 @@ public class ExceptionAdvice {
         return responseService.getErrorResponse(404, "위치를 찾을 수 없습니다.");
     }
 
-    @ExceptionHandler(CompanyNotFoundException.class)
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    protected CommonResponse companyNotFoundException(){
-        return responseService.getErrorResponse(404, "회사를 찾을 수 없습니다.");
-    }
-
     @ExceptionHandler(DataIntegrityViolationException.class)
     @ResponseStatus(HttpStatus.METHOD_NOT_ALLOWED)
     protected CommonResponse dataIntegrityViolationException(){

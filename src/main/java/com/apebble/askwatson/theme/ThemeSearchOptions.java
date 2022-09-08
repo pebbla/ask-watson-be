@@ -9,8 +9,6 @@ import java.util.List;
 public class ThemeSearchOptions {
     private String searchWord;                  // 검색어
 
-    private List<Long> companyIds;              // 회사별 조건
-
     private Long locationId;                    // 위치별 조건
 
     private Long categoryId;                    // 카테고리별 조건
@@ -29,8 +27,4 @@ public class ThemeSearchOptions {
     private Integer timeLimitRangeFrom;         // 시간제한 필터
     private Integer timeLimitRangeTo;           // 시간제한 필터
 
-    public int getCompanyIdsSize() {
-        return companyIds == null || CollectionUtils.isEmpty(companyIds)
-                ? 0 : companyIds.size();
-    }
 }
