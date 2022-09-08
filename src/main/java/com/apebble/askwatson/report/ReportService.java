@@ -24,12 +24,11 @@ public class ReportService {
     // 신고 등록
     public Report createReport(Long reporterId, Long reviewId, ReportParams params) {
         User reporter = userJpaRepository.findById(reporterId).orElseThrow(UserNotFoundException::new);
-        User reportedUser = userJpaRepository.findById(params.getReportedUserId()).orElseThrow(UserNotFoundException::new);
         Review review = reviewJpaRepository.findById(reviewId).orElseThrow(ReviewNotFoundException::new);
 
         Report report = Report.builder()
                 .reporter(reporter)
-                .reportedUser(reportedUser)
+                .reportedUser(review.getUser())
                 .review(review)
                 .content(params.getContent())
                 .build();
