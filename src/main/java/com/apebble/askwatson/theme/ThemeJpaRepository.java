@@ -25,4 +25,7 @@ public interface ThemeJpaRepository extends JpaRepository<Theme, Long> {
             "and (:#{#options.timeLimitRangeFrom} is null or (:#{#options.timeLimitRangeFrom} <= t.timeLimit)) " +
             "and (:#{#options.timeLimitRangeTo} is null or (t.timeLimit < :#{#options.timeLimitRangeTo})) " )
     Page<Theme> findThemesByOptions(@Param("options") ThemeSearchOptions options, Pageable pageable);
+
+    @Query(value = "select t from Theme t where :searchWord is null or (t.themeName like %:searchWord% or t.themeExplanation like %:searchWord%  or t.cafe.cafeName like %:searchWord% or t.cafe.address like %:searchWord% or t.cafe.location.state like %:searchWord% or t.cafe.location.city like %:searchWord% or t.category.categoryName like %:searchWord%)")
+    List<Theme> findThemesBySearchWord(String searchWord);
 }

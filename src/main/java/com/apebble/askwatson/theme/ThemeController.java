@@ -28,6 +28,12 @@ public class ThemeController {
         return responseService.getPageResponse(themeService.getThemes(searchOptions, pageable));
     }
 
+    // 방탈출 테마 전체 조회(리스트 - 관리자웹용)
+    @GetMapping(value="/admin/themes")
+    public ListResponse<ThemeDto.Response> getThemeList(@RequestParam(required = false) String searchWord) {
+        return responseService.getListResponse(themeService.getThemeList(searchWord));
+    }
+
     // 테마 단건 조회
     @GetMapping(value = "/themes/{themeId}")
     public SingleResponse<ThemeDto.Response> getTheme(@PathVariable Long themeId) {
