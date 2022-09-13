@@ -1,6 +1,5 @@
 package com.apebble.askwatson.cafe;
 
-import com.apebble.askwatson.cafe.company.Company;
 import com.apebble.askwatson.cafe.location.Location;
 import com.apebble.askwatson.comm.BaseTime;
 import com.apebble.askwatson.comm.util.GeographyConverter;
@@ -32,9 +31,6 @@ public class Cafe extends BaseTime {
 
     @ManyToOne @JoinColumn(name = "location_id")
     private Location location;                                  // 방탈출카페 지역
-
-    @ManyToOne @JoinColumn(name = "company_id")
-    private Company company;                                    // 방탈출카페 체인명
 
     private String website;                                     // 방탈출카페 웹사이트
 
@@ -76,11 +72,10 @@ public class Cafe extends BaseTime {
         this.reviewCount--;
     }
 
-    public void update(CafeParams params, Location location, Company company) throws ParseException{
+    public void update(CafeParams params, Location location) throws ParseException{
         this.cafeName = params.getCafeName();
         this.cafePhoneNum = params.getCafePhoneNum();
         this.location = location;
-        this.company = company;
         this.website = params.getWebsite();
         this.address = params.getAddress();
         this.imageUrl = params.getImageUrl();

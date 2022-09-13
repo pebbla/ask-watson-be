@@ -16,8 +16,6 @@ public class CafeParams {
 
     private Long locationId;
 
-    private Long companyId;
-
     private Double longitude;
 
     private Double latitude;
