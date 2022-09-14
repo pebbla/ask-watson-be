@@ -14,8 +14,7 @@ public interface CafeJpaRepository extends JpaRepository<Cafe, Long> {
             "and (:#{#options.isEnglishPossible} is null or c.isEnglishPossible=:#{#options.isEnglishPossible}) " )
     Page<Cafe> findCafesByOptions(@Param("options") CafeSearchOptions options, Pageable pageable);
 
-    @Query(value = "select c from Cafe c where (:#{#options.searchWord} is null or (c.cafeName like %:#{#options.searchWord}% or c.address like %:#{#options.searchWord}%)) " +
-            "and (:#{#options.locationId} is null or c.location.id=:#{#options.locationId}) " +
-            "and (:#{#options.isEnglishPossible} is null or c.isEnglishPossible=:#{#options.isEnglishPossible}) " )
-    List<Cafe> findCafeListByOptions(@Param("options") CafeSearchOptions options);
+
+    @Query(value = "select c from Cafe c where :searchWord is null or (c.cafeName like %:searchWord% or c.address like %:searchWord%  or c.location.state like %:searchWord% or c.location.city like %:searchWord%)")
+    List<Cafe> findCafesBySearchWord(String searchWord);
 }

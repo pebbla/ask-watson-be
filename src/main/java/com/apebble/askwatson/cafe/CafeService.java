@@ -55,10 +55,11 @@ public class CafeService {
     }
 
     // 방탈출 카페 전체 조회(리스트 - 관리자웹 개발용)
-    public List<CafeDto.Response> getCafeList(CafeSearchOptions searchOptions) {
-       List<Cafe> cafeList = (searchOptions == null)
+    public List<CafeDto.Response> getCafeList(String searchWord) {
+       List<Cafe> cafeList = (searchWord == null)
                 ? cafeJpaRepository.findAll()
-                : cafeJpaRepository.findCafeListByOptions(searchOptions);
+                : cafeJpaRepository.findCafesBySearchWord(searchWord);
+
         return convertToCafeDtoList(cafeList);
     }
 

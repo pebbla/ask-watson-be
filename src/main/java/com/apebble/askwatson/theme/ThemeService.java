@@ -17,6 +17,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+import static java.util.stream.Collectors.toList;
+
 @Slf4j
 @Service
 @Transactional
@@ -63,6 +65,15 @@ public class ThemeService {
         return convertToThemeDtoPage(themeList);
     }
 
+    // 방탈출 테마 전체 조회(리스트 - 관리자웹용)
+    public List<ThemeDto.Response> getThemeList(String searchWord) {
+        List<Theme> themeList = (searchWord == null)
+                ? themeJpaRepository.findAll()
+                : themeJpaRepository.findThemesBySearchWord(searchWord);
+
+        return convertToThemeDtoList(themeList);
+    }
+
     // 테마 단건 조회
     public ThemeDto.Response getOneTheme(Long themeId) {
         return convertToThemeDto(themeJpaRepository.findById(themeId).orElseThrow(ThemeNotFoundException::new));
@@ -86,6 +97,10 @@ public class ThemeService {
 
     public Page<ThemeDto.Response> convertToThemeDtoPage(Page<Theme> themeList){
         return themeList.map(ThemeDto.Response::new);
+    }
+
+    public List<ThemeDto.Response> convertToThemeDtoList(List<Theme> themeList){
+        return themeList.stream().map(ThemeDto.Response::new).collect(toList());
     }
 
     public ThemeDto.Response convertToThemeDto(Theme theme){

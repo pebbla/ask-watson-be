@@ -31,8 +31,8 @@ public class CafeController {
 
     // 방탈출 카페 전체 조회(리스트 - 관리자웹 개발용)
     @GetMapping(value="/admin/cafes")
-    public ListResponse<CafeDto.Response> getCafeList(@ModelAttribute CafeSearchOptions searchOptions) {
-        return responseService.getListResponse(cafeService.getCafeList(searchOptions));
+    public ListResponse<CafeDto.Response> getCafeList(@RequestParam(required = false) String searchWord) {
+        return responseService.getListResponse(cafeService.getCafeList(searchWord));
     }
 
     // 방탈출 카페 단건 조회
