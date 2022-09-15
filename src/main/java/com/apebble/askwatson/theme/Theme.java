@@ -90,7 +90,7 @@ public class Theme extends BaseTime {
         this.themeName = params.getThemeName();
         this.themeExplanation = params.getThemeExplanation();
         this.category = category;
-        this.difficulty = params.getDifficulty();
+        this.imageUrl = params.getImageUrl();
         this.timeLimit = params.getTimeLimit();
         this.minNumPeople = params.getMinNumPeople();
         this.price = params.getPrice();

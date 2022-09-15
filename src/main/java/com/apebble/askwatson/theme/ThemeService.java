@@ -38,7 +38,6 @@ public class ThemeService {
                 .themeName(params.getThemeName())
                 .themeExplanation(params.getThemeExplanation())
                 .timeLimit(params.getTimeLimit())
-                .difficulty(params.getDifficulty())
                 .category(category)
                 .minNumPeople(params.getMinNumPeople())
                 .price(params.getPrice())

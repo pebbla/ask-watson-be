@@ -10,8 +10,6 @@ public class ThemeParams {
 
     private Long categoryId;
 
-    private double difficulty;
-
     private int timeLimit;
 
     private int minNumPeople;
