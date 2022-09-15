@@ -15,6 +15,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Comparator;
 import java.util.List;
 
 import static java.util.stream.Collectors.toList;
@@ -65,12 +66,30 @@ public class ThemeService {
     }
 
     // 방탈출 테마 전체 조회(리스트 - 관리자웹용)
-    public List<ThemeDto.Response> getThemeList(String searchWord) {
+    public List<ThemeDto.Response> getThemeList(String searchWord, Boolean sortByUpdateYn) {
         List<Theme> themeList = (searchWord == null)
                 ? themeJpaRepository.findAll()
                 : themeJpaRepository.findThemesBySearchWord(searchWord);
 
+        if(sortByUpdateYn!=null && sortByUpdateYn) {
+            sortByUpdate(themeList);
+        }
+
         return convertToThemeDtoList(themeList);
+    }
+
+    private void sortByUpdate(List<Theme> themeList) {
+        Comparator<Theme> comparator = Comparator.comparing(theme -> theme.getModifiedAt() != null);
+        comparator = comparator.thenComparing(theme -> theme.getThemeName() != null && !theme.getThemeName().equals(""))
+                .thenComparing(theme -> theme.getThemeExplanation() != null && !theme.getThemeExplanation().equals(""))
+                .thenComparing(theme -> theme.getTimeLimit() != null && !theme.getTimeLimit().equals(0))
+                .thenComparing(theme -> theme.getMinNumPeople() != null && !theme.getMinNumPeople().equals(0))
+                .thenComparing(theme -> theme.getPrice() != null && !theme.getPrice().equals(0))
+                .thenComparing(theme -> theme.getImageUrl() != null && !theme.getImageUrl().equals(""))
+                .thenComparing(theme -> theme.getReservationUrl() != null && !theme.getReservationUrl().equals(""))
+                .thenComparing(theme -> theme.getCategory() != null);
+
+        themeList.sort(comparator);
     }
 
     // 테마 단건 조회

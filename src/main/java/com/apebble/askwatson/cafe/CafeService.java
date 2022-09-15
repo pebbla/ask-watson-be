@@ -14,6 +14,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Comparator;
 import java.util.List;
 
 import static java.util.stream.Collectors.toList;
@@ -55,12 +56,28 @@ public class CafeService {
     }
 
     // 방탈출 카페 전체 조회(리스트 - 관리자웹 개발용)
-    public List<CafeDto.Response> getCafeList(String searchWord) {
+    public List<CafeDto.Response> getCafeList(String searchWord, Boolean sortByUpdateYn) {
        List<Cafe> cafeList = (searchWord == null)
                 ? cafeJpaRepository.findAll()
                 : cafeJpaRepository.findCafesBySearchWord(searchWord);
 
+       if(sortByUpdateYn!=null && sortByUpdateYn) {
+           sortByUpdate(cafeList);
+       }
+
         return convertToCafeDtoList(cafeList);
+    }
+
+    private void sortByUpdate(List<Cafe> cafeList) {
+        Comparator<Cafe> comparator = Comparator.comparing(cafe -> cafe.getModifiedAt() != null);
+        comparator = comparator.thenComparing(cafe -> cafe.getCafeName() != null && !cafe.getCafeName().equals(""))
+                .thenComparing(cafe -> cafe.getCafePhoneNum() != null && !cafe.getCafePhoneNum().equals(""))
+                .thenComparing(cafe -> cafe.getWebsite() != null && !cafe.getWebsite().equals(""))
+                .thenComparing(cafe -> cafe.getAddress() != null && !cafe.getAddress().equals(""))
+                .thenComparing(cafe -> cafe.getImageUrl() != null && !cafe.getImageUrl().equals(""))
+                .thenComparing(cafe -> cafe.getLocation() != null);
+
+        cafeList.sort(comparator);
     }
 
     // 방탈출 카페 단건 조회

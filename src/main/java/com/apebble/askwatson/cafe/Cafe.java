@@ -25,7 +25,7 @@ public class Cafe extends BaseTime {
     private Long id;                                            // pk
 
     @Column(length = 64)
-    private String cafeName;                        // 방탈출카페명
+    private String cafeName;                                    // 방탈출카페명
 
     private String cafePhoneNum;                                // 방탈출카페 전화번호
 
