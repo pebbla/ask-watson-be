@@ -11,13 +11,10 @@ import org.springframework.web.reactive.function.client.WebClient;
 import com.apebble.askwatson.comm.response.ResponseService;
 import com.apebble.askwatson.comm.response.SingleResponse;
 
-import io.netty.handler.codec.http.HttpHeaders;
 import reactor.core.publisher.Mono;
 
 
 public class NotionMangerService {
-
-    
 
     
     private final ResponseService responseService = new ResponseService();
@@ -36,10 +33,16 @@ public class NotionMangerService {
     }
 
 
+
     // get
     public SingleResponse<String> getRequest(String blockId) {
         WebClient webClient = createWebClient(baseURL + "/pages/" + blockId);
         Mono<String> response = webClient.get()
+        .headers(httpHeaders -> {
+            httpHeaders.add("Authorization", "Bearer " + apiKey);
+            httpHeaders.add("Content-Type", "application/json");
+            httpHeaders.add("Notion-Version", "2021-08-16");
+        })
                 .exchange()
                 .flatMap(clientResponse -> clientResponse.bodyToMono(String.class));
         System.out.println(response.block());
@@ -52,37 +55,48 @@ public class NotionMangerService {
     public SingleResponse<String> postRequest(Map<String, Object> map) {
         WebClient webClient = createWebClient(baseURL);
         Mono<String> response = webClient.post()
+        .headers(httpHeaders -> {
+            httpHeaders.add("Authorization", "Bearer " + apiKey);
+            httpHeaders.add("Content-Type", "application/json");
+            httpHeaders.add("Notion-Version", "2021-08-16");
+        })
                 .body(BodyInserters.fromValue(map.get("properties")))
                 .exchange()
                 .flatMap(clientResponse -> clientResponse.bodyToMono(String.class));
         return responseService.getSingleResponse(response.block());
     }
-    
+
+
 
     // post
     public SingleResponse<String>  putRequest(Map<String, Object> map) {
         WebClient webClient = createWebClient(baseURL);
         Mono<String> response = webClient.post()
+        .headers(httpHeaders -> {
+            httpHeaders.add("Authorization", "Bearer " + apiKey);
+            httpHeaders.add("Content-Type", "application/json");
+            httpHeaders.add("Notion-Version", "2021-08-16");
+        })
                 .body(BodyInserters.fromValue(map.get("properties")))
                 .exchange()
                 .flatMap(clientResponse -> clientResponse.bodyToMono(String.class));
         return responseService.getSingleResponse(response.block());
 
     }
-    
+
+
 
     // delete
     public void deleteRequest(String blockId) {
         WebClient webClient = createWebClient(baseURL + "/blocks/" + blockId);
         Mono<String> response = webClient.delete()
+        .headers(httpHeaders -> {
+            httpHeaders.add("Authorization", "Bearer " + apiKey);
+            httpHeaders.add("Content-Type", "application/json");
+            httpHeaders.add("Notion-Version", "2021-08-16");
+        })
             .exchange()
             .flatMap(clientResponse -> clientResponse.bodyToMono(String.class));
     }
-
-
-
-
-
-
 
 }
