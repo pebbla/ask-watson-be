@@ -52,8 +52,7 @@ INSERT INTO cafe(cafe_name,cafe_phone_num,location_id,geography,website,address,
 INSERT INTO cafe(cafe_name,cafe_phone_num,location_id,geography,website,address,image_url) VALUES ('ㅂㅐㄱ설공주','02-6653-1624',5, POINT(127.127730, 38.439801),"http://www.snowwhite.com","어쩌구 주소","https://storage.cloud.google.com/ask_watson/test/front/IMG_9823.jpg");
 INSERT INTO cafe(cafe_name,cafe_phone_num,location_id,geography,website,address,image_url) VALUES ('사과 맛있어욤','031-2020-1124',12, POINT(127.127730, 38.439801),"http://www.appleapple.com","주소주소입니다주소","https://storage.cloud.google.com/ask_watson/test/front/IMG_9823.jpg");
 
-INSERT INTO `review` (`activity`, `content`, `device_ratio`, `difficulty`, `rating`, `time_taken`, `used_hint_num`, `theme_id`) VALUES ('1', '내용내용!!', '1', '1', '1', '1', '1', '1', '1');
-
+-- INSERT INTO `review` (`activity`, `content`, `device_ratio`, `difficulty`, `rating`, `time_taken`, `used_hint_num`, `theme_id`) VALUES ('1', '내용내용!!', '1', '1', '1', '1', '1', '1', '1');
 
 INSERT INTO theme(theme_name,theme_explanation,category_id,difficulty,time_limit,cafe_id,min_num_people,price,reservation_url,image_url) VALUES('포인트나인나인','포인트 아홉개를 연결함으로써 별자리를 완성해보세요!',3,3.5,60,1,2,24000,"http://www.pointnine-reservation.com","https://storage.cloud.google.com/ask_watson/test/front/%E1%84%87%E1%85%AE%E1%84%82%E1%85%A9%E1%86%BC2.png");
 INSERT INTO theme(theme_name,theme_explanation,category_id,difficulty,time_limit,cafe_id,min_num_people,price,reservation_url,image_url) VALUES('포인트에잇','포인트 여덟개를 연결해서 별자리를 완성해봅시다',1,4.0,70,1,1,22000,"http://www.pointeight-reservation.com","https://storage.cloud.google.com/ask_watson/test/front/%E1%84%87%E1%85%AE%E1%84%82%E1%85%A9%E1%86%BC2.png");
@@ -62,3 +61,24 @@ INSERT INTO theme(theme_name,theme_explanation,category_id,difficulty,time_limit
 INSERT INTO theme(theme_name,theme_explanation,category_id,difficulty,time_limit,cafe_id,min_num_people,price,reservation_url,image_url) VALUES('더클루2','더클루테마2입니당',1,4.3,70,2,1,21000,"http://www.theclue2-reservation.ac.kr","https://storage.cloud.google.com/ask_watson/test/front/%E1%84%87%E1%85%AE%E1%84%82%E1%85%A9%E1%86%BC2.png");
 INSERT INTO theme(theme_name,theme_explanation,category_id,difficulty,time_limit,cafe_id,min_num_people,price,reservation_url,image_url) VALUES('더클루3','더클루테마3입니당',1,4.2,70,2,1,30000,"http://www.theclue3-reservation.ac.kr","https://storage.cloud.google.com/ask_watson/test/front/%E1%84%87%E1%85%AE%E1%84%82%E1%85%A9%E1%86%BC2.png");
 INSERT INTO theme(theme_name,theme_explanation,category_id,difficulty,time_limit,cafe_id,min_num_people,price,reservation_url,image_url) VALUES('더클루4','더클루테마4입니당',1,4.7,70,2,1,40000,"http://www.theclue4-reservation.ac.kr","https://storage.cloud.google.com/ask_watson/test/front/%E1%84%87%E1%85%AE%E1%84%82%E1%85%A9%E1%86%BC2.png");
+INSERT INTO theme(theme_name,theme_explanation,category_id,difficulty,time_limit,cafe_id,min_num_people,price,reservation_url,image_url) VALUES('더클루5','더클루테마5입니당더클루테마5입니당더클루테마5입니당더클루테마5입니당더클루테마5입니당더클루테마5입니당더클루테테마5입니당더클루테마5입니당더클루테마5입니당',1,4.7,70,2,1,40000,"http://www.theclue4-reservation.ac.kr","https://storage.cloud.google.com/ask_watson/test/front/%E1%84%87%E1%85%AE%E1%84%82%E1%85%A9%E1%86%BC2.png");
+
+INSERT INTO notice(title,content) VALUES('공지공지1','공지내용임공지내용공지내용임공지내용공지내용임공지내용공지내용임공지내용공지내용임공지내용공지내용임공지내용');
+INSERT INTO notice(title,content) VALUES('공지공지2','공지내용임공지내용공지내용임공지내용공지내용임공지내용공ㄹㄹㄹㄹㄹㄹ지내용임공지내용공지내용임공지내용공지내용임공지내용');
+INSERT INTO notice(title,content) VALUES('공지공지3','공지내용임공지내용공지내용임공지내용공지내용임공지내용공지내용임공지내용공지내용임공지내용공지내용임공지내용');
+INSERT INTO notice(title,content) VALUES('공지공지4','공지내용임공지내용공지내용임공지내용공지내용임공지내용공지내ㄹㄹㄹㄹㄹ용임공지내용공지내용임공지내용공지내용임공지내용');
+INSERT INTO notice(title,content) VALUES('공지공지5','공지내용임공지내용공지내용임공지내용공지내용임공지내용공지내용임공지내용공지내용임공지내용공지내용임공지내용');
+INSERT INTO notice(title,content) VALUES('공지공지6','공지내용임공지내용공지내용임공지내용공지내용임공지내용공지내용임공지내용공지내용임공지내용공지내용임공지내용');
+
+INSERT INTO faq(title,content) VALUES('자주묻는질문1','자주자주 묻는 질문들 자주자주 묻는 질문들 자주자주 묻는 질문들 자주자주 묻는 질문들 ');
+INSERT INTO faq(title,content) VALUES('자주묻는질문2','자주자주 묻는 질문들 자주자주 묻는 질문들 자주자주 묻는 질문들 자주자주 묻는 질문들 자주자주 묻는 질문들 ');
+INSERT INTO faq(title,content) VALUES('자주묻는질문3','자주자주 묻는 질문들 자주자주 묻는 질문들 자주자주 묻는 질문들 ');
+INSERT INTO faq(title,content) VALUES('자주묻는질문4','자주자주 묻는 질문들 자주자주 묻는 질문들 자주자주 묻는 질문들 자주자주 묻는 질문들 ');
+INSERT INTO faq(title,content) VALUES('자주묻는질문5','자주자주 묻는 질문들 자주자주 묻는 질문들 자주자주 묻는 질문들 자주자주 묻는 질문들 자주자주 묻는 질문들 ');
+INSERT INTO faq(title,content) VALUES('자주묻는질문ㅇ6','자주자주 묻는 질문들 자주자주 묻는 질문들 자주자주 묻는 질문들 자주자주 묻는 질문들 자주자주 묻는 질문들 자주자주 묻는 질문들 ');
+
+INSERT INTO review(user_id,difficulty,time_taken,used_hint_num,rating,device_ratio,activity,content,theme_id) VALUES(1,3,45,7,2.3,4,4,"리뷰예시입니다ㅏㅏㅏㅏㅏㅏ",1);
+INSERT INTO review(user_id,difficulty,time_taken,used_hint_num,rating,device_ratio,activity,content,theme_id) VALUES(2,3,45,7,2.3,4,4,"리뷰예시~~~~입니다ㅏㅏㅏㅏㅏㅏ",2);
+
+INSERT INTO report(reporter_id,reported_user_id,content,review_id) VALUES(2,1,"리뷰가 너무 성의가 없습니다...",1);
+INSERT INTO report(reporter_id,reported_user_id,content,review_id) VALUES(1,2,"리뷰가 너무 재미가 없습니다...",2);

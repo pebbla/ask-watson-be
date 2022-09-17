@@ -26,8 +26,10 @@ public class NoticeService {
     }
 
     // 공지사항 전체 조회
-    public List<Notice> getNotices() {
-        return noticeJpaRepository.findAll();
+    public List<Notice> getNotices(String searchWord) {
+        return (searchWord == null)
+                ? noticeJpaRepository.findAll()
+                : noticeJpaRepository.findNoticesBySearchWord(searchWord);
     }
 
     // 공지사항 단건 조회

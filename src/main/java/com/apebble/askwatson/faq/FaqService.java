@@ -25,8 +25,10 @@ public class FaqService {
     }
 
     // 방탈출 카페 전체 조회
-    public List<Faq> getFaqs() {
-        return faqJpaRepository.findAll();
+    public List<Faq> getFaqs(String searchWord) {
+        return (searchWord == null)
+                ? faqJpaRepository.findAll()
+                : faqJpaRepository.findFaqsBySearchWord(searchWord);
     }
 
     // 방탈출 카페 단건 조회
