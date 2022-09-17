@@ -27,6 +27,7 @@ public class ThemeService {
     private final CafeJpaRepository cafeJpaRepository;
     private final CategoryJpaRepository categoryJpaRepository;
     private final ThemeJpaRepository themeJpaRepository;
+    private final ThemeNotionRepository themeNotionRepository;
 
     // 방탈출 테마 등록
     public Theme createTheme(Long cafeId, ThemeParams params) {
@@ -46,6 +47,7 @@ public class ThemeService {
                 .imageUrl(params.getImageUrl())
                 .build();
 
+                themeNotionRepository.createTheme(theme);
         return themeJpaRepository.save(theme);
     }
 
@@ -76,24 +78,27 @@ public class ThemeService {
 
     // 테마 단건 조회
     public ThemeDto.Response getOneTheme(Long themeId) {
-        return convertToThemeDto(themeJpaRepository.findById(themeId).orElseThrow(ThemeNotFoundException::new));
+        ThemeDto.Response themeDto = convertToThemeDto(themeJpaRepository.findById(themeId).orElseThrow(ThemeNotFoundException::new));
+        themeNotionRepository.getTheme(themeId);
+        return themeDto;
     }
 
     // 테마 수정
     public ThemeDto.Response modifyTheme(Long themeId, ThemeParams params) {
         Theme theme = themeJpaRepository.findById(themeId).orElseThrow(ThemeNotFoundException::new);
         Category category = categoryJpaRepository.findById(params.getCategoryId()).orElseThrow(CategoryNotFoundException::new);
-
         theme.update(params, category);
-
         return convertToThemeDto(theme);
     }
+
 
     // 테마 삭제
     public void deleteTheme(Long themeId) throws DataIntegrityViolationException {
         Theme theme = themeJpaRepository.findById(themeId).orElseThrow(ThemeNotFoundException::new);
         themeJpaRepository.delete(theme);
+        themeNotionRepository.deleteThemeByBlockId("da94731f256047ac805aeee859d4a550");
     }
+
 
     public Page<ThemeDto.Response> convertToThemeDtoPage(Page<Theme> themeList){
         return themeList.map(ThemeDto.Response::new);

@@ -67,7 +67,6 @@ public class Theme extends BaseTime {
 
     public void setCafe(Cafe cafe) {
         this.cafe = cafe;
-
         if(!cafe.getThemeList().contains(this))
             cafe.getThemeList().add(this);
     }
