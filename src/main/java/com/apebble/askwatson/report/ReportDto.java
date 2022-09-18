@@ -18,6 +18,7 @@ public class ReportDto {
         private Review review;
         private String cafeName;
         private String themeName;
+        private String createdAt;
 
         public Response(Report entity) {
             this.id = entity.getId();
@@ -27,6 +28,7 @@ public class ReportDto {
             this.review = entity.getReview();
             this.cafeName = entity.getReview().getTheme().getCafe().getCafeName();
             this.themeName = entity.getReview().getTheme().getThemeName();
+            this.createdAt = entity.getCreatedAt().toString();
         }
     }
 }

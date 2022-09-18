@@ -80,5 +80,5 @@ INSERT INTO faq(title,content) VALUES('자주묻는질문ㅇ6','자주자주 묻
 INSERT INTO review(user_id,difficulty,time_taken,used_hint_num,rating,device_ratio,activity,content,theme_id) VALUES(1,3,45,7,2.3,4,4,"리뷰예시입니다ㅏㅏㅏㅏㅏㅏ",1);
 INSERT INTO review(user_id,difficulty,time_taken,used_hint_num,rating,device_ratio,activity,content,theme_id) VALUES(2,3,45,7,2.3,4,4,"리뷰예시~~~~입니다ㅏㅏㅏㅏㅏㅏ",2);
 
-INSERT INTO report(reporter_id,reported_user_id,content,review_id) VALUES(2,1,"리뷰가 너무 성의가 없습니다...",1);
-INSERT INTO report(reporter_id,reported_user_id,content,review_id) VALUES(1,2,"리뷰가 너무 재미가 없습니다...",2);
+INSERT INTO report(created_at,reporter_id,reported_user_id,content,review_id) VALUES('2022-09-18T02:29:45',2,1,"리뷰가 너무 성의가 없습니다...",1);
+INSERT INTO report(created_at,reporter_id,reported_user_id,content,review_id) VALUES('2022-09-18T02:29:45',1,2,"리뷰가 너무 재미가 없습니다...",2);
