@@ -20,6 +20,7 @@ public class Faq extends BaseTime {
 
     private String title;           // 제목
 
+    @Column(length = 2000)
     private String content;         // 내용
 
     public void update(FaqParams params) {

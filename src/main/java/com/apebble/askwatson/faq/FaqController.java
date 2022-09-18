@@ -24,8 +24,8 @@ public class FaqController {
 
     // 자주묻는질문 전체 조회
     @GetMapping(value="/faqs")
-    public ListResponse<Faq> getFaqs() {
-        return responseService.getListResponse(faqService.getFaqs());
+    public ListResponse<Faq> getFaqs(@RequestParam(required = false) String searchWord) {
+        return responseService.getListResponse(faqService.getFaqs(searchWord));
     }
 
     // 자주묻는질문 단건 조회

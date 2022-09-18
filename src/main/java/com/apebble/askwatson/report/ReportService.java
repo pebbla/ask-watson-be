@@ -12,6 +12,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+import static java.util.stream.Collectors.toList;
+
 @Slf4j
 @Service
 @Transactional
@@ -37,13 +39,25 @@ public class ReportService {
     }
 
     // 신고 전체 조회
-    public List<Report> getAllReports() {
-        return reportJpaRepository.findAll();
+    public List<ReportDto.Response> getAllReports(String searchWord) {
+        List<Report> reportList = (searchWord == null)
+                ? reportJpaRepository.findAll()
+                : reportJpaRepository.findReportsBySearchWord(searchWord);
+
+        return convertToReportDtoList(reportList);
     }
 
     // 처리 여부에 따른 신고 목록 조정
-    public List<Report> getReportsByHandledYn(Boolean handledYn) {
-        return reportJpaRepository.findByHandledYn(handledYn);
+    public List<ReportDto.Response> getReportsByHandledYn(String searchWord, Boolean handledYn) {
+        List<Report> reportList = (searchWord == null)
+                ? reportJpaRepository.findByHandledYn(handledYn)
+                : reportJpaRepository.findReportsByHandledYnAndSearchWord(searchWord, handledYn);
+
+        return convertToReportDtoList(reportList);
+    }
+
+    private List<ReportDto.Response> convertToReportDtoList(List<Report> reportList){
+        return reportList.stream().map(ReportDto.Response::new).collect(toList());
     }
 
     // 신고 처리 상태 변경

@@ -24,11 +24,11 @@ public class ReportController {
 
     // 신고 목록 조회
     @GetMapping(value = "/admin/reports")
-    public ListResponse<Report> getReports(@RequestParam(required = false) Boolean handledYn) {
+    public ListResponse<ReportDto.Response> getReports(@RequestParam(required = false) Boolean handledYn, @RequestParam(required = false) String searchWord) {
         if(handledYn == null) {
-            return responseService.getListResponse(reportService.getAllReports());
+            return responseService.getListResponse(reportService.getAllReports(searchWord));
         } else {
-            return responseService.getListResponse(reportService.getReportsByHandledYn(handledYn));
+            return responseService.getListResponse(reportService.getReportsByHandledYn(searchWord, handledYn));
         }
 
     }

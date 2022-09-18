@@ -25,8 +25,8 @@ public class NoticeController {
 
     // 공지사항 전제 조회
     @GetMapping(value="/notices")
-    public ListResponse<Notice> getNotices() {
-        return responseService.getListResponse(noticeService.getNotices());
+    public ListResponse<Notice> getNotices(@RequestParam(required = false) String searchWord) {
+        return responseService.getListResponse(noticeService.getNotices(searchWord));
     }
 
     // 공지사항 단건 조회
