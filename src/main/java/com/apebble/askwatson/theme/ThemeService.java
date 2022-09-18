@@ -15,7 +15,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Comparator;
+import java.util.ArrayList;
 import java.util.List;
 
 import static java.util.stream.Collectors.toList;
@@ -72,24 +72,38 @@ public class ThemeService {
                 : themeJpaRepository.findThemesBySearchWord(searchWord);
 
         if(sortByUpdateYn!=null && sortByUpdateYn) {
-            sortByUpdate(themeList);
+            themeList = sortByUpdate(themeList);
         }
 
         return convertToThemeDtoList(themeList);
     }
 
-    private void sortByUpdate(List<Theme> themeList) {
-        Comparator<Theme> comparator = Comparator.comparing(theme -> theme.getModifiedAt() != null);
-        comparator = comparator.thenComparing(theme -> theme.getThemeName() != null && !theme.getThemeName().equals(""))
-                .thenComparing(theme -> theme.getThemeExplanation() != null && !theme.getThemeExplanation().equals(""))
-                .thenComparing(theme -> theme.getTimeLimit() != null && !theme.getTimeLimit().equals(0))
-                .thenComparing(theme -> theme.getMinNumPeople() != null && !theme.getMinNumPeople().equals(0))
-                .thenComparing(theme -> theme.getPrice() != null && !theme.getPrice().equals(0))
-                .thenComparing(theme -> theme.getImageUrl() != null && !theme.getImageUrl().equals(""))
-                .thenComparing(theme -> theme.getReservationUrl() != null && !theme.getReservationUrl().equals(""))
-                .thenComparing(theme -> theme.getCategory() != null);
+    private List<Theme> sortByUpdate(List<Theme> themeList) {
+        List<Theme> nullModifiedAtList = new ArrayList<>();
+        List<Theme> nullColumnList = new ArrayList<>();
+        List<Theme> nonNullColumnList = new ArrayList<>();
 
-        themeList.sort(comparator);
+        themeList.forEach(theme -> {
+                    if(theme.getModifiedAt() == null)
+                        nullModifiedAtList.add(theme);
+                    else if(theme.getThemeName() == null || theme.getThemeName().equals("") ||
+                            theme.getThemeExplanation() == null || theme.getThemeExplanation().equals("") ||
+                            theme.getTimeLimit() == null || theme.getTimeLimit().equals(0) ||
+                            theme.getMinNumPeople() == null || theme.getMinNumPeople().equals(0) ||
+                            theme.getPrice() == null || theme.getPrice().equals(0) ||
+                            theme.getImageUrl() == null || theme.getImageUrl().equals("") ||
+                            theme.getReservationUrl() == null || theme.getReservationUrl().equals("") ||
+                            theme.getCategory() == null)
+                        nullColumnList.add(theme);
+                    else nonNullColumnList.add(theme);
+                });
+
+        List<Theme> result = new ArrayList<>();
+        result.addAll(nullModifiedAtList);
+        result.addAll(nullColumnList);
+        result.addAll(nonNullColumnList);
+
+        return result;
     }
 
     // 테마 단건 조회

@@ -14,7 +14,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Comparator;
+import java.util.ArrayList;
 import java.util.List;
 
 import static java.util.stream.Collectors.toList;
@@ -62,22 +62,36 @@ public class CafeService {
                 : cafeJpaRepository.findCafesBySearchWord(searchWord);
 
        if(sortByUpdateYn!=null && sortByUpdateYn) {
-           sortByUpdate(cafeList);
+           cafeList = sortByUpdate(cafeList);
        }
 
         return convertToCafeDtoList(cafeList);
     }
 
-    private void sortByUpdate(List<Cafe> cafeList) {
-        Comparator<Cafe> comparator = Comparator.comparing(cafe -> cafe.getModifiedAt() != null);
-        comparator = comparator.thenComparing(cafe -> cafe.getCafeName() != null && !cafe.getCafeName().equals(""))
-                .thenComparing(cafe -> cafe.getCafePhoneNum() != null && !cafe.getCafePhoneNum().equals(""))
-                .thenComparing(cafe -> cafe.getWebsite() != null && !cafe.getWebsite().equals(""))
-                .thenComparing(cafe -> cafe.getAddress() != null && !cafe.getAddress().equals(""))
-                .thenComparing(cafe -> cafe.getImageUrl() != null && !cafe.getImageUrl().equals(""))
-                .thenComparing(cafe -> cafe.getLocation() != null);
+    private List<Cafe> sortByUpdate(List<Cafe> cafeList) {
+        List<Cafe> nullModifiedAtList = new ArrayList<>();
+        List<Cafe> nullColumnList = new ArrayList<>();
+        List<Cafe> nonNullColumnList = new ArrayList<>();
 
-        cafeList.sort(comparator);
+        cafeList.forEach(cafe -> {
+            if(cafe.getModifiedAt() == null)
+                nullModifiedAtList.add(cafe);
+            else if(cafe.getCafeName() == null || cafe.getCafeName().equals("") ||
+                    cafe.getCafePhoneNum() == null || cafe.getCafePhoneNum().equals("") ||
+                    cafe.getWebsite() == null || cafe.getWebsite().equals("") ||
+                    cafe.getAddress() == null || cafe.getAddress().equals("") ||
+                    cafe.getImageUrl() == null || cafe.getImageUrl().equals("") ||
+                    cafe.getLocation() == null)
+                nullColumnList.add(cafe);
+            else nonNullColumnList.add(cafe);
+        });
+
+        List<Cafe> result = new ArrayList<>();
+        result.addAll(nullModifiedAtList);
+        result.addAll(nullColumnList);
+        result.addAll(nonNullColumnList);
+
+        return result;
     }
 
     // 방탈출 카페 단건 조회
