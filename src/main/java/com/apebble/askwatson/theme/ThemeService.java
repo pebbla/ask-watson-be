@@ -15,6 +15,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static java.util.stream.Collectors.toList;
@@ -38,7 +39,6 @@ public class ThemeService {
                 .themeName(params.getThemeName())
                 .themeExplanation(params.getThemeExplanation())
                 .timeLimit(params.getTimeLimit())
-                .difficulty(params.getDifficulty())
                 .category(category)
                 .minNumPeople(params.getMinNumPeople())
                 .price(params.getPrice())
@@ -66,12 +66,44 @@ public class ThemeService {
     }
 
     // 방탈출 테마 전체 조회(리스트 - 관리자웹용)
-    public List<ThemeDto.Response> getThemeList(String searchWord) {
+    public List<ThemeDto.Response> getThemeList(String searchWord, Boolean sortByUpdateYn) {
         List<Theme> themeList = (searchWord == null)
                 ? themeJpaRepository.findAll()
                 : themeJpaRepository.findThemesBySearchWord(searchWord);
 
+        if(sortByUpdateYn!=null && sortByUpdateYn) {
+            themeList = sortByUpdate(themeList);
+        }
+
         return convertToThemeDtoList(themeList);
+    }
+
+    private List<Theme> sortByUpdate(List<Theme> themeList) {
+        List<Theme> nullModifiedAtList = new ArrayList<>();
+        List<Theme> nullColumnList = new ArrayList<>();
+        List<Theme> nonNullColumnList = new ArrayList<>();
+
+        themeList.forEach(theme -> {
+                    if(theme.getModifiedAt() == null)
+                        nullModifiedAtList.add(theme);
+                    else if(theme.getThemeName() == null || theme.getThemeName().equals("") ||
+                            theme.getThemeExplanation() == null || theme.getThemeExplanation().equals("") ||
+                            theme.getTimeLimit() == null || theme.getTimeLimit().equals(0) ||
+                            theme.getMinNumPeople() == null || theme.getMinNumPeople().equals(0) ||
+                            theme.getPrice() == null || theme.getPrice().equals(0) ||
+                            theme.getImageUrl() == null || theme.getImageUrl().equals("") ||
+                            theme.getReservationUrl() == null || theme.getReservationUrl().equals("") ||
+                            theme.getCategory() == null)
+                        nullColumnList.add(theme);
+                    else nonNullColumnList.add(theme);
+                });
+
+        List<Theme> result = new ArrayList<>();
+        result.addAll(nullModifiedAtList);
+        result.addAll(nullColumnList);
+        result.addAll(nonNullColumnList);
+
+        return result;
     }
 
     // 테마 단건 조회

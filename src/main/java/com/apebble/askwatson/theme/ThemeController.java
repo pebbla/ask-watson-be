@@ -30,8 +30,8 @@ public class ThemeController {
 
     // 방탈출 테마 전체 조회(리스트 - 관리자웹용)
     @GetMapping(value="/admin/themes")
-    public ListResponse<ThemeDto.Response> getThemeList(@RequestParam(required = false) String searchWord) {
-        return responseService.getListResponse(themeService.getThemeList(searchWord));
+    public ListResponse<ThemeDto.Response> getThemeList(@RequestParam(required = false) String searchWord, @RequestParam(required = false) Boolean sortByUpdateYn) {
+        return responseService.getListResponse(themeService.getThemeList(searchWord, sortByUpdateYn));
     }
 
     // 테마 단건 조회

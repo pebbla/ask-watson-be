@@ -14,6 +14,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static java.util.stream.Collectors.toList;
@@ -55,12 +56,42 @@ public class CafeService {
     }
 
     // 방탈출 카페 전체 조회(리스트 - 관리자웹 개발용)
-    public List<CafeDto.Response> getCafeList(String searchWord) {
+    public List<CafeDto.Response> getCafeList(String searchWord, Boolean sortByUpdateYn) {
        List<Cafe> cafeList = (searchWord == null)
                 ? cafeJpaRepository.findAll()
                 : cafeJpaRepository.findCafesBySearchWord(searchWord);
 
+       if(sortByUpdateYn!=null && sortByUpdateYn) {
+           cafeList = sortByUpdate(cafeList);
+       }
+
         return convertToCafeDtoList(cafeList);
+    }
+
+    private List<Cafe> sortByUpdate(List<Cafe> cafeList) {
+        List<Cafe> nullModifiedAtList = new ArrayList<>();
+        List<Cafe> nullColumnList = new ArrayList<>();
+        List<Cafe> nonNullColumnList = new ArrayList<>();
+
+        cafeList.forEach(cafe -> {
+            if(cafe.getModifiedAt() == null)
+                nullModifiedAtList.add(cafe);
+            else if(cafe.getCafeName() == null || cafe.getCafeName().equals("") ||
+                    cafe.getCafePhoneNum() == null || cafe.getCafePhoneNum().equals("") ||
+                    cafe.getWebsite() == null || cafe.getWebsite().equals("") ||
+                    cafe.getAddress() == null || cafe.getAddress().equals("") ||
+                    cafe.getImageUrl() == null || cafe.getImageUrl().equals("") ||
+                    cafe.getLocation() == null)
+                nullColumnList.add(cafe);
+            else nonNullColumnList.add(cafe);
+        });
+
+        List<Cafe> result = new ArrayList<>();
+        result.addAll(nullModifiedAtList);
+        result.addAll(nullColumnList);
+        result.addAll(nonNullColumnList);
+
+        return result;
     }
 
     // 방탈출 카페 단건 조회
