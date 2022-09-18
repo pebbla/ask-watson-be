@@ -3,6 +3,9 @@ package com.apebble.askwatson.user;
 import com.apebble.askwatson.comm.response.*;
 import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
+
+import java.util.Map;
+
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
@@ -15,6 +18,19 @@ public class UserController {
 
     private final UserService userService;
     private final ResponseService responseService;
+
+    // 카카오 토큰으로 로그인
+    @PostMapping(value = "/kakao/signin")
+    public SingleResponse<Map<String, Object>> signInByKakaoToken(String accessToken){
+        //TODO : 회원가입 된 경우 access token, refresh token 전달
+        // 403리턴 값 전달
+        return responseService.getSingleResponse(userService.signInByKakaoToken(accessToken));
+    }
+
+    // 네이버 토큰으로 로그인
+
+    // 구글 토큰으로 로그인
+
 
     // 회원 등록
     @PostMapping(value = "/users")
