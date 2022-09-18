@@ -19,6 +19,7 @@ public class ReportDto {
         private String cafeName;
         private String themeName;
         private String createdAt;
+        private Boolean handledYn;
 
         public Response(Report entity) {
             this.id = entity.getId();
@@ -29,6 +30,7 @@ public class ReportDto {
             this.cafeName = entity.getReview().getTheme().getCafe().getCafeName();
             this.themeName = entity.getReview().getTheme().getThemeName();
             this.createdAt = entity.getCreatedAt().toString();
+            this.handledYn = entity.isHandledYn();
         }
     }
 }
