@@ -28,6 +28,7 @@ dependencies {
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	implementation group: 'org.hibernate', name: 'hibernate-spatial', version: '5.6.9.Final'
+	implementation 'com.google.code.gson:gson:2.8.7'
 	
 	// swagger
 	implementation 'io.springfox:springfox-boot-starter:3.0.0'
