@@ -22,6 +22,12 @@ public class CafeController {
         return responseService.getSingleResponse(cafeService.createCafe(params));
     }
 
+    // 방탈출 카페 객체 등록
+    @PostMapping(value="/admin/cafes/new")
+    public SingleResponse<Long> createCafeObj() throws ParseException {
+        return responseService.getSingleResponse(cafeService.createCafeObj());
+    }
+
     // 방탈출 카페 전체 조회
     @GetMapping(value="/cafes")
     public PageResponse<CafeDto.Response> getCafes(

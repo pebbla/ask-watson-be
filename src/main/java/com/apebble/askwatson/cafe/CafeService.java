@@ -45,6 +45,13 @@ public class CafeService {
         return convertToCafeDto(cafeJpaRepository.save(cafe));
     }
 
+    public Long createCafeObj() throws ParseException {
+        Cafe cafe = new Cafe();
+        cafe.setGeography(GeographyConverter.strToPoint(0.0, 0.0));
+
+        return cafeJpaRepository.save(cafe).getId();
+    }
+
     // 방탈출 카페 전체 조회
     public Page<CafeDto.Response> getCafes(CafeSearchOptions searchOptions, Pageable pageable) {
         Page<Cafe> cafeList;
