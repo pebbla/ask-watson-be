@@ -40,7 +40,7 @@ public class UserController {
 
     // 회원 전체 조회
     @GetMapping(value = "/admin/users")
-    public PageResponse<User> getAllUsers(@PageableDefault(size=20) Pageable pageable) {
+    public PageResponse<UserDto.Response> getAllUsers(@PageableDefault(size=20) Pageable pageable) {
         return responseService.getPageResponse(userService.getAllUsers(pageable));
     }
 

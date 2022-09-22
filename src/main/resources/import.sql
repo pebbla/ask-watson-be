@@ -42,12 +42,33 @@ INSERT INTO category(category_name) VALUES ('기타');
 INSERT INTO admin(admin_account,admin_name,admin_password) VALUES ('hssarah','이한슬','qwer1234');
 INSERT INTO admin(admin_account,admin_name,admin_password) VALUES ('arock1998','최아록','qwer1234');
 
-INSERT INTO user(user_nickname,user_phone_num,user_birth,user_gender,marketing_agree_yn) VALUES ('우영우', '010-1511-2662', '1995-04-02', 'F', 1);
-INSERT INTO user(user_nickname,user_phone_num,user_birth,user_gender,marketing_agree_yn) VALUES ('홍길동', '010-1111-2222', '1900-01-01', 'M', 1);
+INSERT INTO user(created_at,user_nickname,user_phone_num,user_birth,user_gender,marketing_agree_yn) VALUES ('2022-03-10T02:29:45','우영우', '010-1511-2662', '1995-04-02', 'F', 1);
+INSERT INTO user(created_at,user_nickname,user_phone_num,user_birth,user_gender,marketing_agree_yn) VALUES ('2020-09-18T02:29:45','홍길동', '010-1111-2222', '1900-01-01', 'M', 1);
 
 INSERT INTO cafe(cafe_name,cafe_phone_num,location_id,geography,website,address,image_url) VALUES ('포인트나인 강남점','02-1919-1919',1, POINT(127.127730, 38.439801),"http://www.pointnine.com","서울시 서초구 서초3동 어쩌구 주소","https://storage.cloud.google.com/ask_watson/test/front/IMG_9823.jpg");
 INSERT INTO cafe(cafe_name,cafe_phone_num,location_id,geography,website,address,image_url) VALUES ('더클루 강남점','02-2323-1111',1, POINT(127.127730, 38.439801),"http://www.theclue.com","서울시 어쩌구 주소","https://storage.cloud.google.com/ask_watson/test/front/IMG_9823.jpg");
 INSERT INTO cafe(cafe_name,cafe_phone_num,location_id,geography,website,address,image_url) VALUES ('룰루랄라라','02-6653-1624',5, POINT(127.127730, 38.439801),"http://www.lululalala.com","어쩌구 주소","https://storage.cloud.google.com/ask_watson/test/front/IMG_9823.jpg");
+INSERT INTO cafe(cafe_name,cafe_phone_num,location_id,geography,website,address,image_url) VALUES ('방탈출고고싱','031-2020-1124',12,POINT(127.127730, 38.439801),"http://www.gogosing.com","주소주소입니다주소","https://storage.cloud.google.com/ask_watson/test/front/IMG_9823.jpg");
+INSERT INTO cafe(cafe_name,cafe_phone_num,location_id,geography,website,address,image_url) VALUES ('ㅂㅐㄱ설공주','02-6653-1624',5, POINT(127.127730, 38.439801),"http://www.snowwhite.com","어쩌구 주소","https://storage.cloud.google.com/ask_watson/test/front/IMG_9823.jpg");
+INSERT INTO cafe(cafe_name,cafe_phone_num,location_id,geography,website,address,image_url) VALUES ('사과 맛있어욤','031-2020-1124',12, POINT(127.127730, 38.439801),"http://www.appleapple.com","주소주소입니다주소","https://storage.cloud.google.com/ask_watson/test/front/IMG_9823.jpg");
+INSERT INTO cafe(cafe_name,cafe_phone_num,location_id,geography,website,address,image_url) VALUES ('방탈출고고싱','031-2020-1124',12,POINT(127.127730, 38.439801),"http://www.gogosing.com","주소주소입니다주소","https://storage.cloud.google.com/ask_watson/test/front/IMG_9823.jpg");
+INSERT INTO cafe(cafe_name,cafe_phone_num,location_id,geography,website,address,image_url) VALUES ('ㅂㅐㄱ설공주','02-6653-1624',5, POINT(127.127730, 38.439801),"http://www.snowwhite.com","어쩌구 주소","https://storage.cloud.google.com/ask_watson/test/front/IMG_9823.jpg");
+INSERT INTO cafe(cafe_name,cafe_phone_num,location_id,geography,website,address,image_url) VALUES ('사과 맛있어욤','031-2020-1124',12, POINT(127.127730, 38.439801),"http://www.appleapple.com","주소주소입니다주소","https://storage.cloud.google.com/ask_watson/test/front/IMG_9823.jpg");
+INSERT INTO cafe(cafe_name,cafe_phone_num,location_id,geography,website,address,image_url) VALUES ('방탈출고고싱','031-2020-1124',12,POINT(127.127730, 38.439801),"http://www.gogosing.com","주소주소입니다주소","https://storage.cloud.google.com/ask_watson/test/front/IMG_9823.jpg");
+INSERT INTO cafe(cafe_name,cafe_phone_num,location_id,geography,website,address,image_url) VALUES ('ㅂㅐㄱ설공주','02-6653-1624',5, POINT(127.127730, 38.439801),"http://www.snowwhite.com","어쩌구 주소","https://storage.cloud.google.com/ask_watson/test/front/IMG_9823.jpg");
+INSERT INTO cafe(cafe_name,cafe_phone_num,location_id,geography,website,address,image_url) VALUES ('사과 맛있어욤','031-2020-1124',12, POINT(127.127730, 38.439801),"http://www.appleapple.com","주소주소입니다주소","https://storage.cloud.google.com/ask_watson/test/front/IMG_9823.jpg");
+INSERT INTO cafe(cafe_name,cafe_phone_num,location_id,geography,website,address,image_url) VALUES ('방탈출고고싱','031-2020-1124',12,POINT(127.127730, 38.439801),"http://www.gogosing.com","주소주소입니다주소","https://storage.cloud.google.com/ask_watson/test/front/IMG_9823.jpg");
+INSERT INTO cafe(cafe_name,cafe_phone_num,location_id,geography,website,address,image_url) VALUES ('ㅂㅐㄱ설공주','02-6653-1624',5, POINT(127.127730, 38.439801),"http://www.snowwhite.com","어쩌구 주소","https://storage.cloud.google.com/ask_watson/test/front/IMG_9823.jpg");
+INSERT INTO cafe(cafe_name,cafe_phone_num,location_id,geography,website,address,image_url) VALUES ('사과 맛있어욤','031-2020-1124',12, POINT(127.127730, 38.439801),"http://www.appleapple.com","주소주소입니다주소","https://storage.cloud.google.com/ask_watson/test/front/IMG_9823.jpg");
+INSERT INTO cafe(cafe_name,cafe_phone_num,location_id,geography,website,address,image_url) VALUES ('방탈출고고싱','031-2020-1124',12,POINT(127.127730, 38.439801),"http://www.gogosing.com","주소주소입니다주소","https://storage.cloud.google.com/ask_watson/test/front/IMG_9823.jpg");
+INSERT INTO cafe(cafe_name,cafe_phone_num,location_id,geography,website,address,image_url) VALUES ('ㅂㅐㄱ설공주','02-6653-1624',5, POINT(127.127730, 38.439801),"http://www.snowwhite.com","어쩌구 주소","https://storage.cloud.google.com/ask_watson/test/front/IMG_9823.jpg");
+INSERT INTO cafe(cafe_name,cafe_phone_num,location_id,geography,website,address,image_url) VALUES ('사과 맛있어욤','031-2020-1124',12, POINT(127.127730, 38.439801),"http://www.appleapple.com","주소주소입니다주소","https://storage.cloud.google.com/ask_watson/test/front/IMG_9823.jpg");
+INSERT INTO cafe(cafe_name,cafe_phone_num,location_id,geography,website,address,image_url) VALUES ('방탈출고고싱','031-2020-1124',12,POINT(127.127730, 38.439801),"http://www.gogosing.com","주소주소입니다주소","https://storage.cloud.google.com/ask_watson/test/front/IMG_9823.jpg");
+INSERT INTO cafe(cafe_name,cafe_phone_num,location_id,geography,website,address,image_url) VALUES ('ㅂㅐㄱ설공주','02-6653-1624',5, POINT(127.127730, 38.439801),"http://www.snowwhite.com","어쩌구 주소","https://storage.cloud.google.com/ask_watson/test/front/IMG_9823.jpg");
+INSERT INTO cafe(cafe_name,cafe_phone_num,location_id,geography,website,address,image_url) VALUES ('사과 맛있어욤','031-2020-1124',12, POINT(127.127730, 38.439801),"http://www.appleapple.com","주소주소입니다주소","https://storage.cloud.google.com/ask_watson/test/front/IMG_9823.jpg");
+INSERT INTO cafe(cafe_name,cafe_phone_num,location_id,geography,website,address,image_url) VALUES ('방탈출고고싱','031-2020-1124',12,POINT(127.127730, 38.439801),"http://www.gogosing.com","주소주소입니다주소","https://storage.cloud.google.com/ask_watson/test/front/IMG_9823.jpg");
+INSERT INTO cafe(cafe_name,cafe_phone_num,location_id,geography,website,address,image_url) VALUES ('ㅂㅐㄱ설공주','02-6653-1624',5, POINT(127.127730, 38.439801),"http://www.snowwhite.com","어쩌구 주소","https://storage.cloud.google.com/ask_watson/test/front/IMG_9823.jpg");
+INSERT INTO cafe(cafe_name,cafe_phone_num,location_id,geography,website,address,image_url) VALUES ('사과 맛있어욤','031-2020-1124',12, POINT(127.127730, 38.439801),"http://www.appleapple.com","주소주소입니다주소","https://storage.cloud.google.com/ask_watson/test/front/IMG_9823.jpg");
 INSERT INTO cafe(cafe_name,cafe_phone_num,location_id,geography,website,address,image_url) VALUES ('방탈출고고싱','031-2020-1124',12,POINT(127.127730, 38.439801),"http://www.gogosing.com","주소주소입니다주소","https://storage.cloud.google.com/ask_watson/test/front/IMG_9823.jpg");
 INSERT INTO cafe(cafe_name,cafe_phone_num,location_id,geography,website,address,image_url) VALUES ('ㅂㅐㄱ설공주','02-6653-1624',5, POINT(127.127730, 38.439801),"http://www.snowwhite.com","어쩌구 주소","https://storage.cloud.google.com/ask_watson/test/front/IMG_9823.jpg");
 INSERT INTO cafe(cafe_name,cafe_phone_num,location_id,geography,website,address,image_url) VALUES ('사과 맛있어욤','031-2020-1124',12, POINT(127.127730, 38.439801),"http://www.appleapple.com","주소주소입니다주소","https://storage.cloud.google.com/ask_watson/test/front/IMG_9823.jpg");
@@ -76,6 +97,8 @@ INSERT INTO faq(title,content) VALUES('자주묻는질문3','자주자주 묻는
 INSERT INTO faq(title,content) VALUES('자주묻는질문4','자주자주 묻는 질문들 자주자주 묻는 질문들 자주자주 묻는 질문들 자주자주 묻는 질문들 ');
 INSERT INTO faq(title,content) VALUES('자주묻는질문5','자주자주 묻는 질문들 자주자주 묻는 질문들 자주자주 묻는 질문들 자주자주 묻는 질문들 자주자주 묻는 질문들 ');
 INSERT INTO faq(title,content) VALUES('자주묻는질문ㅇ6','자주자주 묻는 질문들 자주자주 묻는 질문들 자주자주 묻는 질문들 자주자주 묻는 질문들 자주자주 묻는 질문들 자주자주 묻는 질문들 ');
+
+INSERT INTO escape_complete(user_id,theme_id,escape_complete_dt) VALUES(1,1,'2022-03-04');
 
 INSERT INTO review(user_id,difficulty,time_taken,used_hint_num,rating,device_ratio,activity,content,theme_id) VALUES(1,3,45,7,2.3,4,4,"리뷰예시입니다ㅏㅏㅏㅏㅏㅏ",1);
 INSERT INTO review(user_id,difficulty,time_taken,used_hint_num,rating,device_ratio,activity,content,theme_id) VALUES(2,3,45,7,2.3,4,4,"리뷰예시~~~~입니다ㅏㅏㅏㅏㅏㅏ",2);
