@@ -29,7 +29,7 @@ public class UserDto {
             this.reportedCount = reportedCount;
             this.reviewCount = reviewCount;
             this.escapeCompleteCount = escapeCompleteCount;
-            this.signUpDt = entity.getCreatedAt().toString();
+            this.createdAt = entity.getCreatedAt().toString();
         }
     }
 }
