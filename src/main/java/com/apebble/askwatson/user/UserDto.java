@@ -17,7 +17,7 @@ public class UserDto {
         private int reportedCount;
         private int reviewCount;
         private int escapeCompleteCount;
-        private String signUpDt;
+        private String createdAt;
 
         public Response(User entity, int reportedCount, int reviewCount, int escapeCompleteCount) {
             this.id = entity.getId();
