@@ -2,11 +2,13 @@ package com.apebble.askwatson.user;
 
 import com.apebble.askwatson.comm.exception.UserNotFoundException;
 import com.apebble.askwatson.comm.util.DateConverter;
+import com.apebble.askwatson.escapecomplete.EscapeCompleteJpaRepository;
+import com.apebble.askwatson.report.ReportJpaRepository;
+import com.apebble.askwatson.review.ReviewJpaRepository;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
-import ch.qos.logback.classic.Logger;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -29,6 +31,9 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class UserService {
     private final UserJpaRepository userJpaRepository;
+    private final ReportJpaRepository reportJpaRepository;
+    private final ReviewJpaRepository reviewJpaRepository;
+    private final EscapeCompleteJpaRepository escapeCompleteJpaRepository;
 
     // 카카오 토큰으로 로그인
     public Map<String,Object> signInByKakaoToken(String access_token) {
@@ -73,8 +78,6 @@ public class UserService {
         resultMap.put("refresh_token", "refresh_token");
         return resultMap;
     }
-    
-    
 
     // 회원 등록
     public User createUser(UserParams params) {
@@ -90,8 +93,28 @@ public class UserService {
     }
 
     // 회원 전체 조회
-    public Page<User> getAllUsers(Pageable pageable) {
-        return userJpaRepository.findAll(pageable);
+    public Page<UserDto.Response> getAllUsers(Pageable pageable) {
+        Page<User> users = userJpaRepository.findAll(pageable);
+
+
+        return convertToUserDtoPage(users);
+    }
+
+    private Page<UserDto.Response> convertToUserDtoPage(Page<User> users){
+        return users.map(user ->
+                new UserDto.Response(user, getUserReportedCount(user), getUserReviewCount(user), getUserEscapeCompleteCount(user)));
+    }
+
+    private int getUserReportedCount(User user) {
+        return reportJpaRepository.countByReportedUser(user);
+    }
+
+    private int getUserReviewCount(User user) {
+        return reviewJpaRepository.countByUser(user);
+    }
+
+    private int getUserEscapeCompleteCount(User user) {
+        return escapeCompleteJpaRepository.countByUser(user);
     }
 
     // 회원정보 수정
