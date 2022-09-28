@@ -2,10 +2,12 @@ package com.apebble.askwatson.review;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 import javax.transaction.Transactional;
 
 import com.apebble.askwatson.cafe.Cafe;
+import com.apebble.askwatson.escapecomplete.EscapeCompleteService;
 import org.springframework.stereotype.Service;
 
 import com.apebble.askwatson.comm.exception.EscapeCompleteNotFoundException;
@@ -32,12 +34,26 @@ public class ReviewService {
     private final UserJpaRepository userJpaRepository;
     private final ThemeJpaRepository themeJpaRepository;
     private final EscapeCompleteJpaRepository escapeCompleteJpaRepository;
+    private final EscapeCompleteService escapeCompleteService;
 
-    // 리뷰 등록
-    public Review createReview(Long userId, Long themeId, ReviewParams params) {
+    // 리뷰 등록(탈출완료 여부 확인)
+    public Review createReviewByCheckingEscapeComplete(Long userId, Long themeId, ReviewParams params) {
+        if(!doesEscapeCompleteExists(userId, themeId))
+            escapeCompleteService.createEscapeComplete(userId, themeId);
+
+        return createReview(userId, themeId, params);
+    }
+
+    private boolean doesEscapeCompleteExists(Long userId, Long themeId) {
+        Optional<EscapeComplete> escapeComplete = escapeCompleteJpaRepository.findByUserIdAndThemeId(userId, themeId);
+        return escapeComplete.isPresent();
+    }
+
+    private Review createReview(Long userId, Long themeId, ReviewParams params) {
         User user = userJpaRepository.findById(userId).orElseThrow(UserNotFoundException::new);
         Theme theme = themeJpaRepository.findById(themeId).orElseThrow(ThemeNotFoundException::new);
-        EscapeComplete escapeComplete = escapeCompleteJpaRepository.findByUserIdAndThemeId(userId, themeId);
+        EscapeComplete escapeComplete = escapeCompleteJpaRepository.findByUserIdAndThemeId(userId, themeId)
+                .orElseThrow(EscapeCompleteNotFoundException::new);
         
         Review review = Review.builder()
             .user(user)

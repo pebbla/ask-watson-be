@@ -23,7 +23,7 @@ public class ReviewController {
     @PostMapping(value = "/user/{userId}/themes/{themeId}/reviews")
     public SingleResponse<Review> createReview(@PathVariable Long userId, @PathVariable Long themeId,
             @RequestBody ReviewParams params) {
-        return responseService.getSingleResponse(reviewService.createReview(userId, themeId, params));
+        return responseService.getSingleResponse(reviewService.createReviewByCheckingEscapeComplete(userId, themeId, params));
     }
 
     // 유저벌 리뷰 리스트 조회
