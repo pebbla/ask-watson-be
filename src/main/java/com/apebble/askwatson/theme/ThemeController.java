@@ -36,8 +36,8 @@ public class ThemeController {
 
     // 테마 단건 조회
     @GetMapping(value = "/themes/{themeId}")
-    public SingleResponse<ThemeDto.Response> getTheme(@PathVariable Long themeId) {
-        return responseService.getSingleResponse(themeService.getOneTheme(themeId));
+    public SingleResponse<OneThemeDto.Response> getTheme(@PathVariable Long themeId, @RequestParam(required = false) Long userId) {
+        return responseService.getSingleResponse(themeService.getOneTheme(themeId, userId));
     }
 
     // 카페별 테마 조회
