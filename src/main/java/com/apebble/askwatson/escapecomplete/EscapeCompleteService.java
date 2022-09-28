@@ -1,6 +1,8 @@
 package com.apebble.askwatson.escapecomplete;
 
 import com.apebble.askwatson.comm.exception.*;
+import com.apebble.askwatson.review.Review;
+import com.apebble.askwatson.review.ReviewJpaRepository;
 import com.apebble.askwatson.theme.Theme;
 import com.apebble.askwatson.theme.ThemeJpaRepository;
 import com.apebble.askwatson.user.User;
@@ -12,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -21,6 +24,7 @@ public class EscapeCompleteService {
     private final UserJpaRepository userJpaRepository;
     private final ThemeJpaRepository themeJpaRepository;
     private final EscapeCompleteJpaRepository escapeCompleteJpaRepository;
+    private final ReviewJpaRepository reviewJpaRepository;
 
     // 탈출 완료 등록
     public EscapeComplete createEscapeComplete(Long userId, Long themeId) {
@@ -50,8 +54,23 @@ public class EscapeCompleteService {
         return escapeComplete;
     }
 
-    // 탈출 완료 취소
-    public void deleteEscapeComplete(Long escapeCompleteId) {
+    // 탈출 완료 취소(리뷰 여부 확인)
+    public void deleteEscapeCompleteByCheckingReview(Long escapeCompleteId) {
+        if(!doesReviewExists(escapeCompleteId))
+            deleteEscapeComplete(escapeCompleteId);
+    }
+
+    private boolean doesReviewExists(Long escapeCompleteId) {
+        EscapeComplete escapeComplete = escapeCompleteJpaRepository.findById(escapeCompleteId).orElseThrow(EscapeCompleteNotFoundException::new);
+        Optional<Review> review = reviewJpaRepository.findByUserAndTheme(escapeComplete.getUser(), escapeComplete.getTheme());
+
+        if(review.isPresent())
+            throw new EscapeCompleteUndeletableException();
+
+        return false;
+    }
+
+    private void deleteEscapeComplete(Long escapeCompleteId) {
         EscapeComplete escapeComplete = escapeCompleteJpaRepository.findById(escapeCompleteId).orElseThrow(EscapeCompleteNotFoundException::new);
         Theme theme = escapeComplete.getTheme();
         theme.setEscapeCount(theme.getEscapeCount()-1);
