@@ -24,7 +24,17 @@ public class ThemeController {
     // 테마 목록 전체 조회
     @GetMapping(value = "/themes")
     public PageResponse<ThemeDto.Response> getThemes(
-            @ModelAttribute ThemeSearchOptions searchOptions, @PageableDefault(size=20) Pageable pageable) {
+            @RequestParam(required = false) String searchWord, @RequestParam(required = false) Long locationId,
+            @RequestParam(required = false) Long categoryId, @RequestParam(required = false) Integer minNumPeople,
+            @RequestParam(required = false) Double difficultyRangeFrom, @RequestParam(required = false) Double difficultyRangeTo,
+            @RequestParam(required = false) Double deviceRatioRangeFrom, @RequestParam(required = false) Double deviceRatioRangeTo,
+            @RequestParam(required = false) Double activityRangeFrom, @RequestParam(required = false) Double activityRangeTo,
+            @RequestParam(required = false) Integer timeLimitRangeFrom, @RequestParam(required = false) Integer timeLimitRangeTo,
+            @PageableDefault(size=20) Pageable pageable) {
+
+        ThemeSearchOptions searchOptions = new ThemeSearchOptions(searchWord, locationId, categoryId, minNumPeople, difficultyRangeFrom, difficultyRangeTo,
+                deviceRatioRangeFrom, deviceRatioRangeTo, activityRangeFrom, activityRangeTo, timeLimitRangeFrom, timeLimitRangeTo);
+
         return responseService.getPageResponse(themeService.getThemes(searchOptions, pageable));
     }
 
@@ -36,7 +46,7 @@ public class ThemeController {
 
     // 테마 단건 조회
     @GetMapping(value = "/themes/{themeId}")
-    public SingleResponse<OneThemeDto.Response> getTheme(@PathVariable Long themeId, @RequestParam(required = false) Long userId) {
+    public SingleResponse<ThemeDtoWithHeartAndComplete.Response> getTheme(@PathVariable Long themeId, @RequestParam(required = false) Long userId) {
         return responseService.getSingleResponse(themeService.getOneTheme(themeId, userId));
     }
 

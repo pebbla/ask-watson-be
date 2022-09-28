@@ -110,7 +110,7 @@ public class ThemeService {
     }
 
     // 테마 단건 조회
-    public OneThemeDto.Response getOneTheme(Long themeId, Long userId) {
+    public ThemeDtoWithHeartAndComplete.Response getOneTheme(Long themeId, Long userId) {
         Theme theme =  themeJpaRepository.findById(themeId).orElseThrow(ThemeNotFoundException::new);
         return convertToOneThemeDto(theme, userId);
     }
@@ -143,8 +143,8 @@ public class ThemeService {
         return new ThemeDto.Response(theme);
     }
 
-    public OneThemeDto.Response convertToOneThemeDto(Theme theme, Long userId){
-        return new OneThemeDto.Response(
+    public ThemeDtoWithHeartAndComplete.Response convertToOneThemeDto(Theme theme, Long userId){
+        return new ThemeDtoWithHeartAndComplete.Response(
                 theme,
                 checkUserHeartedTheme(userId, theme.getId()),
                 checkUserCompletedTheme(userId, theme.getId()));
