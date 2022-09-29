@@ -30,6 +30,8 @@ public class Report extends BaseTime {
     @Column(length = 100)
     private String content;                 // 신고 내용
 
+    private String reviewContent;           // 신고당한 리뷰 내용
+
     @ManyToOne @JoinColumn(name = "review_id")
     private Review review;                  // 신고당한 리뷰
 
