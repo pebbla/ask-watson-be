@@ -18,12 +18,13 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import static java.util.stream.Collectors.toList;
 
 @Slf4j
 @Service
@@ -93,16 +94,18 @@ public class UserService {
     }
 
     // 회원 전체 조회
-    public Page<UserDto.Response> getAllUsers(Pageable pageable) {
-        Page<User> users = userJpaRepository.findAll(pageable);
+    public List<UserDto.Response> getAllUsers(String searchWord) {
+        List<User> users = (searchWord == null)
+                ? userJpaRepository.findAll()
+                : userJpaRepository.findUsersBySearchWord(searchWord);
 
-
-        return convertToUserDtoPage(users);
+        return convertToUserDtoList(users);
     }
 
-    private Page<UserDto.Response> convertToUserDtoPage(Page<User> users){
-        return users.map(user ->
-                new UserDto.Response(user, getUserReportedCount(user), getUserReviewCount(user), getUserEscapeCompleteCount(user)));
+    private List<UserDto.Response> convertToUserDtoList(List<User> users){
+        return users.stream().map(user ->
+                new UserDto.Response(user, getUserReportedCount(user), getUserReviewCount(user), getUserEscapeCompleteCount(user))
+        ).collect(toList());
     }
 
     private int getUserReportedCount(User user) {
