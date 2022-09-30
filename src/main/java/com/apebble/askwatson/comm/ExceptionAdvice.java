@@ -102,12 +102,20 @@ public class ExceptionAdvice {
         return responseService.getErrorResponse(404, "위치를 찾을 수 없습니다.");
     }
 
+    /**
+     * 405 : Method not allowed
+     */
     @ExceptionHandler(DataIntegrityViolationException.class)
     @ResponseStatus(HttpStatus.METHOD_NOT_ALLOWED)
     protected CommonResponse dataIntegrityViolationException(){
         return responseService.getErrorResponse(405, "연관 관계 문제로 삭제할 수 없습니다.");
     }
 
+    @ExceptionHandler(EscapeCompleteUndeletableException.class)
+    @ResponseStatus(HttpStatus.METHOD_NOT_ALLOWED)
+    protected CommonResponse escapeCompleteUndeletableException(){
+        return responseService.getErrorResponse(405, "탈출 완료를 취소할 수 없습니다. 리뷰 작성 여부를 확인해주십시오.");
+    }
     
     //TODO : 런칭 시 주석제거, -> 포스트맨, 스웨거에서 에러메세지 보기위함
 //    @ExceptionHandler({ Exception.class })

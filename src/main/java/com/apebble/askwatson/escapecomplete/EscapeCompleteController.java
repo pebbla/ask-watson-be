@@ -39,7 +39,7 @@ public class EscapeCompleteController {
     // 탈출 완료 취소
     @DeleteMapping(value = "/user/escape-completes/{escapeCompleteId}")
     public CommonResponse cancelEscapeComplete(@PathVariable Long escapeCompleteId) {
-        escapeCompleteService.deleteEscapeComplete(escapeCompleteId);
+        escapeCompleteService.deleteEscapeCompleteByCheckingReview(escapeCompleteId);
         return responseService.getSuccessResponse();
     }
 }
