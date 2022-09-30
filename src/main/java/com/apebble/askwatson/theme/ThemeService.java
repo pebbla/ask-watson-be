@@ -67,16 +67,6 @@ public class ThemeService {
         return themeJpaRepository.save(theme);
     }
 
-
-    public Long createThemeObj(Long cafeId)  {
-        Cafe cafe = cafeJpaRepository.findById(cafeId).orElseThrow(CafeNotFoundException::new);
-        Theme theme = new Theme();
-        theme.setThemeExplanation("");
-        theme.setCafe(cafe);
-
-        return themeJpaRepository.save(theme).getId();
-    }
-
     // 카페별 테마 조회
     public List<Theme> getThemesByCafe(Long cafeId) {
         Cafe cafe = cafeJpaRepository.findById(cafeId).orElseThrow(CafeNotFoundException::new);
