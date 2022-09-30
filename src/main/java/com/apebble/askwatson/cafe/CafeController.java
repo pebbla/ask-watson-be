@@ -1,12 +1,17 @@
 package com.apebble.askwatson.cafe;
+import org.springframework.http.MediaType;
 
 import com.apebble.askwatson.comm.response.*;
 import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
+
+import java.util.Map;
+
 import org.locationtech.jts.io.ParseException;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @Api(tags = {"카페"})
 @RestController
@@ -17,9 +22,15 @@ public class CafeController {
     private final ResponseService responseService;
 
     // 방탈출 카페 등록
-    @PostMapping(value="/admin/cafes")
-    public SingleResponse<CafeDto.Response> createCafe(@RequestBody CafeParams params) throws ParseException {
-        return responseService.getSingleResponse(cafeService.createCafe(params));
+    @PostMapping(value="/admin/cafes", consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
+    public SingleResponse<CafeDto.Response> createCafe(@ModelAttribute CafeParams params, @RequestPart(value = "file") MultipartFile file) throws Exception  {
+        return responseService.getSingleResponse(cafeService.createCafe(params, file));
+    }
+
+    // 방탈출 카페 객체 등록
+    @PostMapping(value="/admin/cafes/new")
+    public SingleResponse<Long> createCafeObj() throws ParseException {
+        return responseService.getSingleResponse(cafeService.createCafeObj());
     }
 
     // 방탈출 카페 전체 조회

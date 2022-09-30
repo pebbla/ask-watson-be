@@ -2,3 +2,4 @@ spring:
   profiles:
 #    active: rds
     active: local
+    active: local

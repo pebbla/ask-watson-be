@@ -1,5 +1,7 @@
 package com.apebble.askwatson.cafe;
 
+import org.springframework.web.multipart.MultipartFile;
+
 import lombok.Data;
 
 @Data
@@ -21,4 +23,5 @@ public class CafeParams {
     private Double latitude;
 
     private Boolean isEnglishPossible;
+
 }

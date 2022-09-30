@@ -5,6 +5,7 @@ import com.apebble.askwatson.cafe.location.LocationJpaRepository;
 import com.apebble.askwatson.comm.exception.CafeNotFoundException;
 import com.apebble.askwatson.comm.exception.LocationNotFoundException;
 import com.apebble.askwatson.comm.util.GeographyConverter;
+import com.apebble.askwatson.config.GoogleCloudConfig;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.locationtech.jts.io.ParseException;
@@ -12,36 +13,56 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.EntityManager;
+
 import static java.util.stream.Collectors.toList;
+
+
 
 @Slf4j
 @Service
 @Transactional
 @RequiredArgsConstructor
 public class CafeService {
+
     private final CafeJpaRepository cafeJpaRepository;
     private final LocationJpaRepository locationJpaRepository;
+    private final GoogleCloudConfig googleCloudConfig;
+    private final EntityManager entityManager;
+
 
     // 방탈출 카페 등록
-    public CafeDto.Response createCafe(CafeParams params) throws ParseException {
+    @Transactional
+    public CafeDto.Response createCafe(CafeParams params, MultipartFile file) throws Exception {
         Location location = locationJpaRepository.findById(params.getLocationId()).orElseThrow(LocationNotFoundException::new);
 
         Cafe cafe = Cafe.builder()
-                .cafeName(params.getCafeName())
-                .cafePhoneNum(params.getCafePhoneNum())
-                .website(params.getWebsite())
-                .address(params.getAddress())
-                .imageUrl(params.getImageUrl())
-                .location(location)
-                .geography(GeographyConverter.strToPoint(params.getLongitude(), params.getLatitude()))
-                .isEnglishPossible(params.getIsEnglishPossible())
-                .build();
+            .cafeName(params.getCafeName())
+            .cafePhoneNum(params.getCafePhoneNum())
+            .website(params.getWebsite())
+            .address(params.getAddress())
+            .location(location)
+            .geography(GeographyConverter.strToPoint(params.getLongitude(), params.getLatitude()))
+            .isEnglishPossible(params.getIsEnglishPossible())
+            .build();
+        entityManager.persist(cafe);
+
+        String imageUrl = googleCloudConfig.uploadObject("cafe/" + cafe.getId() + params.getCafeName(), file);
+        cafe.setImageUrl(imageUrl);
 
         return convertToCafeDto(cafeJpaRepository.save(cafe));
+    }
+
+
+    public Long createCafeObj() throws ParseException {
+        Cafe cafe = new Cafe();
+        cafe.setGeography(GeographyConverter.strToPoint(0.0, 0.0));
+        return cafeJpaRepository.save(cafe).getId();
     }
 
     // 방탈출 카페 전체 조회
@@ -131,3 +152,6 @@ public class CafeService {
         return new CafeDto.Response(cafe);
     }
 }
+
+
+

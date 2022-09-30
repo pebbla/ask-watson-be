@@ -24,7 +24,7 @@ public class Theme extends BaseTime {
     @Column(length = 64)
     private String themeName;                       // 테마명
 
-    @Column(length = 100, nullable = false)
+    @Column(length = 1000, nullable = false)
     private String themeExplanation;                // 테마 설명
 
     @ManyToOne @JoinColumn(name = "category_id")
@@ -36,8 +36,10 @@ public class Theme extends BaseTime {
 
     private Integer price;                          // 가격
 
+    @Column(length = 400)
     private String reservationUrl;                  // 예약하기 url
 
+    @Column(length = 400)
     private String imageUrl;                        // 방탈출테마 이미지 url
 
     @Builder.Default @ColumnDefault("0")

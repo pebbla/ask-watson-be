@@ -21,6 +21,12 @@ public class ThemeController {
         return responseService.getSingleResponse(themeService.createTheme(cafeId, params));
     }
 
+    // 방탈출 테마 객체 등록
+    @PostMapping(value="/admin/cafes/{cafeId}/themes/new")
+    public SingleResponse<Long> createThemeObj(@PathVariable Long cafeId) {
+        return responseService.getSingleResponse(themeService.createThemeObj(cafeId));
+    }
+
     // 테마 목록 전체 조회
     @GetMapping(value = "/themes")
     public PageResponse<ThemeDto.Response> getThemes(
