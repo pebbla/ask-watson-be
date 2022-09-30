@@ -54,14 +54,14 @@ public class CafeController {
 
     // 방탈출 카페 수정
     @PutMapping(value = "/admin/cafes/{cafeId}", consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
-    public SingleResponse<CafeDto.Response> modifyCafe(@PathVariable Long cafeId, @RequestBody CafeParams params,@RequestPart(value = "file", required = false) MultipartFile file) throws Exception {
+    public SingleResponse<CafeDto.Response> modifyCafe(@PathVariable Long cafeId, @ModelAttribute CafeParams params, @RequestPart(value = "file", required = false) MultipartFile file) throws Exception {
         return responseService.getSingleResponse(cafeService.modifyCafe(cafeId, params, file));
     }
 
     // 방탈출 카페 삭제
     @PatchMapping(value = "/admin/cafes/{cafeId}/unavailable")
-    public CommonResponse deleteCafe(@PathVariable Long cafeId) {
         cafeService.deleteUselessCafeInfo(cafeId);
+    public CommonResponse deleteCafe(@PathVariable Long cafeId) throws Exception {
         return responseService.getSuccessResponse();
     }
 }

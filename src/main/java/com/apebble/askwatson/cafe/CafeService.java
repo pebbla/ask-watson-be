@@ -128,6 +128,7 @@ public class CafeService {
         String imageUrl = params.getImageUrl();
 
         if(file != null) {
+            googleCloudConfig.deleteObject("cafe/" + cafe.getId() + "_");
             imageUrl = googleCloudConfig.uploadObject("cafe/" + cafe.getId() + "_" + params.getCafeName().replace(" ", ""), file);
             params.setImageUrl(imageUrl);
         }
@@ -138,6 +139,7 @@ public class CafeService {
 
     // 방탈출 카페 삭제
     public void deleteUselessCafeInfo(Long cafeId) {
+        googleCloudConfig.deleteObject("cafe/" + cafeId + "_");
         Cafe cafe = cafeJpaRepository.findById(cafeId).orElseThrow(CafeNotFoundException::new);
         setThemesUnavailable(cafe);
         cafe.deleteUselessInfo();

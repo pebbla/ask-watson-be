@@ -3,6 +3,9 @@ package com.apebble.askwatson.theme;
 import com.apebble.askwatson.cafe.Cafe;
 import com.apebble.askwatson.cafe.CafeJpaRepository;
 import com.apebble.askwatson.comm.util.StringConverter;
+import com.apebble.askwatson.comm.exception.CafeNotFoundException;
+import com.apebble.askwatson.comm.exception.CategoryNotFoundException;
+import com.apebble.askwatson.comm.exception.ThemeNotFoundException;
 import com.apebble.askwatson.config.GoogleCloudConfig;
 import com.apebble.askwatson.comm.exception.*;
 import com.apebble.askwatson.heart.Heart;
@@ -144,6 +147,7 @@ public class ThemeService {
         String imageUrl = params.getImageUrl();
 
         if(file != null) {
+            googleCloudConfig.deleteObject("theme/" + theme.getId() + "_");
             imageUrl = googleCloudConfig.uploadObject("theme/" + theme.getId() + "_" + params.getThemeName().replace(" ", ""), file);
             params.setImageUrl(imageUrl);
         }
