@@ -26,7 +26,7 @@ public class GoogleCloudConfig {
     public String uploadObject(String objectName, MultipartFile file) throws Exception {
 
         Storage storage = StorageOptions.newBuilder().setProjectId(PROJECT_ID)
-                .setCredentials(GoogleCredentials.fromStream(new FileInputStream("/Users/choealog/Desktop/watson/pelagic-berm-360511-199ce13e58b2.json")))
+                .setCredentials(GoogleCredentials.fromStream(new FileInputStream("src/main/resources/pelagic-berm-360511-199ce13e58b2.json")))
                 .build().getService();
         BlobId blobId = BlobId.of(BUCKET_NAME, objectName);
 

@@ -1,4 +1,5 @@
 package com.apebble.askwatson.theme;
+import org.springframework.http.MediaType;
 
 import com.apebble.askwatson.comm.response.*;
 import io.swagger.annotations.Api;
@@ -6,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @Api(tags = {"테마"})
 @RestController
@@ -15,10 +17,11 @@ public class ThemeController {
     private final ThemeService themeService;
     private final ResponseService responseService;
 
+
     // 방탈출 테마 등록
-    @PostMapping(value="/admin/cafes/{cafeId}/themes")
-    public SingleResponse<Theme> createTheme(@PathVariable Long cafeId, @RequestBody ThemeParams params) {
-        return responseService.getSingleResponse(themeService.createTheme(cafeId, params));
+    @PostMapping(value="/admin/cafes/{cafeId}/themes", consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
+    public SingleResponse<Theme> createTheme(@PathVariable Long cafeId, @ModelAttribute ThemeParams params, @RequestPart(value = "file") MultipartFile file) throws Exception {
+        return responseService.getSingleResponse(themeService.createTheme(cafeId, params, file));
     }
 
     // 방탈출 테마 객체 등록
@@ -54,9 +57,9 @@ public class ThemeController {
     }
 
     // 테마 수정
-    @PutMapping(value = "/admin/themes/{themeId}")
-    public SingleResponse<ThemeDto.Response> modifyTheme(@PathVariable Long themeId, @RequestBody ThemeParams params) {
-        return responseService.getSingleResponse(themeService.modifyTheme(themeId, params));
+    @PutMapping(value = "/admin/themes/{themeId}", consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
+    public SingleResponse<ThemeDto.Response> modifyTheme(@PathVariable Long themeId, @ModelAttribute ThemeParams params, @RequestPart(value = "file", required=false) MultipartFile file) throws Exception {
+        return responseService.getSingleResponse(themeService.modifyTheme(themeId, params, file));
     }
 
     // 테마 이용가능여부 변경

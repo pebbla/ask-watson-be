@@ -2,11 +2,13 @@ package com.apebble.askwatson.theme;
 
 import com.apebble.askwatson.cafe.Cafe;
 import com.apebble.askwatson.cafe.CafeJpaRepository;
+import com.apebble.askwatson.comm.util.StringConverter;
+import com.apebble.askwatson.config.GoogleCloudConfig;
 import com.apebble.askwatson.comm.exception.*;
-import com.apebble.askwatson.escapecomplete.EscapeComplete;
-import com.apebble.askwatson.escapecomplete.EscapeCompleteJpaRepository;
 import com.apebble.askwatson.heart.Heart;
 import com.apebble.askwatson.heart.HeartJpaRepository;
+import com.apebble.askwatson.escapecomplete.EscapeComplete;
+import com.apebble.askwatson.escapecomplete.EscapeCompleteJpaRepository;
 import com.apebble.askwatson.theme.category.Category;
 import com.apebble.askwatson.theme.category.CategoryJpaRepository;
 import lombok.RequiredArgsConstructor;
@@ -15,10 +17,13 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
+
+import javax.annotation.Nullable;
+import javax.persistence.EntityManager;
 
 import static java.util.stream.Collectors.toList;
 
@@ -32,9 +37,11 @@ public class ThemeService {
     private final ThemeJpaRepository themeJpaRepository;
     private final HeartJpaRepository heartJpaRepository;
     private final EscapeCompleteJpaRepository escapeCompleteJpaRepository;
+    private final GoogleCloudConfig googleCloudConfig;
 
+    
     // 방탈출 테마 등록
-    public Theme createTheme(Long cafeId, ThemeParams params) {
+    public Theme createTheme(Long cafeId, ThemeParams params, MultipartFile file) throws Exception {
         Cafe cafe = cafeJpaRepository.findById(cafeId).orElseThrow(CafeNotFoundException::new);
         Category category = categoryJpaRepository.findById(params.getCategoryId()).orElseThrow(CategoryNotFoundException::new);
 
@@ -49,9 +56,14 @@ public class ThemeService {
                 .reservationUrl(params.getReservationUrl())
                 .imageUrl(params.getImageUrl())
                 .build();
+        entityManager.persist(theme);
+
+        String imageUrl = googleCloudConfig.uploadObject("theme/" + theme.getId() + "_" + theme.getThemeName().replace(" ", ""), file);
+        theme.setImageUrl(imageUrl);
 
         return themeJpaRepository.save(theme);
     }
+
 
     public Long createThemeObj(Long cafeId)  {
         Cafe cafe = cafeJpaRepository.findById(cafeId).orElseThrow(CafeNotFoundException::new);
@@ -125,13 +137,18 @@ public class ThemeService {
         return convertToOneThemeDto(theme, userId);
     }
 
-    // 테마 수정
-    public ThemeDto.Response modifyTheme(Long themeId, ThemeParams params) {
+    // 테마 정보 수정
+    public ThemeDto.Response modifyTheme(Long themeId, ThemeParams params, @Nullable MultipartFile file) throws Exception {
         Theme theme = themeJpaRepository.findById(themeId).orElseThrow(ThemeNotFoundException::new);
         Category category = categoryJpaRepository.findById(params.getCategoryId()).orElseThrow(CategoryNotFoundException::new);
+        String imageUrl = params.getImageUrl();
+
+        if(file != null) {
+            imageUrl = googleCloudConfig.uploadObject("theme/" + theme.getId() + "_" + params.getThemeName().replace(" ", ""), file);
+            params.setImageUrl(imageUrl);
+        }
 
         theme.update(params, category);
-
         return convertToThemeDto(theme);
     }
 

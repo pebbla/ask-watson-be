@@ -5,7 +5,6 @@ import com.apebble.askwatson.comm.response.*;
 import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
 
-import java.util.Map;
 
 import org.locationtech.jts.io.ParseException;
 import org.springframework.data.domain.Pageable;
@@ -54,10 +53,9 @@ public class CafeController {
     }
 
     // 방탈출 카페 수정
-    @PutMapping(value = "/admin/cafes/{cafeId}")
-    public SingleResponse<CafeDto.Response> modifyCafe(@PathVariable Long cafeId, @RequestBody CafeParams params) throws ParseException {
-        System.out.println(params);
-        return responseService.getSingleResponse(cafeService.modifyCafe(cafeId, params));
+    @PutMapping(value = "/admin/cafes/{cafeId}", consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
+    public SingleResponse<CafeDto.Response> modifyCafe(@PathVariable Long cafeId, @RequestBody CafeParams params,@RequestPart(value = "file", required = false) MultipartFile file) throws Exception {
+        return responseService.getSingleResponse(cafeService.modifyCafe(cafeId, params, file));
     }
 
     // 방탈출 카페 삭제

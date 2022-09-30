@@ -1,5 +1,7 @@
 package com.apebble.askwatson.theme;
 
+import javax.annotation.Nullable;
+
 import com.apebble.askwatson.cafe.Cafe;
 import com.apebble.askwatson.theme.category.Category;
 import lombok.*;
@@ -58,6 +60,7 @@ public class ThemeDto {
         private Long locationId=null;
 
         public CafeDto(Cafe entity) {
+
             this.id = entity.getId();
             this.cafeName = entity.getCafeName();
             this.cafePhoneNum = entity.getCafePhoneNum();

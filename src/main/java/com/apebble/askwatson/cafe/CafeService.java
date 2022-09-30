@@ -5,6 +5,7 @@ import com.apebble.askwatson.cafe.location.LocationJpaRepository;
 import com.apebble.askwatson.comm.exception.CafeNotFoundException;
 import com.apebble.askwatson.comm.exception.LocationNotFoundException;
 import com.apebble.askwatson.comm.util.GeographyConverter;
+import com.apebble.askwatson.comm.util.StringConverter;
 import com.apebble.askwatson.config.GoogleCloudConfig;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,6 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.Nullable;
 import javax.persistence.EntityManager;
 
 import static java.util.stream.Collectors.toList;
@@ -37,7 +39,6 @@ public class CafeService {
 
 
     // 방탈출 카페 등록
-    @Transactional
     public CafeDto.Response createCafe(CafeParams params, MultipartFile file) throws Exception {
         Location location = locationJpaRepository.findById(params.getLocationId()).orElseThrow(LocationNotFoundException::new);
 
@@ -52,7 +53,7 @@ public class CafeService {
             .build();
         entityManager.persist(cafe);
 
-        String imageUrl = googleCloudConfig.uploadObject("cafe/" + cafe.getId() + params.getCafeName(), file);
+        String imageUrl = googleCloudConfig.uploadObject("cafe/" + cafe.getId() + "_" + cafe.getCafeName().replace(" ", ""), file);
         cafe.setImageUrl(imageUrl);
 
         return convertToCafeDto(cafeJpaRepository.save(cafe));
@@ -119,13 +120,19 @@ public class CafeService {
         return convertToCafeDto(cafeJpaRepository.findById(cafeId).orElseThrow(CafeNotFoundException::new));
     }
 
+
     // 방탈출 카페 수정
-    public CafeDto.Response modifyCafe(Long cafeId, CafeParams params) throws ParseException{
+    public CafeDto.Response modifyCafe(Long cafeId, CafeParams params, @Nullable MultipartFile file) throws Exception {
         Cafe cafe = cafeJpaRepository.findById(cafeId).orElseThrow(CafeNotFoundException::new);
         Location location = locationJpaRepository.findById(params.getLocationId()).orElseThrow(LocationNotFoundException::new);
+        String imageUrl = params.getImageUrl();
+
+        if(file != null) {
+            imageUrl = googleCloudConfig.uploadObject("cafe/" + cafe.getId() + "_" + params.getCafeName().replace(" ", ""), file);
+            params.setImageUrl(imageUrl);
+        }
 
         cafe.update(params, location);
-
         return convertToCafeDto(cafe);
     }
 
