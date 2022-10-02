@@ -61,9 +61,10 @@ public class ThemeService {
                 .build();
         entityManager.persist(theme);
 
-        String imageUrl = googleCloudConfig.uploadObject("theme/" + theme.getId() + "_" + theme.getThemeName().replace(" ", ""), file);
-        theme.setImageUrl(imageUrl);
-
+        if (file != null) {
+            String imageUrl = googleCloudConfig.uploadObject("theme/" + theme.getId() + "_theme", file);
+            theme.setImageUrl(imageUrl);
+        }
         return themeJpaRepository.save(theme);
     }
 
@@ -137,8 +138,8 @@ public class ThemeService {
         String imageUrl = params.getImageUrl();
 
         if(file != null) {
-            googleCloudConfig.deleteObject("theme/" + theme.getId() + "_");
-            imageUrl = googleCloudConfig.uploadObject("theme/" + theme.getId() + "_" + params.getThemeName().replace(" ", ""), file);
+            googleCloudConfig.deleteObject("theme/" + theme.getId() + "_theme");
+            imageUrl = googleCloudConfig.uploadObject("theme/" + theme.getId() + "_theme", file);
             params.setImageUrl(imageUrl);
         }
 
@@ -147,7 +148,6 @@ public class ThemeService {
     }
 
     // 테마 이용가능여부 변경
-    public void modifyThemeAvailability(Long themeId, boolean isAvailable) {
         Theme theme = themeJpaRepository.findById(themeId).orElseThrow(ThemeNotFoundException::new);
         theme.setAvailable(isAvailable);
     }

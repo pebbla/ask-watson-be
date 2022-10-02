@@ -5,11 +5,9 @@ import com.apebble.askwatson.cafe.location.LocationJpaRepository;
 import com.apebble.askwatson.comm.exception.CafeNotFoundException;
 import com.apebble.askwatson.comm.exception.LocationNotFoundException;
 import com.apebble.askwatson.comm.util.GeographyConverter;
-import com.apebble.askwatson.comm.util.StringConverter;
 import com.apebble.askwatson.config.GoogleCloudConfig;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.locationtech.jts.io.ParseException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -53,9 +51,10 @@ public class CafeService {
             .build();
         entityManager.persist(cafe);
 
-        String imageUrl = googleCloudConfig.uploadObject("cafe/" + cafe.getId() + "_" + cafe.getCafeName().replace(" ", ""), file);
-        cafe.setImageUrl(imageUrl);
-
+        if (file != null) {
+            String imageUrl = googleCloudConfig.uploadObject("cafe/" + cafe.getId() + "_cafe" , file);
+            cafe.setImageUrl(imageUrl);
+        }
         return convertToCafeDto(cafeJpaRepository.save(cafe));
     }
 
@@ -121,8 +120,8 @@ public class CafeService {
         String imageUrl = params.getImageUrl();
 
         if(file != null) {
-            googleCloudConfig.deleteObject("cafe/" + cafe.getId() + "_");
-            imageUrl = googleCloudConfig.uploadObject("cafe/" + cafe.getId() + "_" + params.getCafeName().replace(" ", ""), file);
+            googleCloudConfig.deleteObject("cafe/" + cafe.getId() + "_cafe");
+            imageUrl = googleCloudConfig.uploadObject("cafe/" + cafe.getId() + "_cafe", file);
             params.setImageUrl(imageUrl);
         }
 
@@ -136,6 +135,7 @@ public class CafeService {
         Cafe cafe = cafeJpaRepository.findById(cafeId).orElseThrow(CafeNotFoundException::new);
         setThemesUnavailable(cafe);
         cafe.deleteUselessInfo();
+        googleCloudConfig.deleteObject("cafe/" + cafeId + "_cafe");
     }
 
     private void setThemesUnavailable(Cafe cafe) {

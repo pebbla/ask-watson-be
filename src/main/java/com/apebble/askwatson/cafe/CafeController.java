@@ -22,7 +22,7 @@ public class CafeController {
 
     // 방탈출 카페 등록
     @PostMapping(value="/admin/cafes", consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
-    public SingleResponse<CafeDto.Response> createCafe(@ModelAttribute CafeParams params, @RequestPart(value = "file") MultipartFile file) throws Exception  {
+    public SingleResponse<CafeDto.Response> createCafe(@ModelAttribute CafeParams params, @RequestPart(value = "file", required = false) MultipartFile file) throws Exception  {
         return responseService.getSingleResponse(cafeService.createCafe(params, file));
     }
 

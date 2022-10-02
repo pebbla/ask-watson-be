@@ -20,7 +20,7 @@ public class ThemeController {
 
     // 방탈출 테마 등록
     @PostMapping(value="/admin/cafes/{cafeId}/themes", consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
-    public SingleResponse<Theme> createTheme(@PathVariable Long cafeId, @ModelAttribute ThemeParams params, @RequestPart(value = "file") MultipartFile file) throws Exception {
+    public SingleResponse<Theme> createTheme(@PathVariable Long cafeId, @ModelAttribute ThemeParams params, @RequestPart(value = "file", required = false) MultipartFile file) throws Exception {
         return responseService.getSingleResponse(themeService.createTheme(cafeId, params, file));
     }
 

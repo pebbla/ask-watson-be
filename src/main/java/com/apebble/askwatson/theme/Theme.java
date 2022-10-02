@@ -32,7 +32,7 @@ public class Theme extends BaseTime {
 
     private Integer timeLimit;                      // 제한시간
 
-    private Integer minNumPeople;                       // 최소 인원 수
+    private Integer minNumPeople;                   // 최소 인원 수
 
     private Integer price;                          // 가격
 
