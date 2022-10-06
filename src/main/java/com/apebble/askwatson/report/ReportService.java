@@ -31,8 +31,9 @@ public class ReportService {
         Report report = Report.builder()
                 .reporter(reporter)
                 .reportedUser(review.getUser())
-                .review(review)
                 .content(params.getContent())
+                .review(review)
+                .reviewContent(review.getContent())
                 .build();
 
         return reportJpaRepository.save(report);

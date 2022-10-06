@@ -8,6 +8,8 @@ import javax.transaction.Transactional;
 
 import com.apebble.askwatson.cafe.Cafe;
 import com.apebble.askwatson.escapecomplete.EscapeCompleteService;
+import com.apebble.askwatson.report.Report;
+import com.apebble.askwatson.report.ReportJpaRepository;
 import org.springframework.stereotype.Service;
 
 import com.apebble.askwatson.comm.exception.EscapeCompleteNotFoundException;
@@ -35,6 +37,7 @@ public class ReviewService {
     private final ThemeJpaRepository themeJpaRepository;
     private final EscapeCompleteJpaRepository escapeCompleteJpaRepository;
     private final EscapeCompleteService escapeCompleteService;
+    private final ReportJpaRepository reportJpaRepository;
 
     // 리뷰 등록(탈출완료 여부 확인)
     public Review createReviewByCheckingEscapeComplete(Long userId, Long themeId, ReviewParams params) {
@@ -134,6 +137,7 @@ public class ReviewService {
     public void deleteReview(Long reviewId) {
         Review review = reviewJpaRepository.findById(reviewId).orElseThrow(ReviewNotFoundException::new);
         reflectReviewDeletionInCafeAndTheme(review, review.getTheme());
+        setReportsReviewNull(review);
         reviewJpaRepository.delete(review);
     }
 
@@ -170,5 +174,10 @@ public class ReviewService {
 
     private double calculateDeletedValue(double oldValue, double valueToDelete, int reviewCount) {
         return ((oldValue * reviewCount) - valueToDelete) / (reviewCount - 1);
+    }
+
+    private void setReportsReviewNull(Review review) {
+        List<Report> reports = reportJpaRepository.findByReview(review);
+        reports.forEach(report -> report.setReview(null));
     }
 }

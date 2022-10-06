@@ -15,7 +15,7 @@ public class ReportDto {
         private User reporter;
         private User reportedUser;
         private String content;
-        private Review review;
+        private Long reviewId;
         private String cafeName;
         private String themeName;
         private String createdAt;
@@ -26,9 +26,15 @@ public class ReportDto {
             this.reporter = entity.getReporter();
             this.reportedUser = entity.getReportedUser();
             this.content = entity.getContent();
-            this.review = entity.getReview();
-            this.cafeName = entity.getReview().getTheme().getCafe().getCafeName();
-            this.themeName = entity.getReview().getTheme().getThemeName();
+            if(entity.isReviewNull()){
+                this.reviewId = null;
+                this.cafeName = null;
+                this.themeName = null;
+            } else {
+                this.reviewId = entity.getReview().getId();
+                this.cafeName = entity.getReview().getTheme().getCafe().getCafeName();
+                this.themeName = entity.getReview().getTheme().getThemeName();
+            }
             this.createdAt = entity.getCreatedAt().toString();
             this.handledYn = entity.isHandledYn();
         }
