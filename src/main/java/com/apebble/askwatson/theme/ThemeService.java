@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static java.util.stream.Collectors.toList;
 
@@ -151,12 +152,16 @@ public class ThemeService {
     }
 
     private boolean checkUserHeartedTheme(Long userId, Long themeId) {
-        Heart heart = heartJpaRepository.findByUserIdAndThemeId(userId, themeId);
-        return heart != null;
+        if(userId == null) return false;
+
+        Optional<Heart> heart = heartJpaRepository.findByUserIdAndThemeId(userId, themeId);
+        return heart.isPresent();
     }
 
     private boolean checkUserCompletedTheme(Long userId, Long themeId) {
-        EscapeComplete escapeComplete = escapeCompleteJpaRepository.findByUserIdAndThemeId(userId, themeId);
-        return escapeComplete != null;
+        if(userId == null) return false;
+
+        Optional<EscapeComplete> escapeComplete = escapeCompleteJpaRepository.findByUserIdAndThemeId(userId, themeId);
+        return escapeComplete.isPresent();
     }
 }
