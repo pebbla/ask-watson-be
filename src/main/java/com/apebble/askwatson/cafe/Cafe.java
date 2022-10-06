@@ -38,7 +38,7 @@ public class Cafe extends BaseTime {
 
     private String imageUrl;                                    // 방탈출카페 이미지 url
 
-    @Column(nullable = false, columnDefinition = "GEOMETRY")
+    @Column(columnDefinition = "GEOMETRY")
     private Point geography;                                    // 방탈출카페 위치정보(경도, 위도)
 
     @Builder.Default @ColumnDefault("0")
@@ -48,7 +48,10 @@ public class Cafe extends BaseTime {
     private double rating=0;                                    // 평균 별점
 
     @Builder.Default @ColumnDefault("0")
-    private boolean isEnglishPossible=false;                    // 영어 가능 여부
+    private Boolean isEnglishPossible=false;                    // 영어 가능 여부
+
+    @Builder.Default @ColumnDefault("1")
+    private boolean isAvailable=true;                         // 카페 이용가능 여부
 
     @Singular("theme")
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "cafe", cascade = CascadeType.ALL)
@@ -81,5 +84,16 @@ public class Cafe extends BaseTime {
         this.imageUrl = params.getImageUrl();
         this.geography = GeographyConverter.strToPoint(params.getLongitude(), params.getLatitude());
         this.isEnglishPossible = params.getIsEnglishPossible();
+    }
+
+    public void deleteUselessInfo() {
+        this.isAvailable = false;
+        this.cafePhoneNum = null;
+        this.location = null;
+        this.website = null;
+        this.address = null;
+        this.imageUrl = null;
+        this.geography = null;
+        this.isEnglishPossible = null;
     }
 }

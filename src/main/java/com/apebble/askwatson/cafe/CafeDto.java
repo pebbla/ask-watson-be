@@ -21,7 +21,8 @@ public class CafeDto {
         private PointDto geography;
         private int reviewCount;
         private double rating;
-        private boolean isEnglishPossible;
+        private Boolean isEnglishPossible;
+        private boolean isAvailable;
 
         public Response(Cafe entity) {
             this.id = entity.getId();
@@ -34,7 +35,8 @@ public class CafeDto {
             this.geography = new PointDto(entity.getGeography());
             this.reviewCount = entity.getReviewCount();
             this.rating = entity.getRating();
-            this.isEnglishPossible = entity.isEnglishPossible();
+            this.isEnglishPossible = entity.getIsEnglishPossible();
+            this.isAvailable = entity.isAvailable();
         }
     }
 

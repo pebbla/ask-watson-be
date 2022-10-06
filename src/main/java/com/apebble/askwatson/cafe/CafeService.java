@@ -110,9 +110,9 @@ public class CafeService {
     }
 
     // 방탈출 카페 삭제
-    public void deleteCafe(Long cafeId) throws DataIntegrityViolationException {
+    public void deleteUselessCafeInfo(Long cafeId) {
         Cafe cafe = cafeJpaRepository.findById(cafeId).orElseThrow(CafeNotFoundException::new);
-        cafeJpaRepository.delete(cafe);
+        cafe.deleteUselessInfo();
     }
 
     public Page<CafeDto.Response> convertToCafeDtoPage(Page<Cafe> cafeList){
