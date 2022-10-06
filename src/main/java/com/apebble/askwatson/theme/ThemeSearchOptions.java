@@ -1,11 +1,10 @@
 package com.apebble.askwatson.theme;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
-import org.springframework.util.CollectionUtils;
-
-import java.util.List;
 
 @Data
+@AllArgsConstructor
 public class ThemeSearchOptions {
     private String searchWord;                  // 검색어
 
@@ -26,5 +25,4 @@ public class ThemeSearchOptions {
 
     private Integer timeLimitRangeFrom;         // 시간제한 필터
     private Integer timeLimitRangeTo;           // 시간제한 필터
-
 }

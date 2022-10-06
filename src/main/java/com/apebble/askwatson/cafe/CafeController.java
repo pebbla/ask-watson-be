@@ -25,7 +25,8 @@ public class CafeController {
     // 방탈출 카페 전체 조회
     @GetMapping(value="/cafes")
     public PageResponse<CafeDto.Response> getCafes(
-            @ModelAttribute CafeSearchOptions searchOptions, @PageableDefault(size=20) Pageable pageable) {
+            CafeSearchOptions searchOptions, @PageableDefault(size=20) Pageable pageable) {
+
         return responseService.getPageResponse(cafeService.getCafes(searchOptions, pageable));
     }
 

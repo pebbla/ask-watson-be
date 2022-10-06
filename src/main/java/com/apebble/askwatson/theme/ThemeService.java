@@ -2,10 +2,11 @@ package com.apebble.askwatson.theme;
 
 import com.apebble.askwatson.cafe.Cafe;
 import com.apebble.askwatson.cafe.CafeJpaRepository;
-import com.apebble.askwatson.comm.exception.CafeNotFoundException;
-import com.apebble.askwatson.comm.exception.CategoryNotFoundException;
-import com.apebble.askwatson.comm.exception.DataIntegrityViolationException;
-import com.apebble.askwatson.comm.exception.ThemeNotFoundException;
+import com.apebble.askwatson.comm.exception.*;
+import com.apebble.askwatson.escapecomplete.EscapeComplete;
+import com.apebble.askwatson.escapecomplete.EscapeCompleteJpaRepository;
+import com.apebble.askwatson.heart.Heart;
+import com.apebble.askwatson.heart.HeartJpaRepository;
 import com.apebble.askwatson.theme.category.Category;
 import com.apebble.askwatson.theme.category.CategoryJpaRepository;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static java.util.stream.Collectors.toList;
 
@@ -28,6 +30,8 @@ public class ThemeService {
     private final CafeJpaRepository cafeJpaRepository;
     private final CategoryJpaRepository categoryJpaRepository;
     private final ThemeJpaRepository themeJpaRepository;
+    private final HeartJpaRepository heartJpaRepository;
+    private final EscapeCompleteJpaRepository escapeCompleteJpaRepository;
 
     // 방탈출 테마 등록
     public Theme createTheme(Long cafeId, ThemeParams params) {
@@ -107,8 +111,9 @@ public class ThemeService {
     }
 
     // 테마 단건 조회
-    public ThemeDto.Response getOneTheme(Long themeId) {
-        return convertToThemeDto(themeJpaRepository.findById(themeId).orElseThrow(ThemeNotFoundException::new));
+    public ThemeDtoWithHeartAndComplete.Response getOneTheme(Long themeId, Long userId) {
+        Theme theme =  themeJpaRepository.findById(themeId).orElseThrow(ThemeNotFoundException::new);
+        return convertToOneThemeDto(theme, userId);
     }
 
     // 테마 수정
@@ -137,5 +142,26 @@ public class ThemeService {
 
     public ThemeDto.Response convertToThemeDto(Theme theme){
         return new ThemeDto.Response(theme);
+    }
+
+    public ThemeDtoWithHeartAndComplete.Response convertToOneThemeDto(Theme theme, Long userId){
+        return new ThemeDtoWithHeartAndComplete.Response(
+                theme,
+                checkUserHeartedTheme(userId, theme.getId()),
+                checkUserCompletedTheme(userId, theme.getId()));
+    }
+
+    private boolean checkUserHeartedTheme(Long userId, Long themeId) {
+        if(userId == null) return false;
+
+        Optional<Heart> heart = heartJpaRepository.findByUserIdAndThemeId(userId, themeId);
+        return heart.isPresent();
+    }
+
+    private boolean checkUserCompletedTheme(Long userId, Long themeId) {
+        if(userId == null) return false;
+
+        Optional<EscapeComplete> escapeComplete = escapeCompleteJpaRepository.findByUserIdAndThemeId(userId, themeId);
+        return escapeComplete.isPresent();
     }
 }
