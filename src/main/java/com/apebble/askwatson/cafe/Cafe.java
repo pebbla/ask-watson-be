@@ -51,7 +51,7 @@ public class Cafe extends BaseTime {
     private Boolean isEnglishPossible=false;                    // 영어 가능 여부
 
     @Builder.Default @ColumnDefault("1")
-    private boolean isAvailable=true;                         // 카페 이용가능 여부
+    private boolean isAvailable=true;                           // 카페 이용가능 여부
 
     @Singular("theme")
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "cafe", cascade = CascadeType.ALL)
@@ -61,6 +61,14 @@ public class Cafe extends BaseTime {
     public void addTheme(Theme theme) {
         this.themeList.add(theme);
         if(theme.getCafe() != this) theme.setCafe(this);
+    }
+
+    public boolean isLocationNull(){
+        return this.location == null;
+    }
+
+    public boolean isGeographyNull(){
+        return this.geography == null;
     }
 
     public void updateCafeByReview(double newRating) {

@@ -3,7 +3,6 @@ package com.apebble.askwatson.cafe;
 import com.apebble.askwatson.cafe.location.Location;
 import com.apebble.askwatson.cafe.location.LocationJpaRepository;
 import com.apebble.askwatson.comm.exception.CafeNotFoundException;
-import com.apebble.askwatson.comm.exception.DataIntegrityViolationException;
 import com.apebble.askwatson.comm.exception.LocationNotFoundException;
 import com.apebble.askwatson.comm.util.GeographyConverter;
 import lombok.RequiredArgsConstructor;
@@ -49,8 +48,8 @@ public class CafeService {
     public Page<CafeDto.Response> getCafes(CafeSearchOptions searchOptions, Pageable pageable) {
         Page<Cafe> cafeList;
         cafeList = (searchOptions == null)
-                ? cafeJpaRepository.findAll(pageable)
-                : cafeJpaRepository.findCafesByOptions(searchOptions, pageable);
+                ? cafeJpaRepository.findCafesByIsAvailable(true, pageable)
+                : cafeJpaRepository.findCafesByOptionsAndIsAvailable(searchOptions, true, pageable);
 
         return convertToCafeDtoPage(cafeList);
     }
@@ -112,7 +111,12 @@ public class CafeService {
     // 방탈출 카페 삭제
     public void deleteUselessCafeInfo(Long cafeId) {
         Cafe cafe = cafeJpaRepository.findById(cafeId).orElseThrow(CafeNotFoundException::new);
+        setThemesUnavailable(cafe);
         cafe.deleteUselessInfo();
+    }
+
+    private void setThemesUnavailable(Cafe cafe) {
+        cafe.getThemeList().forEach(theme -> theme.setAvailable(false));
     }
 
     public Page<CafeDto.Response> convertToCafeDtoPage(Page<Cafe> cafeList){

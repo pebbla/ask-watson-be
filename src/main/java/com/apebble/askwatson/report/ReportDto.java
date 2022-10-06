@@ -1,6 +1,5 @@
 package com.apebble.askwatson.report;
 
-import com.apebble.askwatson.review.Review;
 import com.apebble.askwatson.user.User;
 import lombok.Getter;
 import lombok.Setter;
@@ -15,9 +14,9 @@ public class ReportDto {
         private User reporter;
         private User reportedUser;
         private String content;
-        private Long reviewId;
-        private String cafeName;
-        private String themeName;
+        private Long reviewId=null;
+        private String cafeName=null;
+        private String themeName=null;
         private String createdAt;
         private Boolean handledYn;
 
@@ -26,11 +25,7 @@ public class ReportDto {
             this.reporter = entity.getReporter();
             this.reportedUser = entity.getReportedUser();
             this.content = entity.getContent();
-            if(entity.isReviewNull()){
-                this.reviewId = null;
-                this.cafeName = null;
-                this.themeName = null;
-            } else {
+            if(!entity.isReviewNull()){
                 this.reviewId = entity.getReview().getId();
                 this.cafeName = entity.getReview().getTheme().getCafe().getCafeName();
                 this.themeName = entity.getReview().getTheme().getThemeName();

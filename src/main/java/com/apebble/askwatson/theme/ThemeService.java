@@ -63,8 +63,8 @@ public class ThemeService {
     public Page<ThemeDto.Response> getThemes(ThemeSearchOptions searchOptions, Pageable pageable) {
         Page<Theme> themeList;
         themeList = (searchOptions == null)
-            ? themeJpaRepository.findAll(pageable)
-            : themeJpaRepository.findThemesByOptions(searchOptions, pageable);
+            ? themeJpaRepository.findThemesByIsAvailable(true, pageable)
+            : themeJpaRepository.findThemesByOptionsAndIsAvailable(searchOptions, true, pageable);
 
         return convertToThemeDtoPage(themeList);
     }
@@ -111,8 +111,8 @@ public class ThemeService {
     }
 
     // 테마 단건 조회
-    public ThemeDtoWithHeartAndComplete.Response getOneTheme(Long themeId, Long userId) {
-        Theme theme =  themeJpaRepository.findById(themeId).orElseThrow(ThemeNotFoundException::new);
+    public OneThemeDto.Response getOneTheme(Long themeId, Long userId) {
+        Theme theme = themeJpaRepository.findById(themeId).orElseThrow(ThemeNotFoundException::new);
         return convertToOneThemeDto(theme, userId);
     }
 
@@ -126,10 +126,10 @@ public class ThemeService {
         return convertToThemeDto(theme);
     }
 
-    // 테마 삭제
-    public void deleteTheme(Long themeId) throws DataIntegrityViolationException {
+    // 테마 이용가능여부 변경
+    public void modifyThemeAvailability(Long themeId, boolean isAvailable) {
         Theme theme = themeJpaRepository.findById(themeId).orElseThrow(ThemeNotFoundException::new);
-        themeJpaRepository.delete(theme);
+        theme.setAvailable(isAvailable);
     }
 
     public Page<ThemeDto.Response> convertToThemeDtoPage(Page<Theme> themeList){
@@ -144,8 +144,8 @@ public class ThemeService {
         return new ThemeDto.Response(theme);
     }
 
-    public ThemeDtoWithHeartAndComplete.Response convertToOneThemeDto(Theme theme, Long userId){
-        return new ThemeDtoWithHeartAndComplete.Response(
+    public OneThemeDto.Response convertToOneThemeDto(Theme theme, Long userId){
+        return new OneThemeDto.Response(
                 theme,
                 checkUserHeartedTheme(userId, theme.getId()),
                 checkUserCompletedTheme(userId, theme.getId()));

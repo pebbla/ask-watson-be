@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter @Setter
-public class ThemeDtoWithHeartAndComplete {
+public class OneThemeDto {
 
     @Getter @Setter
     public static class Response {
@@ -30,6 +30,7 @@ public class ThemeDtoWithHeartAndComplete {
         private CafeDto cafe;
         private boolean isHearted;
         private boolean isCompleted;
+        private boolean isAvailable;
 
         public Response(Theme entity, boolean isHearted, boolean isCompleted) {
             this.id = entity.getId();
@@ -51,6 +52,7 @@ public class ThemeDtoWithHeartAndComplete {
             this.cafe = new CafeDto(entity.getCafe());
             this.isHearted = isHearted;
             this.isCompleted = isCompleted;
+            this.isAvailable = entity.isAvailable();
         }
     }
 
@@ -59,13 +61,13 @@ public class ThemeDtoWithHeartAndComplete {
         private Long id;
         private String cafeName;
         private String cafePhoneNum;
-        private Long locationId;
+        private Long locationId=null;
 
         public CafeDto(Cafe entity) {
             this.id = entity.getId();
             this.cafeName = entity.getCafeName();
             this.cafePhoneNum = entity.getCafePhoneNum();
-            this.locationId = entity.getLocation().getId();
+            if(!entity.isLocationNull()) this.locationId = entity.getLocation().getId();
         }
     }
 }
