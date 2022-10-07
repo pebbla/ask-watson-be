@@ -27,6 +27,8 @@ import com.apebble.askwatson.user.UserJpaRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import static java.util.stream.Collectors.toList;
+
 @Slf4j
 @Service
 @Transactional
@@ -40,11 +42,11 @@ public class ReviewService {
     private final ReportJpaRepository reportJpaRepository;
 
     // 리뷰 등록(탈출완료 여부 확인)
-    public Review createReviewByCheckingEscapeComplete(Long userId, Long themeId, ReviewParams params) {
+    public ReviewDto.Response createReviewByCheckingEscapeComplete(Long userId, Long themeId, ReviewParams params) {
         if(!doesEscapeCompleteExists(userId, themeId))
             escapeCompleteService.createEscapeComplete(userId, themeId);
 
-        return createReview(userId, themeId, params);
+        return convertToReviewDto(createReview(userId, themeId, params));
     }
 
     private boolean doesEscapeCompleteExists(Long userId, Long themeId) {
@@ -105,27 +107,28 @@ public class ReviewService {
     }
 
     // 유저별 리뷰 리스트 조회
-    public List<Review> getReviewsByUserId(Long userId) {
+    public List<ReviewDto.Response> getReviewsByUserId(Long userId) {
         User user = userJpaRepository.findById(userId).orElseThrow(UserNotFoundException::new);
-        return reviewJpaRepository.findByUser(user);
+        return convertToReviewDtoList(reviewJpaRepository.findByUser(user));
     }
 
     // 테마별 리뷰 리스트 조회
-    public List<Review> getReviewsByThemeId(Long themeId) {
-        return reviewJpaRepository.findByThemeId(themeId);
+    public List<ReviewDto.Response> getReviewsByThemeId(Long themeId) {
+        return convertToReviewDtoList(reviewJpaRepository.findByThemeId(themeId));
     }
 
     // 리뷰 단건 조회
-    public Review getOneReview(Long reviewId) {
-        return reviewJpaRepository.findById(reviewId).orElseThrow(ReviewNotFoundException::new);
+    public ReviewDto.Response getOneReview(Long reviewId) {
+        Review review = reviewJpaRepository.findById(reviewId).orElseThrow(ReviewNotFoundException::new);
+        return convertToReviewDto(review);
     }
 
     // 리뷰 수정
-    public Review modifyReview(Long reviewId, ReviewParams params) {
+    public ReviewDto.Response modifyReview(Long reviewId, ReviewParams params) {
         Review review = reviewJpaRepository.findById(reviewId).orElseThrow(ReviewNotFoundException::new);
         reflectModifiedReviewInCafeAndTheme(review, params, review.getTheme());
         review.update(params);
-        return review;
+        return convertToReviewDto(review);
     }
 
     private void reflectModifiedReviewInCafeAndTheme(Review oldReview, ReviewParams newReview, Theme theme) {
@@ -179,5 +182,13 @@ public class ReviewService {
     private void setReportsReviewNull(Review review) {
         List<Report> reports = reportJpaRepository.findByReview(review);
         reports.forEach(report -> report.setReview(null));
+    }
+
+    private List<ReviewDto.Response> convertToReviewDtoList(List<Review> reviewList){
+        return reviewList.stream().map(ReviewDto.Response::new).collect(toList());
+    }
+
+    private ReviewDto.Response convertToReviewDto(Review review){
+        return new ReviewDto.Response(review);
     }
 }

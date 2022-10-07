@@ -21,32 +21,32 @@ public class ReviewController {
 
     // 리뷰 등록
     @PostMapping(value = "/user/{userId}/themes/{themeId}/reviews")
-    public SingleResponse<Review> createReview(@PathVariable Long userId, @PathVariable Long themeId,
+    public SingleResponse<ReviewDto.Response> createReview(@PathVariable Long userId, @PathVariable Long themeId,
             @RequestBody ReviewParams params) {
         return responseService.getSingleResponse(reviewService.createReviewByCheckingEscapeComplete(userId, themeId, params));
     }
 
     // 유저벌 리뷰 리스트 조회
     @GetMapping(value = "/user/{userId}/reviews")
-    public ListResponse<Review> getReviewsByUserId(@PathVariable Long userId) {
+    public ListResponse<ReviewDto.Response> getReviewsByUserId(@PathVariable Long userId) {
         return responseService.getListResponse(reviewService.getReviewsByUserId(userId));
     }
 
     // 테마별 리뷰 리스트 조회
-    @GetMapping(value = "/reviews/theme/{themeId}")
-    public ListResponse<Review> getReviewsByThemeId(@PathVariable Long themeId) {
+    @GetMapping(value = "/themes/{themeId}/reviews")
+    public ListResponse<ReviewDto.Response> getReviewsByThemeId(@PathVariable Long themeId) {
         return responseService.getListResponse(reviewService.getReviewsByThemeId(themeId));
     }
 
     // 리뷰 단건 조회
     @GetMapping(value = "/reviews/{reviewId}")
-    public SingleResponse<Review> getOneReview(@PathVariable Long reviewId) {
+    public SingleResponse<ReviewDto.Response> getOneReview(@PathVariable Long reviewId) {
         return responseService.getSingleResponse(reviewService.getOneReview(reviewId));
     }
 
     // 리뷰 수정
     @PutMapping(value = "/user/reviews/{reviewId}")
-    public SingleResponse<Review> modifyReview(@PathVariable Long reviewId, @RequestBody ReviewParams params) {
+    public SingleResponse<ReviewDto.Response> modifyReview(@PathVariable Long reviewId, @RequestBody ReviewParams params) {
         return responseService.getSingleResponse(reviewService.modifyReview(reviewId, params));
     }
 
