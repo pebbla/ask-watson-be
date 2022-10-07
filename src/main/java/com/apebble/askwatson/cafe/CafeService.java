@@ -119,15 +119,15 @@ public class CafeService {
         cafe.getThemeList().forEach(theme -> theme.setAvailable(false));
     }
 
-    public Page<CafeDto.Response> convertToCafeDtoPage(Page<Cafe> cafeList){
+    private Page<CafeDto.Response> convertToCafeDtoPage(Page<Cafe> cafeList){
         return cafeList.map(CafeDto.Response::new);
     }
 
-    public List<CafeDto.Response> convertToCafeDtoList(List<Cafe> cafeList){
+    private List<CafeDto.Response> convertToCafeDtoList(List<Cafe> cafeList){
         return cafeList.stream().map(CafeDto.Response::new).collect(toList());
     }
 
-    public CafeDto.Response convertToCafeDto(Cafe cafe){
+    private CafeDto.Response convertToCafeDto(Cafe cafe){
         return new CafeDto.Response(cafe);
     }
 }

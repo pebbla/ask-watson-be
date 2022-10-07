@@ -132,19 +132,19 @@ public class ThemeService {
         theme.setAvailable(isAvailable);
     }
 
-    public Page<ThemeDto.Response> convertToThemeDtoPage(Page<Theme> themeList){
+    private Page<ThemeDto.Response> convertToThemeDtoPage(Page<Theme> themeList){
         return themeList.map(ThemeDto.Response::new);
     }
 
-    public List<ThemeDto.Response> convertToThemeDtoList(List<Theme> themeList){
+    private List<ThemeDto.Response> convertToThemeDtoList(List<Theme> themeList){
         return themeList.stream().map(ThemeDto.Response::new).collect(toList());
     }
 
-    public ThemeDto.Response convertToThemeDto(Theme theme){
+    private ThemeDto.Response convertToThemeDto(Theme theme){
         return new ThemeDto.Response(theme);
     }
 
-    public OneThemeDto.Response convertToOneThemeDto(Theme theme, Long userId){
+    private OneThemeDto.Response convertToOneThemeDto(Theme theme, Long userId){
         return new OneThemeDto.Response(
                 theme,
                 checkUserHeartedTheme(userId, theme.getId()),

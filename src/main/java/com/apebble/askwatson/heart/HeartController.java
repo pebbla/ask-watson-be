@@ -28,9 +28,9 @@ public class HeartController {
 
 
     // 좋아요 해제
-    @DeleteMapping(value = "/user/themes/{themeId}/hearts/{heartId}")
-    public CommonResponse deleteHeart(@PathVariable Long themeId, @PathVariable Long heartId){
-        heartService.deleteHeart(themeId, heartId);
+    @DeleteMapping(value = "/user/hearts/{heartId}")
+    public CommonResponse deleteHeart(@PathVariable Long heartId){
+        heartService.deleteHeart(heartId);
         return responseService.getSuccessResponse();
     }
 
