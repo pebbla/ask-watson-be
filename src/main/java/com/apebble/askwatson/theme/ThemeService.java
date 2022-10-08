@@ -6,7 +6,6 @@ import com.apebble.askwatson.comm.exception.CafeNotFoundException;
 import com.apebble.askwatson.comm.exception.CategoryNotFoundException;
 import com.apebble.askwatson.comm.exception.ThemeNotFoundException;
 import com.apebble.askwatson.config.GoogleCloudConfig;
-import com.apebble.askwatson.comm.exception.*;
 import com.apebble.askwatson.heart.Heart;
 import com.apebble.askwatson.heart.HeartJpaRepository;
 import com.apebble.askwatson.escapecomplete.EscapeComplete;
@@ -43,7 +42,7 @@ public class ThemeService {
 
     
     // 방탈출 테마 등록
-    public Theme createTheme(Long cafeId, ThemeParams params, MultipartFile file) throws Exception {
+    public Theme createTheme(Long cafeId, ThemeParams params, MultipartFile file) {
         Cafe cafe = cafeJpaRepository.findById(cafeId).orElseThrow(CafeNotFoundException::new);
         Category category = categoryJpaRepository.findById(params.getCategoryId()).orElseThrow(CategoryNotFoundException::new);
 
@@ -131,7 +130,7 @@ public class ThemeService {
     }
 
     // 테마 정보 수정
-    public ThemeDto.Response modifyTheme(Long themeId, ThemeParams params, @Nullable MultipartFile file) throws Exception {
+    public ThemeDto.Response modifyTheme(Long themeId, ThemeParams params, @Nullable MultipartFile file) {
         Theme theme = themeJpaRepository.findById(themeId).orElseThrow(ThemeNotFoundException::new);
         Category category = categoryJpaRepository.findById(params.getCategoryId()).orElseThrow(CategoryNotFoundException::new);
         String imageUrl = params.getImageUrl();
@@ -147,7 +146,7 @@ public class ThemeService {
     }
 
     // 테마 이용가능여부 변경
-    public void modifyThemeAvailability(Long themeId, Boolean isAvailable){
+    public void modifyThemeAvailability(Long themeId, Boolean isAvailable) {
         Theme theme = themeJpaRepository.findById(themeId).orElseThrow(ThemeNotFoundException::new);
         theme.setAvailable(isAvailable);
     }

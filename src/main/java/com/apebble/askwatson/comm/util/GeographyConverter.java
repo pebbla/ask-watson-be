@@ -6,7 +6,7 @@ import org.locationtech.jts.io.ParseException;
 
 public class GeographyConverter {
 
-    public static Point strToPoint(Double longitude, Double latitude) throws ParseException{
+    public static Point strToPoint(Double longitude, Double latitude) throws ParseException {
         String pointWKT = String.format("POINT(%s %s)", longitude, latitude);
         Point point = (Point) new WKTReader().read(pointWKT);
 

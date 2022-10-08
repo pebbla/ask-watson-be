@@ -6,6 +6,7 @@ import com.apebble.askwatson.comm.exception.CafeNotFoundException;
 import com.apebble.askwatson.comm.exception.LocationNotFoundException;
 import com.apebble.askwatson.comm.util.GeographyConverter;
 import com.apebble.askwatson.config.GoogleCloudConfig;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -21,6 +22,8 @@ import javax.annotation.Nullable;
 
 import static java.util.stream.Collectors.toList;
 
+import org.locationtech.jts.io.ParseException;
+
 
 
 @Slf4j
@@ -35,7 +38,7 @@ public class CafeService {
 
 
     // 방탈출 카페 등록
-    public CafeDto.Response createCafe(CafeParams params, MultipartFile file) throws Exception {
+    public CafeDto.Response createCafe(CafeParams params, MultipartFile file) throws ParseException {
         Location location = locationJpaRepository.findById(params.getLocationId()).orElseThrow(LocationNotFoundException::new);
 
         Cafe cafe = Cafe.builder()
@@ -112,7 +115,7 @@ public class CafeService {
 
 
     // 방탈출 카페 수정
-    public CafeDto.Response modifyCafe(Long cafeId, CafeParams params, @Nullable MultipartFile file) throws Exception {
+    public CafeDto.Response modifyCafe(Long cafeId, CafeParams params, @Nullable MultipartFile file) throws ParseException {
         Cafe cafe = cafeJpaRepository.findById(cafeId).orElseThrow(CafeNotFoundException::new);
         Location location = locationJpaRepository.findById(params.getLocationId()).orElseThrow(LocationNotFoundException::new);
         String imageUrl = params.getImageUrl();
@@ -128,7 +131,7 @@ public class CafeService {
     }
 
     // 방탈출 카페 삭제
-    public void deleteUselessCafeInfo(Long cafeId) throws Exception {
+    public void deleteUselessCafeInfo(Long cafeId) {
         Cafe cafe = cafeJpaRepository.findById(cafeId).orElseThrow(CafeNotFoundException::new);
         setThemesUnavailable(cafe);
         cafe.deleteUselessInfo();

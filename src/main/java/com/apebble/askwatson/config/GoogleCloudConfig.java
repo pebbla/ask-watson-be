@@ -6,6 +6,7 @@ import java.util.Iterator;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.apebble.askwatson.comm.exception.GoogleStorageException;
 import com.google.api.gax.paging.Page;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.cloud.storage.Blob;
@@ -28,44 +29,54 @@ public class GoogleCloudConfig {
 
     /**
      * 구글 스토리지에 이미지를 저장합니다.
+     * 
      * @param objectName
      * @param file
      * @return
-     * @throws Exception
+     * @throws GoogleStorageException
      */
-    public String uploadObject(String objectName, MultipartFile file) throws Exception {
+    public String uploadObject(String objectName, MultipartFile file) {
+        try {
+            Storage storage = StorageOptions.newBuilder().setProjectId(PROJECT_ID)
+                    .setCredentials(GoogleCredentials.fromStream(
+                            new FileInputStream("src/main/resources/pelagic-berm-360511-199ce13e58b2.json")))
+                    .build().getService();
+            BlobId blobId = BlobId.of(BUCKET_NAME, objectName);
 
-        Storage storage = StorageOptions.newBuilder().setProjectId(PROJECT_ID)
-                .setCredentials(GoogleCredentials.fromStream(new FileInputStream("src/main/resources/pelagic-berm-360511-199ce13e58b2.json")))
-                .build().getService();
-        BlobId blobId = BlobId.of(BUCKET_NAME, objectName);
+            BlobInfo blobInfo = BlobInfo.newBuilder(blobId).setContentType("image/png").build();
+            Blob createdInfo = storage.create(blobInfo, file.getBytes());
+            String createdName = createdInfo.getName();
+            return HOST_URL + BUCKET_NAME + "/" + createdName;
 
-        BlobInfo blobInfo = BlobInfo.newBuilder(blobId).setContentType("image/png").build();
-        Blob createdInfo = storage.create(blobInfo, file.getBytes());
-        String createdName = createdInfo.getName();
-
-        return HOST_URL + BUCKET_NAME + "/" + createdName;
+        } catch (Exception e) {
+            throw new GoogleStorageException();
+        }
     }
-
 
     /**
      * 구글 스토리지의 이미지를 삭제합니다.
+     * 
      * @param objectNamePrefix
      * @return
-     * @throws Exception
+     * @throws GoogleStorageException
      */
-    public void deleteObject(String objectNamePrefix) throws Exception {
+    public void deleteObject(String objectNamePrefix) {
+        try {
+            Storage storage = StorageOptions.newBuilder().setProjectId(PROJECT_ID)
+                    .setCredentials(GoogleCredentials.fromStream(
+                            new FileInputStream("src/main/resources/pelagic-berm-360511-199ce13e58b2.json")))
+                    .build().getService();
 
-        Storage storage = StorageOptions.newBuilder().setProjectId(PROJECT_ID)
-        .setCredentials(GoogleCredentials.fromStream(new FileInputStream("src/main/resources/pelagic-berm-360511-199ce13e58b2.json")))
-        .build().getService();
+            Page<Blob> blobs = storage.list(BUCKET_NAME, BlobListOption.prefix(objectNamePrefix));
+            Iterator<Blob> blobIterator = blobs.iterateAll().iterator();
+            while (blobIterator.hasNext()) {
+                Blob blob = blobIterator.next();
+                blob.delete();
+            }
 
-        Page<Blob> blobs = storage.list(BUCKET_NAME, BlobListOption.prefix(objectNamePrefix));
-        Iterator<Blob> blobIterator = blobs.iterateAll().iterator();
-        while (blobIterator.hasNext()) {
-          Blob blob = blobIterator.next();
-          blob.delete();
-        }      
+        } catch (Exception e) {
+            throw new GoogleStorageException();
+        }
     }
 
 
