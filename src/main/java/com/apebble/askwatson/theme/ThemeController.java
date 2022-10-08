@@ -37,7 +37,7 @@ public class ThemeController {
 
     // 테마 단건 조회
     @GetMapping(value = "/themes/{themeId}")
-    public SingleResponse<ThemeDtoWithHeartAndComplete.Response> getTheme(@PathVariable Long themeId, @RequestParam(required = false) Long userId) {
+    public SingleResponse<OneThemeDto.Response> getTheme(@PathVariable Long themeId, @RequestParam(required = false) Long userId) {
         return responseService.getSingleResponse(themeService.getOneTheme(themeId, userId));
     }
 
@@ -53,10 +53,10 @@ public class ThemeController {
         return responseService.getSingleResponse(themeService.modifyTheme(themeId, params));
     }
 
-    // 테마 삭제
-    @DeleteMapping(value = "/admin/themes/{themeId}")
-    public CommonResponse deleteTheme(@PathVariable Long themeId) {
-        themeService.deleteTheme(themeId);
+    // 테마 이용가능여부 변경
+    @PatchMapping(value = "/admin/themes/{themeId}")
+    public CommonResponse modifyThemeAvailability(@PathVariable Long themeId, @RequestParam boolean isAvailable) {
+        themeService.modifyThemeAvailability(themeId, isAvailable);
         return responseService.getSuccessResponse();
     }
 }

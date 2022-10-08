@@ -46,6 +46,10 @@ public class Review extends BaseTime {
     @JsonIgnore
     private Theme theme;
 
+    public boolean isUserNull(){
+        return this.user == null;
+    }
+
     public void update(ReviewParams params) {
        this.difficulty = params.getDifficulty();
        this.timeTaken = params.getTimeTaken();

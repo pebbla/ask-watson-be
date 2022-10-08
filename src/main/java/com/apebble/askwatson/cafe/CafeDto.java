@@ -18,10 +18,11 @@ public class CafeDto {
         private String website;
         private String address;
         private String imageUrl;
-        private PointDto geography;
+        private PointDto geography = null;
         private int reviewCount;
         private double rating;
-        private boolean isEnglishPossible;
+        private Boolean isEnglishPossible;
+        private boolean isAvailable;
 
         public Response(Cafe entity) {
             this.id = entity.getId();
@@ -31,10 +32,11 @@ public class CafeDto {
             this.website = entity.getWebsite();
             this.address = entity.getAddress();
             this.imageUrl = entity.getImageUrl();
-            this.geography = new PointDto(entity.getGeography());
+            if(!entity.isGeographyNull()) this.geography = new PointDto(entity.getGeography());
             this.reviewCount = entity.getReviewCount();
             this.rating = entity.getRating();
-            this.isEnglishPossible = entity.isEnglishPossible();
+            this.isEnglishPossible = entity.getIsEnglishPossible();
+            this.isAvailable = entity.isAvailable();
         }
     }
 

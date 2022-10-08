@@ -7,6 +7,8 @@ import javax.persistence.*;
 import com.apebble.askwatson.theme.Theme;
 import com.apebble.askwatson.user.User;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 @Entity
 @Builder
@@ -20,7 +22,7 @@ public class Heart {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;                // pk
 
-    @ManyToOne
+    @ManyToOne @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "user_id")
     @JsonIgnore
     private User user;

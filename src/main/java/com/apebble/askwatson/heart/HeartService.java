@@ -24,11 +24,9 @@ import static java.util.stream.Collectors.toList;
 @Transactional
 @RequiredArgsConstructor
 public class HeartService {
-
     private final HeartJpaRepository heartJpaRepository;
     private final UserJpaRepository userJpaRepository;
     private final ThemeJpaRepository themeJpaRepository;
-
     
     // 좋아요 등록
     public Heart createHeart(Long userId, Long themeId) {
@@ -42,15 +40,13 @@ public class HeartService {
         return heartJpaRepository.save(heart);
     }
 
-
     // 좋아요 해제
-    public void deleteHeart(Long themeId, Long heartId) {
+    public void deleteHeart(Long heartId) {
         Heart heart = heartJpaRepository.findById(heartId).orElseThrow(HeartNotFoundException::new);
-        Theme theme = themeJpaRepository.findById(themeId).orElseThrow(ThemeNotFoundException::new);
+        Theme theme = heart.getTheme();
         theme.setHeartCount(theme.getHeartCount() - 1);
         heartJpaRepository.delete(heart);
     }
-
 
     // 좋아요 목록 조회
     public List<HeartDto.Response> getHeartsByUserId(Long userId){
@@ -58,7 +54,7 @@ public class HeartService {
         return convertToHeartDtoList(heartList);
     }
 
-    public List<HeartDto.Response> convertToHeartDtoList(List<Heart> heartList){
+    private List<HeartDto.Response> convertToHeartDtoList(List<Heart> heartList){
         return heartList.stream().map(HeartDto.Response::new).collect(toList());
     }
 }

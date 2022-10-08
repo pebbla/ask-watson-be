@@ -33,6 +33,12 @@ public class Report extends BaseTime {
     @ManyToOne @JoinColumn(name = "review_id")
     private Review review;                  // 신고당한 리뷰
 
+    private String reviewContent;           // 신고당한 리뷰 내용
+
     @Builder.Default @ColumnDefault("0")
     private boolean handledYn=false;        // 관리자 처리 여부
+
+    public boolean isReviewNull(){
+        return this.review == null;
+    }
 }

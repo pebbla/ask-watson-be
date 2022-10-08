@@ -3,7 +3,6 @@ package com.apebble.askwatson.cafe;
 import com.apebble.askwatson.cafe.location.Location;
 import com.apebble.askwatson.cafe.location.LocationJpaRepository;
 import com.apebble.askwatson.comm.exception.CafeNotFoundException;
-import com.apebble.askwatson.comm.exception.DataIntegrityViolationException;
 import com.apebble.askwatson.comm.exception.LocationNotFoundException;
 import com.apebble.askwatson.comm.util.GeographyConverter;
 import lombok.RequiredArgsConstructor;
@@ -49,8 +48,8 @@ public class CafeService {
     public Page<CafeDto.Response> getCafes(CafeSearchOptions searchOptions, Pageable pageable) {
         Page<Cafe> cafeList;
         cafeList = (searchOptions == null)
-                ? cafeJpaRepository.findAll(pageable)
-                : cafeJpaRepository.findCafesByOptions(searchOptions, pageable);
+                ? cafeJpaRepository.findCafesByIsAvailable(true, pageable)
+                : cafeJpaRepository.findCafesByOptionsAndIsAvailable(searchOptions, true, pageable);
 
         return convertToCafeDtoPage(cafeList);
     }
@@ -110,20 +109,25 @@ public class CafeService {
     }
 
     // 방탈출 카페 삭제
-    public void deleteCafe(Long cafeId) throws DataIntegrityViolationException {
+    public void deleteUselessCafeInfo(Long cafeId) {
         Cafe cafe = cafeJpaRepository.findById(cafeId).orElseThrow(CafeNotFoundException::new);
-        cafeJpaRepository.delete(cafe);
+        setThemesUnavailable(cafe);
+        cafe.deleteUselessInfo();
     }
 
-    public Page<CafeDto.Response> convertToCafeDtoPage(Page<Cafe> cafeList){
+    private void setThemesUnavailable(Cafe cafe) {
+        cafe.getThemeList().forEach(theme -> theme.setAvailable(false));
+    }
+
+    private Page<CafeDto.Response> convertToCafeDtoPage(Page<Cafe> cafeList){
         return cafeList.map(CafeDto.Response::new);
     }
 
-    public List<CafeDto.Response> convertToCafeDtoList(List<Cafe> cafeList){
+    private List<CafeDto.Response> convertToCafeDtoList(List<Cafe> cafeList){
         return cafeList.stream().map(CafeDto.Response::new).collect(toList());
     }
 
-    public CafeDto.Response convertToCafeDto(Cafe cafe){
+    private CafeDto.Response convertToCafeDto(Cafe cafe){
         return new CafeDto.Response(cafe);
     }
 }

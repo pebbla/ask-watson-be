@@ -2,8 +2,14 @@ package com.apebble.askwatson.user;
 
 import com.apebble.askwatson.comm.exception.UserNotFoundException;
 import com.apebble.askwatson.comm.util.DateConverter;
+import com.apebble.askwatson.escapecomplete.EscapeComplete;
 import com.apebble.askwatson.escapecomplete.EscapeCompleteJpaRepository;
+import com.apebble.askwatson.heart.Heart;
+import com.apebble.askwatson.heart.HeartJpaRepository;
+import com.apebble.askwatson.heart.HeartService;
+import com.apebble.askwatson.report.Report;
 import com.apebble.askwatson.report.ReportJpaRepository;
+import com.apebble.askwatson.review.Review;
 import com.apebble.askwatson.review.ReviewJpaRepository;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -35,6 +41,8 @@ public class UserService {
     private final ReportJpaRepository reportJpaRepository;
     private final ReviewJpaRepository reviewJpaRepository;
     private final EscapeCompleteJpaRepository escapeCompleteJpaRepository;
+    private final HeartJpaRepository heartJpaRepository;
+    private final HeartService heartService;
 
     // 카카오 토큰으로 로그인
     public Map<String,Object> signInByKakaoToken(String access_token) {
@@ -131,6 +139,35 @@ public class UserService {
     // 회원 삭제
     public void deleteUser(Long userId) {
         User user = userJpaRepository.findById(userId).orElseThrow(UserNotFoundException::new);
+        processAssociations(user);
         userJpaRepository.delete(user);
+    }
+
+    private void processAssociations(User user) {
+        setReviewsUserNull(user);
+        setEscapeCompletesUserNull(user);
+        setReportsReporterNull(user);
+        setReportsReportedUserNull(user);
+    }
+
+    private void setReviewsUserNull(User user) {
+        List<Review> reviews = reviewJpaRepository.findByUser(user);
+        reviews.forEach(review -> review.setUser(null));
+    }
+
+    // TODO: 회원 삭제시 탈출완료 처리 방법 결정될 시 수정
+    private void setEscapeCompletesUserNull(User user) {
+        List<EscapeComplete> escapeCompletes = escapeCompleteJpaRepository.findByUserId(user.getId());
+        escapeCompletes.forEach(ec -> ec.setUser(null));
+    }
+
+    private void setReportsReporterNull(User user) {
+        List<Report> reports = reportJpaRepository.findByReporter(user);
+        reports.forEach(report -> report.setReporter(null));
+    }
+
+    private void setReportsReportedUserNull(User user) {
+        List<Report> reports = reportJpaRepository.findByReportedUser(user);
+        reports.forEach(report -> report.setReportedUser(null));
     }
 }

@@ -61,6 +61,9 @@ public class Theme extends BaseTime {
     @Builder.Default @ColumnDefault("0")
     private double activity=0;                      // 활동성(낮음, 보통, 높음)
 
+    @Builder.Default @ColumnDefault("1")
+    private boolean isAvailable=true;               // 테마 이용가능 여부
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cafe_id")
     @JsonIgnore

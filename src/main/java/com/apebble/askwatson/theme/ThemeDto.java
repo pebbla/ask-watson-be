@@ -25,6 +25,7 @@ public class ThemeDto {
         private double rating;
         private double deviceRatio;
         private double activity;
+        private boolean isAvailable;
         private CafeDto cafe;
 
         public Response(Theme entity) {
@@ -44,6 +45,7 @@ public class ThemeDto {
             this.rating = entity.getRating();
             this.deviceRatio = entity.getDeviceRatio();
             this.activity = entity.getActivity();
+            this.isAvailable = entity.isAvailable();
             this.cafe = new CafeDto(entity.getCafe());
         }
     }
@@ -53,13 +55,13 @@ public class ThemeDto {
         private Long id;
         private String cafeName;
         private String cafePhoneNum;
-        private Long locationId;
+        private Long locationId=null;
 
         public CafeDto(Cafe entity) {
             this.id = entity.getId();
             this.cafeName = entity.getCafeName();
             this.cafePhoneNum = entity.getCafePhoneNum();
-            this.locationId = entity.getLocation().getId();
+            if(!entity.isLocationNull()) this.locationId = entity.getLocation().getId();
         }
     }
 }
