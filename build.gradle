@@ -32,6 +32,9 @@ dependencies {
 	
 	// swagger
 	implementation 'io.springfox:springfox-boot-starter:3.0.0'
+	// google storage
+	implementation platform('com.google.cloud:libraries-bom:26.1.2')
+	implementation 'com.google.cloud:google-cloud-storage'
 }
 
 tasks.named('test') {

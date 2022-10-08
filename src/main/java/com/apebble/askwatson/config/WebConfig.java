@@ -1,4 +1,4 @@
-package com.apebble.askwatson.comm.config;
+package com.apebble.askwatson.config;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;

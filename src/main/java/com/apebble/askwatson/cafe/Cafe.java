@@ -36,6 +36,7 @@ public class Cafe extends BaseTime {
 
     private String address;                                     // 방탈출카페 주소
 
+    @Column(length = 400)
     private String imageUrl;                                    // 방탈출카페 이미지 url
 
     @Column(columnDefinition = "GEOMETRY")

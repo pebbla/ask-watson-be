@@ -30,5 +30,5 @@ public interface ThemeJpaRepository extends JpaRepository<Theme, Long> {
     Page<Theme> findThemesByOptionsAndIsAvailable(@Param("options") ThemeSearchOptions options, @Param("isAvailable") boolean isAvailable, Pageable pageable);
 
     @Query(value = "select t from Theme t where :searchWord is null or (t.themeName like %:searchWord% or t.themeExplanation like %:searchWord%  or t.cafe.cafeName like %:searchWord% or t.cafe.address like %:searchWord% or t.cafe.location.state like %:searchWord% or t.cafe.location.city like %:searchWord% or t.category.categoryName like %:searchWord%)")
-    List<Theme> findThemesBySearchWord(String searchWord);
+    List<Theme> findThemesBySearchWord(@Param("searchWord") String searchWord);
 }

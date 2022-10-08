@@ -1,12 +1,16 @@
 package com.apebble.askwatson.cafe;
+import org.springframework.http.MediaType;
 
 import com.apebble.askwatson.comm.response.*;
 import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
+
+
 import org.locationtech.jts.io.ParseException;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @Api(tags = {"카페"})
 @RestController
@@ -17,9 +21,9 @@ public class CafeController {
     private final ResponseService responseService;
 
     // 방탈출 카페 등록
-    @PostMapping(value="/admin/cafes")
-    public SingleResponse<CafeDto.Response> createCafe(@RequestBody CafeParams params) throws ParseException {
-        return responseService.getSingleResponse(cafeService.createCafe(params));
+    @PostMapping(value="/admin/cafes", consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
+    public SingleResponse<CafeDto.Response> createCafe(@RequestPart CafeParams params, @RequestPart(value = "file", required = false) MultipartFile file) throws ParseException  {
+        return responseService.getSingleResponse(cafeService.createCafe(params, file));
     }
 
     // 방탈출 카페 전체 조회
@@ -43,15 +47,14 @@ public class CafeController {
     }
 
     // 방탈출 카페 수정
-    @PutMapping(value = "/admin/cafes/{cafeId}")
-    public SingleResponse<CafeDto.Response> modifyCafe(@PathVariable Long cafeId, @RequestBody CafeParams params) throws ParseException {
-        System.out.println(params);
-        return responseService.getSingleResponse(cafeService.modifyCafe(cafeId, params));
+    @PutMapping(value = "/admin/cafes/{cafeId}", consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
+    public SingleResponse<CafeDto.Response> modifyCafe(@PathVariable Long cafeId, @RequestPart CafeParams params, @RequestPart(value = "file", required = false) MultipartFile file) throws ParseException {
+        return responseService.getSingleResponse(cafeService.modifyCafe(cafeId, params, file));
     }
 
     // 방탈출 카페 삭제
-    @PatchMapping(value = "/admin/cafes/{cafeId}/unavailable")
-    public CommonResponse deleteCafe(@PathVariable Long cafeId) {
+    @PatchMapping(value = "/admin/cafes/{cafeId}/unavailable") 
+    public CommonResponse deleteUselessCafeInfo(@PathVariable Long cafeId) {
         cafeService.deleteUselessCafeInfo(cafeId);
         return responseService.getSuccessResponse();
     }

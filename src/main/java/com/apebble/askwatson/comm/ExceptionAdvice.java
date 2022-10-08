@@ -1,7 +1,6 @@
 package com.apebble.askwatson.comm;
 
 import com.apebble.askwatson.comm.exception.*;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -116,6 +115,16 @@ public class ExceptionAdvice {
     protected CommonResponse escapeCompleteUndeletableException(){
         return responseService.getErrorResponse(405, "탈출 완료를 취소할 수 없습니다. 리뷰 작성 여부를 확인해주십시오.");
     }
+
+    /**
+     * 500 : Internal Server Error
+     */
+    @ExceptionHandler(GoogleStorageException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    protected CommonResponse googleStorageException(){
+        return responseService.getErrorResponse(500, "구글 스토리지에 에러가 발생했습니다.");
+    }
+
     
     //TODO : 런칭 시 주석제거, -> 포스트맨, 스웨거에서 에러메세지 보기위함
 //    @ExceptionHandler({ Exception.class })

@@ -5,43 +5,58 @@ import com.apebble.askwatson.cafe.location.LocationJpaRepository;
 import com.apebble.askwatson.comm.exception.CafeNotFoundException;
 import com.apebble.askwatson.comm.exception.LocationNotFoundException;
 import com.apebble.askwatson.comm.util.GeographyConverter;
+import com.apebble.askwatson.config.GoogleCloudConfig;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.locationtech.jts.io.ParseException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.Nullable;
+
 import static java.util.stream.Collectors.toList;
+
+import org.locationtech.jts.io.ParseException;
+
+
 
 @Slf4j
 @Service
 @Transactional
 @RequiredArgsConstructor
 public class CafeService {
+
     private final CafeJpaRepository cafeJpaRepository;
     private final LocationJpaRepository locationJpaRepository;
+    private final GoogleCloudConfig googleCloudConfig;
+
 
     // 방탈출 카페 등록
-    public CafeDto.Response createCafe(CafeParams params) throws ParseException {
+    public CafeDto.Response createCafe(CafeParams params, MultipartFile file) throws ParseException {
         Location location = locationJpaRepository.findById(params.getLocationId()).orElseThrow(LocationNotFoundException::new);
 
         Cafe cafe = Cafe.builder()
-                .cafeName(params.getCafeName())
-                .cafePhoneNum(params.getCafePhoneNum())
-                .website(params.getWebsite())
-                .address(params.getAddress())
-                .imageUrl(params.getImageUrl())
-                .location(location)
-                .geography(GeographyConverter.strToPoint(params.getLongitude(), params.getLatitude()))
-                .isEnglishPossible(params.getIsEnglishPossible())
-                .build();
+            .cafeName(params.getCafeName())
+            .cafePhoneNum(params.getCafePhoneNum())
+            .website(params.getWebsite())
+            .address(params.getAddress())
+            .location(location)
+            .geography(GeographyConverter.strToPoint(params.getLongitude(), params.getLatitude()))
+            .isEnglishPossible(params.getIsEnglishPossible())
+            .build();
+        Cafe savedCafe = cafeJpaRepository.save(cafe);
 
-        return convertToCafeDto(cafeJpaRepository.save(cafe));
+        if (file != null) {
+            String imageUrl = googleCloudConfig.uploadObject("cafe/" + cafe.getId() + "_cafe" , file);
+            savedCafe.setImageUrl(imageUrl);
+        }
+        return convertToCafeDto(savedCafe);
     }
 
     // 방탈출 카페 전체 조회
@@ -98,13 +113,20 @@ public class CafeService {
         return convertToCafeDto(cafeJpaRepository.findById(cafeId).orElseThrow(CafeNotFoundException::new));
     }
 
+
     // 방탈출 카페 수정
-    public CafeDto.Response modifyCafe(Long cafeId, CafeParams params) throws ParseException{
+    public CafeDto.Response modifyCafe(Long cafeId, CafeParams params, @Nullable MultipartFile file) throws ParseException {
         Cafe cafe = cafeJpaRepository.findById(cafeId).orElseThrow(CafeNotFoundException::new);
         Location location = locationJpaRepository.findById(params.getLocationId()).orElseThrow(LocationNotFoundException::new);
+        String imageUrl = params.getImageUrl();
+
+        if(file != null) {
+            googleCloudConfig.deleteObject("cafe/" + cafe.getId() + "_cafe");
+            imageUrl = googleCloudConfig.uploadObject("cafe/" + cafe.getId() + "_cafe", file);
+            params.setImageUrl(imageUrl);
+        }
 
         cafe.update(params, location);
-
         return convertToCafeDto(cafe);
     }
 
@@ -113,6 +135,7 @@ public class CafeService {
         Cafe cafe = cafeJpaRepository.findById(cafeId).orElseThrow(CafeNotFoundException::new);
         setThemesUnavailable(cafe);
         cafe.deleteUselessInfo();
+        googleCloudConfig.deleteObject("cafe/" + cafeId + "_cafe");
     }
 
     private void setThemesUnavailable(Cafe cafe) {
@@ -131,3 +154,6 @@ public class CafeService {
         return new CafeDto.Response(cafe);
     }
 }
+
+
+
