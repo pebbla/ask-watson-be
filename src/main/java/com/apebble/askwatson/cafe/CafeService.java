@@ -18,7 +18,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Nullable;
-import javax.persistence.EntityManager;
 
 import static java.util.stream.Collectors.toList;
 
@@ -33,7 +32,6 @@ public class CafeService {
     private final CafeJpaRepository cafeJpaRepository;
     private final LocationJpaRepository locationJpaRepository;
     private final GoogleCloudConfig googleCloudConfig;
-    private final EntityManager entityManager;
 
 
     // 방탈출 카페 등록
@@ -49,13 +47,13 @@ public class CafeService {
             .geography(GeographyConverter.strToPoint(params.getLongitude(), params.getLatitude()))
             .isEnglishPossible(params.getIsEnglishPossible())
             .build();
-        entityManager.persist(cafe);
+        Cafe savedCafe = cafeJpaRepository.save(cafe);
 
         if (file != null) {
             String imageUrl = googleCloudConfig.uploadObject("cafe/" + cafe.getId() + "_cafe" , file);
-            cafe.setImageUrl(imageUrl);
+            savedCafe.setImageUrl(imageUrl);
         }
-        return convertToCafeDto(cafeJpaRepository.save(cafe));
+        return convertToCafeDto(savedCafe);
     }
 
     // 방탈출 카페 전체 조회

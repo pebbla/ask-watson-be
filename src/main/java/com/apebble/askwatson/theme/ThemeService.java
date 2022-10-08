@@ -26,7 +26,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Nullable;
-import javax.persistence.EntityManager;
 
 import static java.util.stream.Collectors.toList;
 
@@ -59,11 +58,11 @@ public class ThemeService {
                 .reservationUrl(params.getReservationUrl())
                 .imageUrl(params.getImageUrl())
                 .build();
-        entityManager.persist(theme);
+        Theme savedTheme = themeJpaRepository.save(theme);
 
         if (file != null) {
             String imageUrl = googleCloudConfig.uploadObject("theme/" + theme.getId() + "_theme", file);
-            theme.setImageUrl(imageUrl);
+            savedTheme.setImageUrl(imageUrl);
         }
         return themeJpaRepository.save(theme);
     }

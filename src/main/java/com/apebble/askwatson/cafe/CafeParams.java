@@ -1,7 +1,5 @@
 package com.apebble.askwatson.cafe;
 
-import org.springframework.web.multipart.MultipartFile;
-
 import lombok.Data;
 
 @Data
