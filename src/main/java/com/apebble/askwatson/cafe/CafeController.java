@@ -54,9 +54,9 @@ public class CafeController {
     }
 
     // 방탈출 카페 삭제
-    @PatchMapping(value = "/admin/cafes/{cafeId}/unavailable")
+    @PatchMapping(value = "/admin/cafes/{cafeId}/unavailable") 
+    public CommonResponse deleteUselessCafeInfo(@PathVariable Long cafeId) throws Exception {
         cafeService.deleteUselessCafeInfo(cafeId);
-    public CommonResponse deleteCafe(@PathVariable Long cafeId) throws Exception {
         return responseService.getSuccessResponse();
     }
 }

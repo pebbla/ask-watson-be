@@ -128,8 +128,7 @@ public class CafeService {
     }
 
     // 방탈출 카페 삭제
-    public void deleteUselessCafeInfo(Long cafeId) {
-        googleCloudConfig.deleteObject("cafe/" + cafeId + "_");
+    public void deleteUselessCafeInfo(Long cafeId) throws Exception {
         Cafe cafe = cafeJpaRepository.findById(cafeId).orElseThrow(CafeNotFoundException::new);
         setThemesUnavailable(cafe);
         cafe.deleteUselessInfo();

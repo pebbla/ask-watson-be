@@ -2,7 +2,6 @@ package com.apebble.askwatson.theme;
 
 import com.apebble.askwatson.cafe.Cafe;
 import com.apebble.askwatson.cafe.CafeJpaRepository;
-import com.apebble.askwatson.comm.util.StringConverter;
 import com.apebble.askwatson.comm.exception.CafeNotFoundException;
 import com.apebble.askwatson.comm.exception.CategoryNotFoundException;
 import com.apebble.askwatson.comm.exception.ThemeNotFoundException;
@@ -24,6 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import javax.annotation.Nullable;
 
@@ -147,6 +147,7 @@ public class ThemeService {
     }
 
     // 테마 이용가능여부 변경
+    public void modifyThemeAvailability(Long themeId, Boolean isAvailable){
         Theme theme = themeJpaRepository.findById(themeId).orElseThrow(ThemeNotFoundException::new);
         theme.setAvailable(isAvailable);
     }
