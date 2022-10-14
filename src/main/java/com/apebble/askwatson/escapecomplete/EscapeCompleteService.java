@@ -36,9 +36,13 @@ public class EscapeCompleteService {
                 .theme(theme)
                 .build();
 
-        theme.setEscapeCount(theme.getEscapeCount()+1);
+        reflectEscapeCompleteCreationInTheme(theme);
 
         return escapeCompleteJpaRepository.save(escapeComplete);
+    }
+
+    private void reflectEscapeCompleteCreationInTheme(Theme theme) {
+        theme.setEscapeCount(theme.getEscapeCount()+1);
     }
 
     // 사용자별 탈출완료 리스트 조회
@@ -56,12 +60,13 @@ public class EscapeCompleteService {
 
     // 탈출 완료 취소(리뷰 여부 확인)
     public void deleteEscapeCompleteByCheckingReview(Long escapeCompleteId) {
-        if(!doesReviewExists(escapeCompleteId))
-            deleteEscapeComplete(escapeCompleteId);
+        EscapeComplete escapeComplete = escapeCompleteJpaRepository.findById(escapeCompleteId).orElseThrow(EscapeCompleteNotFoundException::new);
+
+        if(!doesReviewExists(escapeComplete))
+            deleteEscapeComplete(escapeComplete);
     }
 
-    private boolean doesReviewExists(Long escapeCompleteId) {
-        EscapeComplete escapeComplete = escapeCompleteJpaRepository.findById(escapeCompleteId).orElseThrow(EscapeCompleteNotFoundException::new);
+    private boolean doesReviewExists(EscapeComplete escapeComplete) {
         Optional<Review> review = reviewJpaRepository.findByUserAndTheme(escapeComplete.getUser(), escapeComplete.getTheme());
 
         if(review.isPresent())
@@ -70,10 +75,12 @@ public class EscapeCompleteService {
         return false;
     }
 
-    private void deleteEscapeComplete(Long escapeCompleteId) {
-        EscapeComplete escapeComplete = escapeCompleteJpaRepository.findById(escapeCompleteId).orElseThrow(EscapeCompleteNotFoundException::new);
-        Theme theme = escapeComplete.getTheme();
-        theme.setEscapeCount(theme.getEscapeCount()-1);
+    public void deleteEscapeComplete(EscapeComplete escapeComplete) {
+        reflectEscapeCompleteDeletionInTheme(escapeComplete.getTheme());
         escapeCompleteJpaRepository.delete(escapeComplete);
+    }
+
+    private void reflectEscapeCompleteDeletionInTheme(Theme theme) {
+        theme.setEscapeCount(theme.getEscapeCount()-1);
     }
 }

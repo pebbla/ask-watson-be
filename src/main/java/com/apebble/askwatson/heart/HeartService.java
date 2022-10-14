@@ -36,16 +36,25 @@ public class HeartService {
                 .user(user)
                 .theme(theme)
                 .build();
-        theme.setHeartCount(theme.getHeartCount() + 1);
+
+        reflectHeartCreationInTheme(theme);
+
         return heartJpaRepository.save(heart);
+    }
+
+    private void reflectHeartCreationInTheme(Theme theme) {
+        theme.setHeartCount(theme.getHeartCount() + 1);
     }
 
     // 좋아요 해제
     public void deleteHeart(Long heartId) {
         Heart heart = heartJpaRepository.findById(heartId).orElseThrow(HeartNotFoundException::new);
-        Theme theme = heart.getTheme();
-        theme.setHeartCount(theme.getHeartCount() - 1);
+        reflectHeartDeletionInTheme(heart.getTheme());
         heartJpaRepository.delete(heart);
+    }
+
+    private void reflectHeartDeletionInTheme(Theme theme) {
+        theme.setHeartCount(theme.getHeartCount() - 1);
     }
 
     // 좋아요 목록 조회
