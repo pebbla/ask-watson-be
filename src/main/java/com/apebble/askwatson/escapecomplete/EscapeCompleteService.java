@@ -21,6 +21,7 @@ import java.util.Optional;
 @Transactional
 @RequiredArgsConstructor
 public class EscapeCompleteService {
+
     private final UserJpaRepository userJpaRepository;
     private final ThemeJpaRepository themeJpaRepository;
     private final EscapeCompleteJpaRepository escapeCompleteJpaRepository;
@@ -36,13 +37,9 @@ public class EscapeCompleteService {
                 .theme(theme)
                 .build();
 
-        reflectEscapeCompleteCreationInTheme(theme);
+        theme.incEscapeCount();
 
         return escapeCompleteJpaRepository.save(escapeComplete);
-    }
-
-    private void reflectEscapeCompleteCreationInTheme(Theme theme) {
-        theme.setEscapeCount(theme.getEscapeCount()+1);
     }
 
     // 사용자별 탈출완료 리스트 조회
@@ -76,11 +73,8 @@ public class EscapeCompleteService {
     }
 
     public void deleteEscapeComplete(EscapeComplete escapeComplete) {
-        reflectEscapeCompleteDeletionInTheme(escapeComplete.getTheme());
+        escapeComplete.getTheme().decEscapeCount();
         escapeCompleteJpaRepository.delete(escapeComplete);
     }
 
-    private void reflectEscapeCompleteDeletionInTheme(Theme theme) {
-        theme.setEscapeCount(theme.getEscapeCount()-1);
-    }
 }
