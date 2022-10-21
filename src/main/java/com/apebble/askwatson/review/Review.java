@@ -1,6 +1,7 @@
 package com.apebble.askwatson.review;
 
 import com.apebble.askwatson.comm.BaseTime;
+import com.apebble.askwatson.escapecomplete.EscapeComplete;
 import com.apebble.askwatson.theme.Theme;
 import com.apebble.askwatson.user.User;
 
@@ -45,6 +46,9 @@ public class Review extends BaseTime {
     @JoinColumn(name = "theme_id")
     @JsonIgnore
     private Theme theme;
+
+    @OneToOne @JoinColumn(name = "escape_complete_id")
+    private EscapeComplete escapeComplete;
 
     public boolean isUserNull(){
         return this.user == null;

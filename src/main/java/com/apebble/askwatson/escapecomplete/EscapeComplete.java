@@ -21,7 +21,7 @@ public class EscapeComplete {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;                        // pk
 
-    @OneToOne @JoinColumn(name = "user_id")
+    @ManyToOne @JoinColumn(name = "user_id")
     @JsonIgnore
     private User user;                      // 탈출 완료한 회원
 

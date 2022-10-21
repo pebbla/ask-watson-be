@@ -24,6 +24,7 @@ import static java.util.stream.Collectors.toList;
 @Transactional
 @RequiredArgsConstructor
 public class HeartService {
+
     private final HeartJpaRepository heartJpaRepository;
     private final UserJpaRepository userJpaRepository;
     private final ThemeJpaRepository themeJpaRepository;
@@ -36,15 +37,16 @@ public class HeartService {
                 .user(user)
                 .theme(theme)
                 .build();
-        theme.setHeartCount(theme.getHeartCount() + 1);
+
+        theme.incHeartCount();
+
         return heartJpaRepository.save(heart);
     }
 
     // 좋아요 해제
     public void deleteHeart(Long heartId) {
         Heart heart = heartJpaRepository.findById(heartId).orElseThrow(HeartNotFoundException::new);
-        Theme theme = heart.getTheme();
-        theme.setHeartCount(theme.getHeartCount() - 1);
+        heart.getTheme().decHeartCount();
         heartJpaRepository.delete(heart);
     }
 
@@ -57,4 +59,5 @@ public class HeartService {
     private List<HeartDto.Response> convertToHeartDtoList(List<Heart> heartList){
         return heartList.stream().map(HeartDto.Response::new).collect(toList());
     }
+
 }

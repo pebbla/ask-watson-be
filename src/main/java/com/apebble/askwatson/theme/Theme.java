@@ -18,6 +18,7 @@ import javax.persistence.*;
 @NoArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
 public class Theme extends BaseTime {
+
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;                                // pk
 
@@ -77,21 +78,6 @@ public class Theme extends BaseTime {
         if(!cafe.getThemeList().contains(this))
             cafe.getThemeList().add(this);
     }
-
-    public void updateThemeByReview(double newRating, double newDeviceRatio, double newActivity) {
-        this.rating = newRating;
-        this.deviceRatio = newDeviceRatio;
-        this.activity = newActivity;
-    }
-
-    public void incReviewCount() {
-        this.reviewCount++;
-    }
-
-    public void decReviewCount() {
-        this.reviewCount--;
-    }
-
     public void update(ThemeParams params, Category category) {
         this.themeName = params.getThemeName();
         this.themeExplanation = params.getThemeExplanation();
@@ -102,4 +88,23 @@ public class Theme extends BaseTime {
         this.price = params.getPrice();
         this.reservationUrl = params.getReservationUrl();
     }
+
+    public void updateThemeByReview(double newRating, double newDeviceRatio, double newActivity) {
+        this.rating = newRating;
+        this.deviceRatio = newDeviceRatio;
+        this.activity = newActivity;
+    }
+
+    public void incHeartCount() { this.heartCount++; }
+
+    public void decHeartCount() { this.heartCount--; }
+
+    public void incEscapeCount() { this.escapeCount++; }
+
+    public void decEscapeCount() { this.escapeCount--; }
+
+    public void incReviewCount() { this.reviewCount++; }
+
+    public void decReviewCount() { this.reviewCount--; }
+
 }

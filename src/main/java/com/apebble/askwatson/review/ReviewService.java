@@ -43,22 +43,21 @@ public class ReviewService {
 
     // 리뷰 등록(탈출완료 여부 확인)
     public ReviewDto.Response createReviewByCheckingEscapeComplete(Long userId, Long themeId, ReviewParams params) {
-        if(!doesEscapeCompleteExists(userId, themeId))
-            escapeCompleteService.createEscapeComplete(userId, themeId);
-
-        return convertToReviewDto(createReview(userId, themeId, params));
+        EscapeComplete escapeComplete = findOrCreateEscapeComplete(userId, themeId);
+        return convertToReviewDto(createReview(userId, themeId, escapeComplete, params));
     }
 
-    private boolean doesEscapeCompleteExists(Long userId, Long themeId) {
+    private EscapeComplete findOrCreateEscapeComplete(Long userId, Long themeId) {
         Optional<EscapeComplete> escapeComplete = escapeCompleteJpaRepository.findByUserIdAndThemeId(userId, themeId);
-        return escapeComplete.isPresent();
+        if(escapeComplete.isPresent())
+            return escapeComplete.orElseThrow(EscapeCompleteNotFoundException::new);
+        else
+            return escapeCompleteService.createEscapeComplete(userId, themeId);
     }
 
-    private Review createReview(Long userId, Long themeId, ReviewParams params) {
+    private Review createReview(Long userId, Long themeId, EscapeComplete escapeComplete, ReviewParams params) {
         User user = userJpaRepository.findById(userId).orElseThrow(UserNotFoundException::new);
         Theme theme = themeJpaRepository.findById(themeId).orElseThrow(ThemeNotFoundException::new);
-        EscapeComplete escapeComplete = escapeCompleteJpaRepository.findByUserIdAndThemeId(userId, themeId)
-                .orElseThrow(EscapeCompleteNotFoundException::new);
         
         Review review = Review.builder()
             .user(user)
@@ -70,21 +69,21 @@ public class ReviewService {
             .activity(params.getActivity())
             .content(params.getContent())
             .theme(theme)
+            .escapeComplete(escapeComplete)
             .build();
 
-        reflectNewReviewInCafeAndTheme(params, theme);
-        LocalDate parseLocalDate = DateConverter.strToLocalDate(params.getEscapeCompleteDate());
-        escapeComplete.update(parseLocalDate);
+        reflectReviewCreationInCafeAndTheme(params, theme);
+        reflectReviewCreationInEscapeComplete(escapeComplete, params.getEscapeCompleteDate());
 
         return reviewJpaRepository.save(review);
     }
 
-    private void reflectNewReviewInCafeAndTheme(ReviewParams review, Theme theme) {
-        reflectNewReviewInCafe(review, theme.getCafe());
-        reflectNewReviewInTheme(review, theme);
+    private void reflectReviewCreationInCafeAndTheme(ReviewParams review, Theme theme) {
+        reflectReviewCreationInCafe(review, theme.getCafe());
+        reflectReviewCreationInTheme(review, theme);
     }
 
-    private void reflectNewReviewInCafe(ReviewParams review, Cafe cafe) {
+    private void reflectReviewCreationInCafe(ReviewParams review, Cafe cafe) {
         int reviewCount = cafe.getReviewCount();
         double newRating = calculateNewValue(cafe.getRating(), review.getRating(), reviewCount);
 
@@ -92,7 +91,7 @@ public class ReviewService {
         cafe.incReviewCount();
     }
 
-    private void reflectNewReviewInTheme(ReviewParams review, Theme theme) {
+    private void reflectReviewCreationInTheme(ReviewParams review, Theme theme) {
         int reviewCount = theme.getReviewCount();
         double newRating = calculateNewValue(theme.getRating(), review.getRating(), reviewCount);
         double newDeviceRatio = calculateNewValue(theme.getDeviceRatio(), review.getDeviceRatio(), reviewCount);
@@ -104,6 +103,11 @@ public class ReviewService {
 
     private double calculateNewValue(double oldValue, double newValue, int reviewCount) {
         return ((oldValue * reviewCount) + newValue) / (reviewCount + 1);
+    }
+
+    private void reflectReviewCreationInEscapeComplete(EscapeComplete escapeComplete, String newEscapeCompleteDt) {
+        LocalDate parseLocalDate = DateConverter.strToLocalDate(newEscapeCompleteDt);
+        escapeComplete.update(parseLocalDate);
     }
 
     // 유저별 리뷰 리스트 조회
@@ -133,7 +137,7 @@ public class ReviewService {
 
     private void reflectModifiedReviewInCafeAndTheme(Review oldReview, ReviewParams newReview, Theme theme) {
         reflectReviewDeletionInCafeAndTheme(oldReview, theme);
-        reflectNewReviewInCafeAndTheme(newReview, theme);
+        reflectReviewCreationInCafeAndTheme(newReview, theme);
     }
 
     // 리뷰 삭제
