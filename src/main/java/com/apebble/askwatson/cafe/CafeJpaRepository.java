@@ -20,5 +20,8 @@ public interface CafeJpaRepository extends JpaRepository<Cafe, Long> {
 
     @Query(value = "select c from Cafe c where :searchWord is null or ((c.cafeName like %:searchWord% or c.address like %:searchWord%) " +
             "and (c.location is null or c.location.state like %:searchWord% or c.location.city like %:searchWord%))")
-    List<Cafe> findCafesBySearchWord(String searchWord);
+    List<Cafe> findCafesBySearchWord(@Param("searchWord") String searchWord);
 }
+
+
+

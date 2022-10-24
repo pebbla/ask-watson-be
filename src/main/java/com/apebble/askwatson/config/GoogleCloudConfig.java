@@ -3,6 +3,7 @@ package com.apebble.askwatson.config;
 import java.io.FileInputStream;
 import java.util.Iterator;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -19,12 +20,16 @@ import com.google.cloud.storage.Storage.BlobListOption;
 import lombok.Getter;
 
 @Configuration
-
 public class GoogleCloudConfig {
 
     final static String HOST_URL = "https://storage.googleapis.com/";
     final static String PROJECT_ID = "pelagic-berm-360511";
     final static String BUCKET_NAME = "ask_watson_pebbla";
+    final static String TEST_BUCKET_NAME = "ask_watson_test";
+
+
+    @Value("${spring.profiles.active}")
+    String springProfilesActive;
 
 
     /**
@@ -41,12 +46,13 @@ public class GoogleCloudConfig {
                     .setCredentials(GoogleCredentials.fromStream(
                             new FileInputStream("src/main/resources/pelagic-berm-360511-199ce13e58b2.json")))
                     .build().getService();
-            BlobId blobId = BlobId.of(BUCKET_NAME, objectName);
 
+            String usingBucket = getUsingBucketName();
+            BlobId blobId = BlobId.of(usingBucket, objectName);
             BlobInfo blobInfo = BlobInfo.newBuilder(blobId).setContentType("image/png").build();
             Blob createdInfo = storage.create(blobInfo, file.getBytes());
             String createdName = createdInfo.getName();
-            return HOST_URL + BUCKET_NAME + "/" + createdName;
+            return HOST_URL + usingBucket + "/" + createdName;
 
         } catch (Exception e) {
             throw new GoogleStorageException();
@@ -66,8 +72,9 @@ public class GoogleCloudConfig {
                     .setCredentials(GoogleCredentials.fromStream(
                             new FileInputStream("src/main/resources/pelagic-berm-360511-199ce13e58b2.json")))
                     .build().getService();
-
-            Page<Blob> blobs = storage.list(BUCKET_NAME, BlobListOption.prefix(objectNamePrefix));
+            
+            String usingBucket = getUsingBucketName();
+            Page<Blob> blobs = storage.list(usingBucket, BlobListOption.prefix(objectNamePrefix));
             Iterator<Blob> blobIterator = blobs.iterateAll().iterator();
             while (blobIterator.hasNext()) {
                 Blob blob = blobIterator.next();
@@ -76,6 +83,15 @@ public class GoogleCloudConfig {
 
         } catch (Exception e) {
             throw new GoogleStorageException();
+        }
+    }
+
+
+    private String getUsingBucketName(){
+        if(springProfilesActive.equals("rds") ) {
+            return BUCKET_NAME;
+        } else {
+            return TEST_BUCKET_NAME;
         }
     }
 
