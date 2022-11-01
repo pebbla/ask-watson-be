@@ -93,6 +93,7 @@ public class Cafe extends BaseTime {
         this.imageUrl = params.getImageUrl();
         this.geography = GeographyConverter.strToPoint(params.getLongitude(), params.getLatitude());
         this.isEnglishPossible = params.getIsEnglishPossible();
+        this.isAvailable = params.getIsAvailable();
     }
 
     public void deleteUselessInfo() {
