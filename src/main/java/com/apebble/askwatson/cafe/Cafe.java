@@ -9,11 +9,13 @@ import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 import org.locationtech.jts.geom.Point;
 import org.locationtech.jts.io.ParseException;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
+
+import static javax.persistence.CascadeType.*;
+import static javax.persistence.FetchType.*;
 
 @Entity
 @Builder
@@ -21,43 +23,37 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Cafe extends BaseTime {
+
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;                                            // pk
 
     @Column(length = 64)
     private String cafeName;                                    // 방탈출카페명
-
     private String cafePhoneNum;                                // 방탈출카페 전화번호
-
-    @ManyToOne @JoinColumn(name = "location_id")
-    private Location location;                                  // 방탈출카페 지역
-
     private String website;                                     // 방탈출카페 웹사이트
-
     private String address;                                     // 방탈출카페 주소
-
     @Column(length = 400)
     private String imageUrl;                                    // 방탈출카페 이미지 url
+    @Builder.Default @ColumnDefault("0")
+    private Boolean isEnglishPossible=false;                    // 영어 가능 여부
+    @Builder.Default @ColumnDefault("1")
+    private boolean isAvailable=true;                           // 카페 이용가능 여부
 
+    @ManyToOne(fetch = LAZY) @JoinColumn(name = "location_id")
+    private Location location;                                  // 방탈출카페 지역
     @Column(columnDefinition = "GEOMETRY")
     private Point geography;                                    // 방탈출카페 위치정보(경도, 위도)
 
     @Builder.Default @ColumnDefault("0")
     private int reviewCount=0;                                  // 리뷰 수
-
     @Builder.Default @ColumnDefault("0")
     private double rating=0;                                    // 평균 별점
 
-    @Builder.Default @ColumnDefault("0")
-    private Boolean isEnglishPossible=false;                    // 영어 가능 여부
-
-    @Builder.Default @ColumnDefault("1")
-    private boolean isAvailable=true;                           // 카페 이용가능 여부
-
     @Singular("theme")
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "cafe", cascade = CascadeType.ALL)
+    @OneToMany(fetch = LAZY, mappedBy = "cafe", cascade = ALL)
     @JsonIgnore
     private List<Theme> themeList = new ArrayList<>();          // 방탈출 테마 리스트(fk)
+
 
     //==연관관계 편의 메서드==//
     public void addTheme(Theme theme) {

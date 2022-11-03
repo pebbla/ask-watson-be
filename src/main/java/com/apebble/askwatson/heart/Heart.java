@@ -10,6 +10,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
+import static javax.persistence.FetchType.*;
+
 @Entity
 @Builder
 @Getter
@@ -17,17 +19,16 @@ import org.hibernate.annotations.OnDeleteAction;
 @NoArgsConstructor
 public class Heart {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;                // pk
 
-    @ManyToOne @OnDelete(action = OnDeleteAction.CASCADE)
+    @ManyToOne(fetch = LAZY) @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "user_id")
     @JsonIgnore
-    private User user;
+    private User user;              // 회원
 
-    @ManyToOne                      // 테마 아이디
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "theme_id")
-    private Theme theme;    
+    private Theme theme;            // 테마
     
 }

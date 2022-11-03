@@ -16,7 +16,6 @@ public class HeartDto {
         public Response(Heart entity) {
             this.id = entity.getId();
             this.themeDto = new ThemeDto.Response(entity.getTheme());
-
         }
     }
 }

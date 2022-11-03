@@ -19,14 +19,15 @@ import static java.util.stream.Collectors.toList;
 @Transactional
 @RequiredArgsConstructor
 public class ReportService {
+
     private final ReportJpaRepository reportJpaRepository;
     private final UserJpaRepository userJpaRepository;
     private final ReviewJpaRepository reviewJpaRepository;
 
     // 신고 등록
-    public Report createReport(Long reporterId, Long reviewId, ReportParams params) {
+    public ReportDto.Response createReport(Long reporterId, Long reviewId, ReportParams params) {
         User reporter = userJpaRepository.findById(reporterId).orElseThrow(UserNotFoundException::new);
-        Review review = reviewJpaRepository.findById(reviewId).orElseThrow(ReviewNotFoundException::new);
+        Review review = reviewJpaRepository.findByIdWithUser(reviewId).orElseThrow(ReviewNotFoundException::new);
 
         Report report = Report.builder()
                 .reporter(reporter)
@@ -36,13 +37,13 @@ public class ReportService {
                 .reviewContent(review.getContent())
                 .build();
 
-        return reportJpaRepository.save(report);
+        return convertToReportDto(reportJpaRepository.save(report));
     }
 
     // 신고 전체 조회
     public List<ReportDto.Response> getAllReports(String searchWord) {
         List<Report> reportList = (searchWord == null)
-                ? reportJpaRepository.findAll()
+                ? reportJpaRepository.findAllReports()
                 : reportJpaRepository.findReportsBySearchWord(searchWord);
 
         return convertToReportDtoList(reportList);
@@ -57,13 +58,19 @@ public class ReportService {
         return convertToReportDtoList(reportList);
     }
 
-    private List<ReportDto.Response> convertToReportDtoList(List<Report> reportList){
-        return reportList.stream().map(ReportDto.Response::new).collect(toList());
-    }
-
     // 신고 처리 상태 변경
     public void modifyReportHandledYn(Long reportId, Boolean handledYn) {
         Report report = reportJpaRepository.findById(reportId).orElseThrow(ReportNotFoundException::new);
         report.updateHandledYn(handledYn);
     }
+
+    //== DTO 변환 메서드==//
+    private List<ReportDto.Response> convertToReportDtoList(List<Report> reportList){
+        return reportList.stream().map(ReportDto.Response::new).collect(toList());
+    }
+
+    private ReportDto.Response convertToReportDto(Report report){
+        return new ReportDto.Response(report);
+    }
+
 }

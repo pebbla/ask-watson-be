@@ -9,6 +9,8 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 
+import static javax.persistence.FetchType.*;
+
 @Entity
 @Builder
 @Getter
@@ -16,20 +18,20 @@ import javax.persistence.*;
 @NoArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
 public class Report extends BaseTime {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;                        // pk
 
-    @OneToOne @JoinColumn(name = "reporter_id")
+    @OneToOne(fetch = LAZY) @JoinColumn(name = "reporter_id")
     private User reporter;                  // 신고한 회원
 
-    @OneToOne @JoinColumn(name = "reported_user_id")
+    @OneToOne(fetch = LAZY) @JoinColumn(name = "reported_user_id")
     private User reportedUser;              // 신고당한 회원
 
     @Column(length = 100)
     private String content;                 // 신고 내용
 
-    @ManyToOne @JoinColumn(name = "review_id")
+    @ManyToOne(fetch = LAZY) @JoinColumn(name = "review_id")
     private Review review;                  // 신고당한 리뷰
 
     private String reviewContent;           // 신고당한 리뷰 내용
@@ -37,20 +39,27 @@ public class Report extends BaseTime {
     @Builder.Default @ColumnDefault("0")
     private boolean handledYn=false;        // 관리자 처리 여부
 
+
     //==연관관계 메서드==//
     public void deleteReview() {
         this.review = null;
     }
     //==생성 메서드==//
     //==조회 로직==//
+    public boolean isReporterNull(){
+        return this.reporter == null;
+    }
+    public boolean isReportedUserNull(){
+        return this.reportedUser == null;
+    }
     public boolean isReviewNull(){
         return this.review == null;
     }
 
     //==수정 로직==//
-    public void updateHandledYn(boolean value) {
-        this.handledYn = value;
-    }
+    public void updateHandledYn(boolean value) { this.handledYn = value; }
+    public void deleteReporter() { this.reporter = null; }
+    public void deleteReportedUser() { this.reportedUser = null; }
 
     //==비즈니스 로직==//
 

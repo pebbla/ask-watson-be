@@ -13,12 +13,13 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 @RequestMapping(value = "/v1")
 public class ReportController {
+
     private final ResponseService responseService;
     private final ReportService reportService;
 
     // 신고 등록
     @PostMapping(value = "/user/{userId}/reviews/{reviewId}/reports")
-    public SingleResponse<Report> createReport(@PathVariable Long userId, @PathVariable Long reviewId, @RequestBody ReportParams params) {
+    public SingleResponse<ReportDto.Response> createReport(@PathVariable Long userId, @PathVariable Long reviewId, @RequestBody ReportParams params) {
         return responseService.getSingleResponse(reportService.createReport(userId, reviewId, params));
     }
 
@@ -30,7 +31,6 @@ public class ReportController {
         } else {
             return responseService.getListResponse(reportService.getReportsByHandledYn(searchWord, handledYn));
         }
-
     }
 
     // 신고 처리 상태 변경
@@ -39,4 +39,5 @@ public class ReportController {
         reportService.modifyReportHandledYn(reportId, handledYn);
         return responseService.getSuccessResponse();
     }
+
 }

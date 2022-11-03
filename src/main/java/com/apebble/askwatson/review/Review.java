@@ -11,6 +11,8 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 
+import static javax.persistence.FetchType.*;
+
 @Entity
 @Builder
 @Getter
@@ -18,36 +20,29 @@ import javax.persistence.*;
 @NoArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
 public class Review extends BaseTime {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;                // pk
 
-    @ManyToOne                      // 유저 아이디 
-    @JoinColumn(name = "user_id")
-    @JsonIgnore
-    private User user;    
-    
-    private double difficulty;      // 난이도
-
-    private double timeTaken;       // 걸린시간
-
-    private Integer usedHintNum;    // 사용한 힌트 갯수
-
-    private double rating;          // 별점
-
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;                        // pk
+    private double difficulty;              // 난이도
+    private double timeTaken;               // 걸린시간
+    private Integer usedHintNum;            // 사용한 힌트 갯수
+    private double rating;                  // 별점
     private double deviceRatio;             // 장치 비율(1, 3, 5)
-
     private double activity;                // 활동성(1, 3, 5)
+    private String content;                 // 내용
 
-    private String content;         // 내용
+    @ManyToOne(fetch = LAZY)
+    @JoinColumn(name = "user_id") @JsonIgnore
+    private User user;                      // 회원
 
-    @ManyToOne                      // 테마 
-    @JoinColumn(name = "theme_id")
-    @JsonIgnore
-    private Theme theme;
+    @ManyToOne(fetch = LAZY)
+    @JoinColumn(name = "theme_id") @JsonIgnore
+    private Theme theme;                    // 테마
 
-    @OneToOne @JoinColumn(name = "escape_complete_id")
-    private EscapeComplete escapeComplete;
+    @OneToOne(fetch = LAZY)
+    @JoinColumn(name = "escape_complete_id")
+    private EscapeComplete escapeComplete;  // 탈출완료
+
 
     //==연관관계 편의 메서드==//
     //==생성 메서드==//
@@ -57,6 +52,8 @@ public class Review extends BaseTime {
     }
 
     //==수정 로직==//
+    public void deleteUser() { this.user = null; }
+    public void deleteEscapeComplete() { this.escapeComplete = null; }
     public void update(ReviewParams params) {
        this.difficulty = params.getDifficulty();
        this.timeTaken = params.getTimeTaken();

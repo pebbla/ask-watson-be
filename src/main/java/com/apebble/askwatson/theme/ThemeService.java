@@ -33,6 +33,7 @@ import static java.util.stream.Collectors.toList;
 @Transactional
 @RequiredArgsConstructor
 public class ThemeService {
+
     private final CafeJpaRepository cafeJpaRepository;
     private final CategoryJpaRepository categoryJpaRepository;
     private final ThemeJpaRepository themeJpaRepository;
@@ -87,7 +88,7 @@ public class ThemeService {
     // 방탈출 테마 전체 조회(리스트 - 관리자웹용)
     public List<ThemeDto.Response> getThemeList(String searchWord, Boolean sortByUpdateYn) {
         List<Theme> themeList = (searchWord == null)
-                ? themeJpaRepository.findAll()
+                ? themeJpaRepository.findAllThemes()
                 : themeJpaRepository.findThemesBySearchWord(searchWord);
 
         if(sortByUpdateYn!=null && sortByUpdateYn) {
@@ -127,7 +128,7 @@ public class ThemeService {
 
     // 테마 단건 조회
     public OneThemeDto.Response getOneTheme(Long themeId, Long userId) {
-        Theme theme = themeJpaRepository.findById(themeId).orElseThrow(ThemeNotFoundException::new);
+        Theme theme = themeJpaRepository.findByIdWithCategory(themeId).orElseThrow(ThemeNotFoundException::new);
         return convertToOneThemeDto(theme, userId);
     }
 
@@ -185,4 +186,5 @@ public class ThemeService {
         Optional<EscapeComplete> escapeComplete = escapeCompleteJpaRepository.findByUserIdAndThemeId(userId, themeId);
         return escapeComplete.isPresent();
     }
+
 }

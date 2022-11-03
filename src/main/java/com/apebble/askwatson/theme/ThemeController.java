@@ -14,21 +14,19 @@ import org.springframework.web.multipart.MultipartFile;
 @RequiredArgsConstructor
 @RequestMapping(value = "/v1")
 public class ThemeController {
+
     private final ThemeService themeService;
     private final ResponseService responseService;
 
-
     // 방탈출 테마 등록
     @PostMapping(value="/admin/cafes/{cafeId}/themes", consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
-    public SingleResponse<Theme> createTheme(@PathVariable Long cafeId, @RequestPart ThemeParams params, @RequestPart(value = "file", required = false) MultipartFile file) {
+    public SingleResponse<Theme> createTheme(@PathVariable Long cafeId, @ModelAttribute ThemeParams params, @RequestPart(value = "file", required = false) MultipartFile file) {
         return responseService.getSingleResponse(themeService.createTheme(cafeId, params, file));
     }
 
     // 테마 목록 전체 조회
     @GetMapping(value = "/themes")
-    public PageResponse<ThemeDto.Response> getThemes(
-            ThemeSearchOptions searchOptions, @PageableDefault(size=20) Pageable pageable) {
-
+    public PageResponse<ThemeDto.Response> getThemes(ThemeSearchOptions searchOptions, @PageableDefault(size=20) Pageable pageable) {
         return responseService.getPageResponse(themeService.getThemes(searchOptions, pageable));
     }
 
@@ -52,7 +50,7 @@ public class ThemeController {
 
     // 테마 수정
     @PutMapping(value = "/admin/themes/{themeId}", consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
-    public SingleResponse<ThemeDto.Response> modifyTheme(@PathVariable Long themeId, @RequestPart ThemeParams params, @RequestPart(value = "file", required=false) MultipartFile file) {
+    public SingleResponse<ThemeDto.Response> modifyTheme(@PathVariable Long themeId, @ModelAttribute ThemeParams params, @RequestPart(value = "file", required=false) MultipartFile file) {
         return responseService.getSingleResponse(themeService.modifyTheme(themeId, params, file));
     }
 
@@ -62,4 +60,5 @@ public class ThemeController {
         themeService.modifyThemeAvailability(themeId, isAvailable);
         return responseService.getSuccessResponse();
     }
+
 }

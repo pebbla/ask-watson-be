@@ -35,6 +35,7 @@ import static java.util.stream.Collectors.toList;
 @Transactional
 @RequiredArgsConstructor
 public class UserService {
+
     private final UserJpaRepository userJpaRepository;
     private final ReportJpaRepository reportJpaRepository;
     private final ReviewJpaRepository reviewJpaRepository;
@@ -149,7 +150,7 @@ public class UserService {
 
     private void setReviewsUserNull(User user) {
         List<Review> reviews = reviewJpaRepository.findByUser(user);
-        reviews.forEach(review -> review.setUser(null));
+        reviews.forEach(Review::deleteUser);
     }
 
     private void deleteEscapeCompletesHandlingReviews(User user) {
@@ -160,16 +161,17 @@ public class UserService {
 
     private void setReviewsEscapeCompleteNull(User user) {
         List<Review> reviews = reviewJpaRepository.findByUser(user);
-        reviews.forEach(review -> review.setEscapeComplete(null));
+        reviews.forEach(Review::deleteEscapeComplete);
     }
 
     private void setReportsReporterNull(User user) {
         List<Report> reports = reportJpaRepository.findByReporter(user);
-        reports.forEach(report -> report.setReporter(null));
+        reports.forEach(Report::deleteReporter);
     }
 
     private void setReportsReportedUserNull(User user) {
         List<Report> reports = reportJpaRepository.findByReportedUser(user);
-        reports.forEach(report -> report.setReportedUser(null));
+        reports.forEach(Report::deleteReportedUser);
     }
+
 }

@@ -7,7 +7,6 @@ import com.apebble.askwatson.comm.exception.LocationNotFoundException;
 import com.apebble.askwatson.comm.util.GeographyConverter;
 import com.apebble.askwatson.config.GoogleCloudConfig;
 
-import com.apebble.askwatson.theme.Theme;
 import com.apebble.askwatson.theme.ThemeJpaRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -76,7 +75,7 @@ public class CafeService {
     // 방탈출 카페 전체 조회(리스트 - 관리자웹 개발용)
     public List<CafeDto.Response> getCafeList(String searchWord, Boolean sortByUpdateYn) {
        List<Cafe> cafeList = (searchWord == null)
-                ? cafeJpaRepository.findAll()
+                ? cafeJpaRepository.findAllCafes()
                 : cafeJpaRepository.findCafesBySearchWord(searchWord);
 
        if(sortByUpdateYn!=null && sortByUpdateYn) {
@@ -114,7 +113,7 @@ public class CafeService {
 
     // 방탈출 카페 단건 조회
     public CafeDto.Response getOneCafe(Long cafeId) {
-        return convertToCafeDto(cafeJpaRepository.findById(cafeId).orElseThrow(CafeNotFoundException::new));
+        return convertToCafeDto(cafeJpaRepository.findByIdWithLocation(cafeId).orElseThrow(CafeNotFoundException::new));
     }
 
 
@@ -165,6 +164,7 @@ public class CafeService {
     private CafeDto.Response convertToCafeDto(Cafe cafe){
         return new CafeDto.Response(cafe);
     }
+
 }
 
 
