@@ -64,6 +64,6 @@ public class ReportService {
     // 신고 처리 상태 변경
     public void modifyReportHandledYn(Long reportId, Boolean handledYn) {
         Report report = reportJpaRepository.findById(reportId).orElseThrow(ReportNotFoundException::new);
-        report.setHandledYn(handledYn);
+        report.updateHandledYn(handledYn);
     }
 }

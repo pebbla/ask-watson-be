@@ -13,7 +13,6 @@ import org.hibernate.annotations.OnDeleteAction;
 @Entity
 @Builder
 @Getter
-@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 public class Heart {

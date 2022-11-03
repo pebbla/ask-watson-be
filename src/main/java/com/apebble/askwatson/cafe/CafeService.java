@@ -58,7 +58,7 @@ public class CafeService {
 
         if (file != null) {
             String imageUrl = googleCloudConfig.uploadObject("cafe/" + cafe.getId() + "_cafe" , file);
-            savedCafe.setImageUrl(imageUrl);
+            savedCafe.updateImageUrl(imageUrl);
         }
         return convertToCafeDto(savedCafe);
     }
@@ -138,8 +138,7 @@ public class CafeService {
 
     private void updateThemesAvailability(Cafe cafe, Boolean isCafeAvailable) {
         if(isCafeAvailable != null && !isCafeAvailable) {
-            List<Theme> themes = themeJpaRepository.findThemesByCafe(cafe);
-            themes.forEach(Theme::makeUnavailable);
+            setThemesUnavailable(cafe);
         }
     }
 
@@ -152,7 +151,7 @@ public class CafeService {
     }
 
     private void setThemesUnavailable(Cafe cafe) {
-        cafe.getThemeList().forEach(theme -> theme.setAvailable(false));
+        cafe.getThemeList().forEach(theme -> theme.changeAvailability(false));
     }
 
     private Page<CafeDto.Response> convertToCafeDtoPage(Page<Cafe> cafeList){

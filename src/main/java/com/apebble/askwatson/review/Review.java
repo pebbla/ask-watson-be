@@ -14,7 +14,6 @@ import javax.persistence.*;
 @Entity
 @Builder
 @Getter
-@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
@@ -50,10 +49,14 @@ public class Review extends BaseTime {
     @OneToOne @JoinColumn(name = "escape_complete_id")
     private EscapeComplete escapeComplete;
 
+    //==연관관계 편의 메서드==//
+    //==생성 메서드==//
+    //==조회 로직==//
     public boolean isUserNull(){
         return this.user == null;
     }
 
+    //==수정 로직==//
     public void update(ReviewParams params) {
        this.difficulty = params.getDifficulty();
        this.timeTaken = params.getTimeTaken();
@@ -63,4 +66,7 @@ public class Review extends BaseTime {
        this.activity = params.getActivity();
        this.content = params.getContent();
     }
+
+    //==비즈니스 로직==//
+
 }

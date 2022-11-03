@@ -58,13 +58,14 @@ public class ThemeService {
                 .imageUrl(params.getImageUrl())
                 .isAvailable(params.getIsAvailable())
                 .build();
+
         Theme savedTheme = themeJpaRepository.save(theme);
 
         if (file != null) {
-            String imageUrl = googleCloudConfig.uploadObject("theme/" + theme.getId() + "_theme", file);
-            savedTheme.setImageUrl(imageUrl);
+            String imageUrl = googleCloudConfig.uploadObject("theme/" + savedTheme.getId() + "_theme", file);
+            savedTheme.updateImageUrl(imageUrl);
         }
-        return themeJpaRepository.save(theme);
+        return savedTheme;
     }
 
     // 카페별 테마 조회
@@ -149,7 +150,7 @@ public class ThemeService {
     // 테마 이용가능여부 변경
     public void modifyThemeAvailability(Long themeId, Boolean isAvailable) {
         Theme theme = themeJpaRepository.findById(themeId).orElseThrow(ThemeNotFoundException::new);
-        theme.setAvailable(isAvailable);
+        theme.changeAvailability(isAvailable);
     }
 
     private Page<ThemeDto.Response> convertToThemeDtoPage(Page<Theme> themeList){

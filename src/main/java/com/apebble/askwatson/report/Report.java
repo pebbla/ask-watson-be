@@ -12,7 +12,6 @@ import javax.persistence.*;
 @Entity
 @Builder
 @Getter
-@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
@@ -38,7 +37,21 @@ public class Report extends BaseTime {
     @Builder.Default @ColumnDefault("0")
     private boolean handledYn=false;        // 관리자 처리 여부
 
+    //==연관관계 메서드==//
+    public void deleteReview() {
+        this.review = null;
+    }
+    //==생성 메서드==//
+    //==조회 로직==//
     public boolean isReviewNull(){
         return this.review == null;
     }
+
+    //==수정 로직==//
+    public void updateHandledYn(boolean value) {
+        this.handledYn = value;
+    }
+
+    //==비즈니스 로직==//
+
 }

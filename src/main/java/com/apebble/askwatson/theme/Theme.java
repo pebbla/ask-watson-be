@@ -13,7 +13,6 @@ import javax.persistence.*;
 @Entity
 @Builder
 @Getter
-@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
@@ -72,12 +71,26 @@ public class Theme extends BaseTime {
     @JsonIgnore
     private Cafe cafe;                              // 방탈출 카페
 
+    //==연관관계 편의 메서드==//
     public void setCafe(Cafe cafe) {
         this.cafe = cafe;
 
         if(!cafe.getThemeList().contains(this))
             cafe.getThemeList().add(this);
     }
+
+    //==생성 메서드==//
+    //==조회 로직==//
+    //==수정 로직==//
+    public void incHeartCount() { this.heartCount++; }
+    public void decHeartCount() { this.heartCount--; }
+    public void incEscapeCount() { this.escapeCount++; }
+    public void decEscapeCount() { this.escapeCount--; }
+    public void incReviewCount() { this.reviewCount++; }
+    public void decReviewCount() { this.reviewCount--; }
+    public void changeAvailability(boolean value) {this.isAvailable = value;}
+    public void updateImageUrl(String url) { this.imageUrl = url; }
+
     public void update(ThemeParams params, Category category) {
         this.themeName = params.getThemeName();
         this.themeExplanation = params.getThemeExplanation();
@@ -90,24 +103,12 @@ public class Theme extends BaseTime {
         this.isAvailable = params.getIsAvailable();
     }
 
-    public void updateThemeByReview(double newRating, double newDeviceRatio, double newActivity) {
+    public void updateByReview(double newRating, double newDeviceRatio, double newActivity) {
         this.rating = newRating;
         this.deviceRatio = newDeviceRatio;
         this.activity = newActivity;
     }
 
-    public void incHeartCount() { this.heartCount++; }
-
-    public void decHeartCount() { this.heartCount--; }
-
-    public void incEscapeCount() { this.escapeCount++; }
-
-    public void decEscapeCount() { this.escapeCount--; }
-
-    public void incReviewCount() { this.reviewCount++; }
-
-    public void decReviewCount() { this.reviewCount--; }
-
-    public void makeUnavailable() {this.isAvailable = false;}
+    //==비즈니스 로직==//
 
 }

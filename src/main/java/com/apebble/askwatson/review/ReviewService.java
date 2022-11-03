@@ -87,7 +87,7 @@ public class ReviewService {
         int reviewCount = cafe.getReviewCount();
         double newRating = calculateNewValue(cafe.getRating(), review.getRating(), reviewCount);
 
-        cafe.updateCafeByReview(newRating);
+        cafe.updateRating(newRating);
         cafe.incReviewCount();
     }
 
@@ -97,7 +97,7 @@ public class ReviewService {
         double newDeviceRatio = calculateNewValue(theme.getDeviceRatio(), review.getDeviceRatio(), reviewCount);
         double newActivity = calculateNewValue(theme.getActivity(), review.getActivity(), reviewCount);
 
-        theme.updateThemeByReview(newRating, newDeviceRatio, newActivity);
+        theme.updateByReview(newRating, newDeviceRatio, newActivity);
         theme.incReviewCount();
     }
 
@@ -136,36 +136,38 @@ public class ReviewService {
     }
 
     private void reflectModifiedReviewInCafeAndTheme(Review oldReview, ReviewParams newReview, Theme theme) {
-        reflectReviewDeletionInCafeAndTheme(oldReview, theme);
+        reflectReviewDeletionInCafeAndTheme(oldReview);
         reflectReviewCreationInCafeAndTheme(newReview, theme);
     }
 
     // 리뷰 삭제
     public void deleteReview(Long reviewId) {
         Review review = reviewJpaRepository.findById(reviewId).orElseThrow(ReviewNotFoundException::new);
-        reflectReviewDeletionInCafeAndTheme(review, review.getTheme());
-        setReportsReviewNull(review);
+        reflectReviewDeletionInCafeAndTheme(review);
+        deleteReviewInReport(review);
         reviewJpaRepository.delete(review);
     }
 
-    private void reflectReviewDeletionInCafeAndTheme(Review review, Theme theme) {
-        reflectReviewDeletionInCafe(review, theme.getCafe());
-        reflectReviewDeletionInTheme(review, theme);
+    private void reflectReviewDeletionInCafeAndTheme(Review review) {
+        deleteReviewInCafe(review);
+        deleteReviewInTheme(review);
     }
 
-    private void reflectReviewDeletionInCafe(Review review, Cafe cafe) {
+    private void deleteReviewInCafe(Review review) {
+        Cafe cafe = review.getTheme().getCafe();
         int reviewCount = cafe.getReviewCount();
-        double deletedRating=0;
 
+        double deletedRating=0;
         if(reviewCount > 1) {
             deletedRating = calculateDeletedValue(cafe.getRating(), review.getRating(),reviewCount);
         }
 
-        cafe.updateCafeByReview(deletedRating);
+        cafe.updateRating(deletedRating);
         cafe.decReviewCount();
     }
 
-    private void reflectReviewDeletionInTheme(Review review, Theme theme) {
+    private void deleteReviewInTheme(Review review) {
+        Theme theme = review.getTheme();
         int reviewCount = theme.getReviewCount();
         double deletedRating=0, deletedDeviceRatio=0, deletedActivity=0;
 
@@ -175,7 +177,7 @@ public class ReviewService {
             deletedActivity = calculateDeletedValue(theme.getActivity(), review.getActivity(), reviewCount);
         }
 
-        theme.updateThemeByReview(deletedRating, deletedDeviceRatio, deletedActivity);
+        theme.updateByReview(deletedRating, deletedDeviceRatio, deletedActivity);
         theme.decReviewCount();
     }
 
@@ -183,9 +185,9 @@ public class ReviewService {
         return ((oldValue * reviewCount) - valueToDelete) / (reviewCount - 1);
     }
 
-    private void setReportsReviewNull(Review review) {
+    private void deleteReviewInReport(Review review) {
         List<Report> reports = reportJpaRepository.findByReview(review);
-        reports.forEach(report -> report.setReview(null));
+        reports.forEach(report -> report.deleteReview());
     }
 
     private List<ReviewDto.Response> convertToReviewDtoList(List<Review> reviewList){

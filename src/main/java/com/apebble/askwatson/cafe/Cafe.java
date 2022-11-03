@@ -9,6 +9,7 @@ import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 import org.locationtech.jts.geom.Point;
 import org.locationtech.jts.io.ParseException;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -17,7 +18,6 @@ import java.util.List;
 @Entity
 @Builder
 @Getter
-@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 public class Cafe extends BaseTime {
@@ -59,30 +59,30 @@ public class Cafe extends BaseTime {
     @JsonIgnore
     private List<Theme> themeList = new ArrayList<>();          // 방탈출 테마 리스트(fk)
 
+    //==연관관계 편의 메서드==//
     public void addTheme(Theme theme) {
         this.themeList.add(theme);
         if(theme.getCafe() != this) theme.setCafe(this);
     }
 
+    //==생성 메서드==//
+//    public static createCafe(CafeParams params, MultipartFile file, Location location) {
+//
+//    }
+
+    //==조회 로직==//
     public boolean isLocationNull(){
         return this.location == null;
     }
-
     public boolean isGeographyNull(){
         return this.geography == null;
     }
 
-    public void updateCafeByReview(double newRating) {
-        this.rating = newRating;
-    }
-
-    public void incReviewCount() {
-        this.reviewCount++;
-    }
-
-    public void decReviewCount() {
-        this.reviewCount--;
-    }
+    //==수정 로직==//
+    public void updateRating(double newRating) { this.rating = newRating; }
+    public void updateImageUrl(String url) { this.imageUrl = url; }
+    public void incReviewCount() { this.reviewCount++; }
+    public void decReviewCount() { this.reviewCount--; }
 
     public void update(CafeParams params, Location location) throws ParseException{
         this.cafeName = params.getCafeName();
@@ -96,6 +96,7 @@ public class Cafe extends BaseTime {
         this.isAvailable = params.getIsAvailable();
     }
 
+    //==비즈니스 로직==//
     public void deleteUselessInfo() {
         this.isAvailable = false;
         this.cafePhoneNum = null;
