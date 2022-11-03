@@ -32,11 +32,11 @@ public class Review extends BaseTime {
     private String content;                 // 내용
 
     @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "user_id") @JsonIgnore
+    @JoinColumn(name = "user_id")
     private User user;                      // 회원
 
     @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "theme_id") @JsonIgnore
+    @JoinColumn(name = "theme_id")
     private Theme theme;                    // 테마
 
     @OneToOne(fetch = LAZY)

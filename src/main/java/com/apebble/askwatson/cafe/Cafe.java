@@ -51,7 +51,6 @@ public class Cafe extends BaseTime {
 
     @Singular("theme")
     @OneToMany(fetch = LAZY, mappedBy = "cafe", cascade = ALL)
-    @JsonIgnore
     private List<Theme> themeList = new ArrayList<>();          // 방탈출 테마 리스트(fk)
 
 

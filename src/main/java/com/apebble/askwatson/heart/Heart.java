@@ -24,7 +24,6 @@ public class Heart {
 
     @ManyToOne(fetch = LAZY) @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "user_id")
-    @JsonIgnore
     private User user;              // 회원
 
     @ManyToOne(fetch = LAZY)

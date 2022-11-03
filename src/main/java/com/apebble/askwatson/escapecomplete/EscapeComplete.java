@@ -29,7 +29,7 @@ public class EscapeComplete {
     private LocalDate escapeCompleteDt;     // 탈출 완료 일시 (Default: 오늘 날짜)
 
     @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "user_id") @JsonIgnore
+    @JoinColumn(name = "user_id")
     private User user;                      // 탈출 완료한 회원
 
     @OneToOne(fetch = LAZY)

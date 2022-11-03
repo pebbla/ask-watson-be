@@ -19,19 +19,19 @@ public class EscapeCompleteController {
 
     // 유저 탈출 완료
     @PostMapping(value = "/user/{userId}/themes/{themeId}/escape-completes")
-    public SingleResponse<EscapeComplete> createEscapeComplete(@PathVariable Long userId, @PathVariable Long themeId) {
-        return responseService.getSingleResponse(escapeCompleteService.createEscapeComplete(userId, themeId));
+    public SingleResponse<EscapeCompleteDto.Response> createEscapeComplete(@PathVariable Long userId, @PathVariable Long themeId) {
+        return responseService.getSingleResponse(escapeCompleteService.createEscapeCompleteWithDto(userId, themeId));
     }
 
     // 사용자별 탈출완료 목록 조회
     @GetMapping(value = "/user/{userId}/escape-completes")
-    public ListResponse<EscapeComplete> getEscapeCompletesByUser(@PathVariable Long userId) {
+    public ListResponse<EscapeCompleteDto.Response> getEscapeCompletesByUser(@PathVariable Long userId) {
         return responseService.getListResponse(escapeCompleteService.getEscapeCompletesByUserId(userId));
     }
 
     // 탈출 완료 일시 수정
     @PatchMapping(value = "/user/escape-completes/{escapeCompleteId}")
-    public SingleResponse<EscapeComplete> modifyEscapeCompleteDt(@PathVariable Long escapeCompleteId, @RequestParam(name="escapeCompleteDt") String escapeCompleteDtStr) {
+    public SingleResponse<EscapeCompleteDto.Response> modifyEscapeCompleteDt(@PathVariable Long escapeCompleteId, @RequestParam(name="escapeCompleteDt") String escapeCompleteDtStr) {
         return responseService.getSingleResponse(escapeCompleteService.modifyEscapeCompleteDt(
                 escapeCompleteId, DateConverter.strToLocalDate(escapeCompleteDtStr)));
     }

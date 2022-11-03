@@ -16,7 +16,6 @@ public class Faq extends BaseTime {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;                // pk
-
     private String title;           // 제목
     @Column(length = 2000)
     private String content;         // 내용

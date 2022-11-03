@@ -1,5 +1,7 @@
 package com.apebble.askwatson.user;
 
+import com.apebble.askwatson.cafe.Cafe;
+import com.apebble.askwatson.cafe.CafeDto;
 import com.apebble.askwatson.comm.exception.UserNotFoundException;
 import com.apebble.askwatson.comm.util.DateConverter;
 import com.apebble.askwatson.escapecomplete.EscapeComplete;
@@ -92,7 +94,7 @@ public class UserService {
     /**
      * 회원 등록
      */
-    public User createUser(UserParams params) {
+    public UserDto.Response createUser(UserParams params) {
         User user = User.builder()
                 .userNickname(params.getUserNickname())
                 .userPhoneNum(params.getUserPhoneNum())
@@ -101,7 +103,7 @@ public class UserService {
                 .marketingAgreeYn(params.getMarketingAgreeYn())
                 .build();
 
-        return userJpaRepository.save(user);
+        return convertToDto(userJpaRepository.save(user));
     }
 
     /**
@@ -113,7 +115,7 @@ public class UserService {
                 ? userJpaRepository.findAll()
                 : userJpaRepository.findUsersBySearchWord(searchWord);
 
-        return convertToUserDtoList(users);
+        return convertToDtoList(users);
     }
 
     private int getUserReportedCount(User user) {
@@ -132,11 +134,11 @@ public class UserService {
     /**
      * 회원정보 수정
      */
-    public User modifyUser(Long userId, UserParams params) {
+    public UserDto.Response modifyUser(Long userId, UserParams params) {
         User user = userJpaRepository.findById(userId).orElseThrow(UserNotFoundException::new);
         user.update(params);
 
-        return user;
+        return convertToDto(user);
     }
 
 
@@ -184,10 +186,14 @@ public class UserService {
 
 
     //==DTO 변환 함수==//
-    private List<UserDto.Response> convertToUserDtoList(List<User> users){
+    private List<UserDto.Response> convertToDtoList(List<User> users){
         return users.stream().map(user ->
                 new UserDto.Response(user, getUserReportedCount(user), getUserReviewCount(user), getUserEscapeCompleteCount(user))
         ).collect(toList());
+    }
+
+    private UserDto.Response convertToDto(User user){
+        return new UserDto.Response(user, getUserReportedCount(user), getUserReviewCount(user), getUserEscapeCompleteCount(user));
     }
 
 }

@@ -45,7 +45,7 @@ public class ThemeService {
     /**
      * 방탈출 테마 등록
      */
-    public Theme createTheme(Long cafeId, ThemeParams params, MultipartFile file) {
+    public ThemeDto.Response createTheme(Long cafeId, ThemeParams params, MultipartFile file) {
         Cafe cafe = cafeJpaRepository.findById(cafeId).orElseThrow(CafeNotFoundException::new);
         Category category = categoryJpaRepository.findById(params.getCategoryId()).orElseThrow(CategoryNotFoundException::new);
 
@@ -68,7 +68,7 @@ public class ThemeService {
             String imageUrl = googleCloudConfig.uploadObject("theme/" + savedTheme.getId() + "_theme", file);
             savedTheme.updateImageUrl(imageUrl);
         }
-        return savedTheme;
+        return convertToThemeDto(savedTheme);
     }
 
 
@@ -76,9 +76,9 @@ public class ThemeService {
      * 카페별 테마 조회
      */
     @Transactional(readOnly = true)
-    public List<Theme> getThemesByCafe(Long cafeId) {
+    public List<ThemeDto.Response> getThemesByCafe(Long cafeId) {
         Cafe cafe = cafeJpaRepository.findById(cafeId).orElseThrow(CafeNotFoundException::new);
-        return themeJpaRepository.findThemesByCafe(cafe);
+        return convertToThemeDtoList(themeJpaRepository.findThemesByCafe(cafe));
     }
 
 

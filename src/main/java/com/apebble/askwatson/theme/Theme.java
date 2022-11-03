@@ -56,7 +56,7 @@ public class Theme extends BaseTime {
     private Category category;                      // 카테고리
 
     @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "cafe_id") @JsonIgnore
+    @JoinColumn(name = "cafe_id")
     private Cafe cafe;                              // 방탈출 카페
 
 

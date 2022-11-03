@@ -10,16 +10,18 @@ import javax.persistence.*;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Notice extends BaseTime {
+
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;                    // pk
-
     private String title;               // 제목
-
     @Column(length = 2000)
     private String content;             // 내용
 
+
+    //==수정 로직==//
     public void update(NoticeParams params) {
         this.title = params.getTitle();
         this.content = params.getContent();
     }
+
 }

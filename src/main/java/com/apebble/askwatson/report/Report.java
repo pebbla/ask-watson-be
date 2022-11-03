@@ -40,18 +40,13 @@ public class Report extends BaseTime {
     private boolean handledYn=false;        // 관리자 처리 여부
 
 
+
     //==연관관계 메서드==//
     public void deleteReview() {
         this.review = null;
     }
-    //==생성 메서드==//
+
     //==조회 로직==//
-    public boolean isReporterNull(){
-        return this.reporter == null;
-    }
-    public boolean isReportedUserNull(){
-        return this.reportedUser == null;
-    }
     public boolean isReviewNull(){
         return this.review == null;
     }
@@ -60,7 +55,5 @@ public class Report extends BaseTime {
     public void updateHandledYn(boolean value) { this.handledYn = value; }
     public void deleteReporter() { this.reporter = null; }
     public void deleteReportedUser() { this.reportedUser = null; }
-
-    //==비즈니스 로직==//
 
 }

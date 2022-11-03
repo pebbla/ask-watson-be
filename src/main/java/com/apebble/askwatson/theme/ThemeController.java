@@ -20,7 +20,7 @@ public class ThemeController {
 
     // 방탈출 테마 등록
     @PostMapping(value="/admin/cafes/{cafeId}/themes", consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
-    public SingleResponse<Theme> createTheme(@PathVariable Long cafeId, @ModelAttribute ThemeParams params, @RequestPart(value = "file", required = false) MultipartFile file) {
+    public SingleResponse<ThemeDto.Response> createTheme(@PathVariable Long cafeId, @ModelAttribute ThemeParams params, @RequestPart(value = "file", required = false) MultipartFile file) {
         return responseService.getSingleResponse(themeService.createTheme(cafeId, params, file));
     }
 
@@ -44,7 +44,7 @@ public class ThemeController {
 
     // 카페별 테마 조회
     @GetMapping(value = "/cafes/{cafeId}/themes")
-    public ListResponse<Theme> getThemesByCafe(@PathVariable Long cafeId) {
+    public ListResponse<ThemeDto.Response> getThemesByCafe(@PathVariable Long cafeId) {
         return responseService.getListResponse(themeService.getThemesByCafe(cafeId));
     }
 
