@@ -4,7 +4,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
-import javax.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.apebble.askwatson.cafe.Cafe;
 import com.apebble.askwatson.escapecomplete.EscapeCompleteService;
@@ -41,7 +41,10 @@ public class ReviewService {
     private final EscapeCompleteService escapeCompleteService;
     private final ReportJpaRepository reportJpaRepository;
 
-    // 리뷰 등록(탈출완료 여부 확인)
+
+    /**
+     * 리뷰 등록
+     */
     public ReviewDto.Response createReviewByCheckingEscapeComplete(Long userId, Long themeId, ReviewParams params) {
         EscapeComplete escapeComplete = findOrCreateEscapeComplete(userId, themeId);
         return convertToReviewDto(createReview(userId, themeId, escapeComplete, params));
@@ -110,24 +113,38 @@ public class ReviewService {
         escapeComplete.update(parseLocalDate);
     }
 
-    // 유저별 리뷰 리스트 조회
+
+    /**
+     * 사용자별 리뷰 목록 조회
+     */
+    @Transactional(readOnly = true)
     public List<ReviewDto.Response> getReviewsByUserId(Long userId) {
         User user = userJpaRepository.findById(userId).orElseThrow(UserNotFoundException::new);
         return convertToReviewDtoList(reviewJpaRepository.findByUser(user));
     }
 
-    // 테마별 리뷰 리스트 조회
+    /**
+     * 테마별 리뷰 리스트 조회
+     */
+    @Transactional(readOnly = true)
     public List<ReviewDto.Response> getReviewsByThemeId(Long themeId) {
         return convertToReviewDtoList(reviewJpaRepository.findByThemeId(themeId));
     }
 
-    // 리뷰 단건 조회
+
+    /**
+     * 리뷰 단건 조회
+     */
+    @Transactional(readOnly = true)
     public ReviewDto.Response getOneReview(Long reviewId) {
         Review review = reviewJpaRepository.findById(reviewId).orElseThrow(ReviewNotFoundException::new);
         return convertToReviewDto(review);
     }
 
-    // 리뷰 수정
+
+    /**
+     * 리뷰 수정
+     */
     public ReviewDto.Response modifyReview(Long reviewId, ReviewParams params) {
         Review review = reviewJpaRepository.findById(reviewId).orElseThrow(ReviewNotFoundException::new);
         reflectModifiedReviewInCafeAndTheme(review, params, review.getTheme());
@@ -140,7 +157,10 @@ public class ReviewService {
         reflectReviewCreationInCafeAndTheme(newReview, theme);
     }
 
-    // 리뷰 삭제
+
+    /**
+     * 리뷰 삭제
+     */
     public void deleteReview(Long reviewId) {
         Review review = reviewJpaRepository.findById(reviewId).orElseThrow(ReviewNotFoundException::new);
         reflectReviewDeletionInCafeAndTheme(review);
@@ -187,9 +207,11 @@ public class ReviewService {
 
     private void deleteReviewInReport(Review review) {
         List<Report> reports = reportJpaRepository.findByReview(review);
-        reports.forEach(report -> report.deleteReview());
+        reports.forEach(Report::deleteReview);
     }
 
+
+    //==DTO 변환 메서드==//
     private List<ReviewDto.Response> convertToReviewDtoList(List<Review> reviewList){
         return reviewList.stream().map(ReviewDto.Response::new).collect(toList());
     }
@@ -197,4 +219,5 @@ public class ReviewService {
     private ReviewDto.Response convertToReviewDto(Review review){
         return new ReviewDto.Response(review);
     }
+
 }

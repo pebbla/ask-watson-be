@@ -41,6 +41,7 @@ public class ReportService {
     }
 
     // 신고 전체 조회
+    @Transactional(readOnly = true)
     public List<ReportDto.Response> getAllReports(String searchWord) {
         List<Report> reportList = (searchWord == null)
                 ? reportJpaRepository.findAllReports()

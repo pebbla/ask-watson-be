@@ -43,6 +43,7 @@ public class EscapeCompleteService {
     }
 
     // 사용자별 탈출완료 리스트 조회
+    @Transactional(readOnly = true)
     public List<EscapeComplete> getEscapeCompletesByUserId(Long userId) {
         return escapeCompleteJpaRepository.findByUserId(userId);
     }

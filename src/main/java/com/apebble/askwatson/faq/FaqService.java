@@ -25,6 +25,7 @@ public class FaqService {
     }
 
     // 방탈출 카페 전체 조회
+    @Transactional(readOnly = true)
     public List<Faq> getFaqs(String searchWord) {
         return (searchWord == null)
                 ? faqJpaRepository.findAll()

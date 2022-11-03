@@ -42,7 +42,9 @@ public class ThemeService {
     private final GoogleCloudConfig googleCloudConfig;
 
     
-    // 방탈출 테마 등록
+    /**
+     * 방탈출 테마 등록
+     */
     public Theme createTheme(Long cafeId, ThemeParams params, MultipartFile file) {
         Cafe cafe = cafeJpaRepository.findById(cafeId).orElseThrow(CafeNotFoundException::new);
         Category category = categoryJpaRepository.findById(params.getCategoryId()).orElseThrow(CategoryNotFoundException::new);
@@ -69,13 +71,21 @@ public class ThemeService {
         return savedTheme;
     }
 
-    // 카페별 테마 조회
+
+    /**
+     * 카페별 테마 조회
+     */
+    @Transactional(readOnly = true)
     public List<Theme> getThemesByCafe(Long cafeId) {
         Cafe cafe = cafeJpaRepository.findById(cafeId).orElseThrow(CafeNotFoundException::new);
         return themeJpaRepository.findThemesByCafe(cafe);
     }
 
-    // 테마 목록 전체 조회
+
+    /**
+     * 테마 목록 전체 조회
+     */
+    @Transactional(readOnly = true)
     public Page<ThemeDto.Response> getThemes(ThemeSearchOptions searchOptions, Pageable pageable) {
         Page<Theme> themeList;
         themeList = (searchOptions == null)
@@ -85,7 +95,11 @@ public class ThemeService {
         return convertToThemeDtoPage(themeList);
     }
 
-    // 방탈출 테마 전체 조회(리스트 - 관리자웹용)
+
+    /**
+     * 방탈출 테마 전체 조회(리스트 - 관리자웹용)
+     */
+    @Transactional(readOnly = true)
     public List<ThemeDto.Response> getThemeList(String searchWord, Boolean sortByUpdateYn) {
         List<Theme> themeList = (searchWord == null)
                 ? themeJpaRepository.findAllThemes()
@@ -126,13 +140,20 @@ public class ThemeService {
         return result;
     }
 
-    // 테마 단건 조회
+
+    /**
+     * 테마 단건 조회
+     */
+    @Transactional(readOnly = true)
     public OneThemeDto.Response getOneTheme(Long themeId, Long userId) {
         Theme theme = themeJpaRepository.findByIdWithCategory(themeId).orElseThrow(ThemeNotFoundException::new);
         return convertToOneThemeDto(theme, userId);
     }
 
-    // 테마 정보 수정
+
+    /**
+     * 테마 정보 수정
+     */
     public ThemeDto.Response modifyTheme(Long themeId, ThemeParams params, @Nullable MultipartFile file) {
         Theme theme = themeJpaRepository.findById(themeId).orElseThrow(ThemeNotFoundException::new);
         Category category = categoryJpaRepository.findById(params.getCategoryId()).orElseThrow(CategoryNotFoundException::new);
@@ -148,12 +169,31 @@ public class ThemeService {
         return convertToThemeDto(theme);
     }
 
-    // 테마 이용가능여부 변경
+
+    /**
+     * 테마 이용가능여부 변경
+     */
     public void modifyThemeAvailability(Long themeId, Boolean isAvailable) {
         Theme theme = themeJpaRepository.findById(themeId).orElseThrow(ThemeNotFoundException::new);
         theme.changeAvailability(isAvailable);
     }
 
+    private boolean checkUserHeartedTheme(Long userId, Long themeId) {
+        if(userId == null) return false;
+
+        Optional<Heart> heart = heartJpaRepository.findByUserIdAndThemeId(userId, themeId);
+        return heart.isPresent();
+    }
+
+    private boolean checkUserCompletedTheme(Long userId, Long themeId) {
+        if(userId == null) return false;
+
+        Optional<EscapeComplete> escapeComplete = escapeCompleteJpaRepository.findByUserIdAndThemeId(userId, themeId);
+        return escapeComplete.isPresent();
+    }
+
+
+    //==DTO 변환 메서드==//
     private Page<ThemeDto.Response> convertToThemeDtoPage(Page<Theme> themeList){
         return themeList.map(ThemeDto.Response::new);
     }
@@ -171,20 +211,6 @@ public class ThemeService {
                 theme,
                 checkUserHeartedTheme(userId, theme.getId()),
                 checkUserCompletedTheme(userId, theme.getId()));
-    }
-
-    private boolean checkUserHeartedTheme(Long userId, Long themeId) {
-        if(userId == null) return false;
-
-        Optional<Heart> heart = heartJpaRepository.findByUserIdAndThemeId(userId, themeId);
-        return heart.isPresent();
-    }
-
-    private boolean checkUserCompletedTheme(Long userId, Long themeId) {
-        if(userId == null) return false;
-
-        Optional<EscapeComplete> escapeComplete = escapeCompleteJpaRepository.findByUserIdAndThemeId(userId, themeId);
-        return escapeComplete.isPresent();
     }
 
 }

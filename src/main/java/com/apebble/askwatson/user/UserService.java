@@ -42,7 +42,9 @@ public class UserService {
     private final EscapeCompleteJpaRepository escapeCompleteJpaRepository;
     private final EscapeCompleteService escapeCompleteService;
 
-    // 카카오 토큰으로 로그인
+    /**
+     * 로그인(카카오)
+     */
     public Map<String,Object> signInByKakaoToken(String access_token) {
         String phoneNum = "";
         Map<String,Object> resultMap = new HashMap<>();
@@ -86,7 +88,10 @@ public class UserService {
         return resultMap;
     }
 
-    // 회원 등록
+
+    /**
+     * 회원 등록
+     */
     public User createUser(UserParams params) {
         User user = User.builder()
                 .userNickname(params.getUserNickname())
@@ -99,19 +104,16 @@ public class UserService {
         return userJpaRepository.save(user);
     }
 
-    // 회원 전체 조회
+    /**
+     * 회원 전체 조회
+     */
+    @Transactional(readOnly = true)
     public List<UserDto.Response> getAllUsers(String searchWord) {
         List<User> users = (searchWord == null)
                 ? userJpaRepository.findAll()
                 : userJpaRepository.findUsersBySearchWord(searchWord);
 
         return convertToUserDtoList(users);
-    }
-
-    private List<UserDto.Response> convertToUserDtoList(List<User> users){
-        return users.stream().map(user ->
-                new UserDto.Response(user, getUserReportedCount(user), getUserReviewCount(user), getUserEscapeCompleteCount(user))
-        ).collect(toList());
     }
 
     private int getUserReportedCount(User user) {
@@ -126,7 +128,10 @@ public class UserService {
         return escapeCompleteJpaRepository.countByUser(user);
     }
 
-    // 회원정보 수정
+
+    /**
+     * 회원정보 수정
+     */
     public User modifyUser(Long userId, UserParams params) {
         User user = userJpaRepository.findById(userId).orElseThrow(UserNotFoundException::new);
         user.update(params);
@@ -134,7 +139,10 @@ public class UserService {
         return user;
     }
 
-    // 회원 삭제
+
+    /**
+     * 회원 삭제
+     */
     public void deleteUser(Long userId) {
         User user = userJpaRepository.findById(userId).orElseThrow(UserNotFoundException::new);
         handleUserAssociations(user);
@@ -172,6 +180,14 @@ public class UserService {
     private void setReportsReportedUserNull(User user) {
         List<Report> reports = reportJpaRepository.findByReportedUser(user);
         reports.forEach(Report::deleteReportedUser);
+    }
+
+
+    //==DTO 변환 함수==//
+    private List<UserDto.Response> convertToUserDtoList(List<User> users){
+        return users.stream().map(user ->
+                new UserDto.Response(user, getUserReportedCount(user), getUserReviewCount(user), getUserEscapeCompleteCount(user))
+        ).collect(toList());
     }
 
 }
