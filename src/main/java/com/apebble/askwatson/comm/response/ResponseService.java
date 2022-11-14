@@ -56,7 +56,7 @@ public class ResponseService{
     }
 
    private void setSuccessResponse(CommonResponse response){
-        response.code=0;
+        response.code=200;
         response.success=true;
         response.message="SUCCESS";
     }
