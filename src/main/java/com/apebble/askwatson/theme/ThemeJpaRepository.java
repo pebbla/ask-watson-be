@@ -13,7 +13,7 @@ import java.util.Optional;
 public interface ThemeJpaRepository extends JpaRepository<Theme, Long> {
 
     @Query(value = "select t from Theme t join fetch t.category where t.id=:id")
-    Optional<Theme> findByIdWithCategory(Long id);
+    Optional<Theme> findByIdWithCategory(@Param("id") Long id);
 
     @Query(value = "select t from Theme t join fetch t.category")
     List<Theme> findAllThemes();
