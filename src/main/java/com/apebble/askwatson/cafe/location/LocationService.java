@@ -15,6 +15,7 @@ import java.util.List;
 @Transactional
 @RequiredArgsConstructor
 public class LocationService {
+
     private final LocationJpaRepository locationJpaRepository;
 
     // 위치 등록
@@ -28,6 +29,7 @@ public class LocationService {
     }
 
     // 위치 전체 조회
+    @Transactional(readOnly = true)
     public List<Location> getLocations() {
         return locationJpaRepository.findAll();
     }
@@ -45,4 +47,5 @@ public class LocationService {
         Location location =locationJpaRepository.findById(locationId).orElseThrow(LocationNotFoundException::new);
         locationJpaRepository.delete(location);
     }
+
 }

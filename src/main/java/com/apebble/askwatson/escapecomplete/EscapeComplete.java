@@ -11,29 +11,35 @@ import org.springframework.lang.Nullable;
 import javax.persistence.*;
 import java.time.LocalDate;
 
+import static javax.persistence.FetchType.*;
+
 @Entity
 @Builder
 @Getter
-@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 public class EscapeComplete {
+
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;                        // pk
-
-    @ManyToOne @JoinColumn(name = "user_id")
-    @JsonIgnore
-    private User user;                      // 탈출 완료한 회원
-
-    @OneToOne @JoinColumn(name = "theme_id")
-    private Theme theme;                    // 탈출 완료한 테마
 
     @Nullable
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
     private LocalDate escapeCompleteDt;     // 탈출 완료 일시 (Default: 오늘 날짜)
 
+    @ManyToOne(fetch = LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;                      // 탈출 완료한 회원
+
+    @OneToOne(fetch = LAZY)
+    @JoinColumn(name = "theme_id")
+    private Theme theme;                    // 탈출 완료한 테마
+
+
+    //==수정 로직==//
     public void update(LocalDate escapeCompleteDt) {
         this.escapeCompleteDt = escapeCompleteDt;
     }
+
 }

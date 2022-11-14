@@ -26,6 +26,7 @@ public class NoticeService {
     }
 
     // 공지사항 전체 조회
+    @Transactional(readOnly = true)
     public List<Notice> getNotices(String searchWord) {
         return (searchWord == null)
                 ? noticeJpaRepository.findAll()
@@ -33,6 +34,7 @@ public class NoticeService {
     }
 
     // 공지사항 단건 조회
+    @Transactional(readOnly = true)
     public Notice getOneNotice(Long noticeId) {
         return noticeJpaRepository.findById(noticeId).orElseThrow(NoticeNotFoundException::new);
     }

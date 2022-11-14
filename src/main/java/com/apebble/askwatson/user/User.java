@@ -18,27 +18,25 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @NoArgsConstructor
 public class User extends BaseTime {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;                    // pk
-
     private String userNickname;        // 회원 별명
-
     private String userPhoneNum;        // 회원 전화번호
-
+    private char userGender;            // 회원 성별 (F:여, M:남)
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
     private LocalDate userBirth;        // 회원 생일
-
-    private char userGender;            // 회원 성별 (F:여, M:남)
-
     private Boolean marketingAgreeYn;   // 마케팅 수신 동의 여부
 
+
+    //==수정 로직==//
     public void update(UserParams params) {
         this.userNickname = params.getUserNickname();
         this.userPhoneNum = params.getUserPhoneNum();
         this.userBirth = DateConverter.strToLocalDate(params.getUserBirth());
         this.marketingAgreeYn = params.getMarketingAgreeYn();
     }
+
 }
 

@@ -7,8 +7,6 @@ import com.apebble.askwatson.comm.exception.LocationNotFoundException;
 import com.apebble.askwatson.comm.util.GeographyConverter;
 import com.apebble.askwatson.config.GoogleCloudConfig;
 
-import com.apebble.askwatson.theme.Theme;
-import com.apebble.askwatson.theme.ThemeJpaRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -35,7 +33,6 @@ import org.locationtech.jts.io.ParseException;
 public class CafeService {
 
     private final CafeJpaRepository cafeJpaRepository;
-    private final ThemeJpaRepository themeJpaRepository;
     private final LocationJpaRepository locationJpaRepository;
     private final GoogleCloudConfig googleCloudConfig;
 
@@ -58,12 +55,13 @@ public class CafeService {
 
         if (file != null) {
             String imageUrl = googleCloudConfig.uploadObject("cafe/" + cafe.getId() + "_cafe" , file);
-            savedCafe.setImageUrl(imageUrl);
+            savedCafe.updateImageUrl(imageUrl);
         }
         return convertToCafeDto(savedCafe);
     }
 
     // 방탈출 카페 전체 조회
+    @Transactional(readOnly = true)
     public Page<CafeDto.Response> getCafes(CafeSearchOptions searchOptions, Pageable pageable) {
         Page<Cafe> cafeList;
         cafeList = (searchOptions == null)
@@ -74,9 +72,10 @@ public class CafeService {
     }
 
     // 방탈출 카페 전체 조회(리스트 - 관리자웹 개발용)
+    @Transactional(readOnly = true)
     public List<CafeDto.Response> getCafeList(String searchWord, Boolean sortByUpdateYn) {
        List<Cafe> cafeList = (searchWord == null)
-                ? cafeJpaRepository.findAll()
+                ? cafeJpaRepository.findAllCafes()
                 : cafeJpaRepository.findCafesBySearchWord(searchWord);
 
        if(sortByUpdateYn!=null && sortByUpdateYn) {
@@ -113,10 +112,10 @@ public class CafeService {
     }
 
     // 방탈출 카페 단건 조회
+    @Transactional(readOnly = true)
     public CafeDto.Response getOneCafe(Long cafeId) {
-        return convertToCafeDto(cafeJpaRepository.findById(cafeId).orElseThrow(CafeNotFoundException::new));
+        return convertToCafeDto(cafeJpaRepository.findByIdWithLocation(cafeId).orElseThrow(CafeNotFoundException::new));
     }
-
 
     // 방탈출 카페 수정
     public CafeDto.Response modifyCafe(Long cafeId, CafeParams params, @Nullable MultipartFile file) throws ParseException {
@@ -138,8 +137,7 @@ public class CafeService {
 
     private void updateThemesAvailability(Cafe cafe, Boolean isCafeAvailable) {
         if(isCafeAvailable != null && !isCafeAvailable) {
-            List<Theme> themes = themeJpaRepository.findThemesByCafe(cafe);
-            themes.forEach(Theme::makeUnavailable);
+            setThemesUnavailable(cafe);
         }
     }
 
@@ -152,7 +150,7 @@ public class CafeService {
     }
 
     private void setThemesUnavailable(Cafe cafe) {
-        cafe.getThemeList().forEach(theme -> theme.setAvailable(false));
+        cafe.getThemeList().forEach(theme -> theme.changeAvailability(false));
     }
 
     private Page<CafeDto.Response> convertToCafeDtoPage(Page<Cafe> cafeList){
@@ -166,6 +164,7 @@ public class CafeService {
     private CafeDto.Response convertToCafeDto(Cafe cafe){
         return new CafeDto.Response(cafe);
     }
+
 }
 
 

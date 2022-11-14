@@ -1,5 +1,7 @@
 package com.apebble.askwatson.user;
 
+import com.apebble.askwatson.cafe.Cafe;
+import com.apebble.askwatson.cafe.CafeDto;
 import com.apebble.askwatson.comm.exception.UserNotFoundException;
 import com.apebble.askwatson.comm.util.DateConverter;
 import com.apebble.askwatson.escapecomplete.EscapeComplete;
@@ -35,13 +37,16 @@ import static java.util.stream.Collectors.toList;
 @Transactional
 @RequiredArgsConstructor
 public class UserService {
+
     private final UserJpaRepository userJpaRepository;
     private final ReportJpaRepository reportJpaRepository;
     private final ReviewJpaRepository reviewJpaRepository;
     private final EscapeCompleteJpaRepository escapeCompleteJpaRepository;
     private final EscapeCompleteService escapeCompleteService;
 
-    // 카카오 토큰으로 로그인
+    /**
+     * 로그인(카카오)
+     */
     public Map<String,Object> signInByKakaoToken(String access_token) {
         String phoneNum = "";
         Map<String,Object> resultMap = new HashMap<>();
@@ -85,8 +90,11 @@ public class UserService {
         return resultMap;
     }
 
-    // 회원 등록
-    public User createUser(UserParams params) {
+
+    /**
+     * 회원 등록
+     */
+    public UserDto.Response createUser(UserParams params) {
         User user = User.builder()
                 .userNickname(params.getUserNickname())
                 .userPhoneNum(params.getUserPhoneNum())
@@ -95,22 +103,19 @@ public class UserService {
                 .marketingAgreeYn(params.getMarketingAgreeYn())
                 .build();
 
-        return userJpaRepository.save(user);
+        return convertToDto(userJpaRepository.save(user));
     }
 
-    // 회원 전체 조회
+    /**
+     * 회원 전체 조회
+     */
+    @Transactional(readOnly = true)
     public List<UserDto.Response> getAllUsers(String searchWord) {
         List<User> users = (searchWord == null)
                 ? userJpaRepository.findAll()
                 : userJpaRepository.findUsersBySearchWord(searchWord);
 
-        return convertToUserDtoList(users);
-    }
-
-    private List<UserDto.Response> convertToUserDtoList(List<User> users){
-        return users.stream().map(user ->
-                new UserDto.Response(user, getUserReportedCount(user), getUserReviewCount(user), getUserEscapeCompleteCount(user))
-        ).collect(toList());
+        return convertToDtoList(users);
     }
 
     private int getUserReportedCount(User user) {
@@ -125,15 +130,21 @@ public class UserService {
         return escapeCompleteJpaRepository.countByUser(user);
     }
 
-    // 회원정보 수정
-    public User modifyUser(Long userId, UserParams params) {
+
+    /**
+     * 회원정보 수정
+     */
+    public UserDto.Response modifyUser(Long userId, UserParams params) {
         User user = userJpaRepository.findById(userId).orElseThrow(UserNotFoundException::new);
         user.update(params);
 
-        return user;
+        return convertToDto(user);
     }
 
-    // 회원 삭제
+
+    /**
+     * 회원 삭제
+     */
     public void deleteUser(Long userId) {
         User user = userJpaRepository.findById(userId).orElseThrow(UserNotFoundException::new);
         handleUserAssociations(user);
@@ -149,7 +160,7 @@ public class UserService {
 
     private void setReviewsUserNull(User user) {
         List<Review> reviews = reviewJpaRepository.findByUser(user);
-        reviews.forEach(review -> review.setUser(null));
+        reviews.forEach(Review::deleteUser);
     }
 
     private void deleteEscapeCompletesHandlingReviews(User user) {
@@ -160,16 +171,29 @@ public class UserService {
 
     private void setReviewsEscapeCompleteNull(User user) {
         List<Review> reviews = reviewJpaRepository.findByUser(user);
-        reviews.forEach(review -> review.setEscapeComplete(null));
+        reviews.forEach(Review::deleteEscapeComplete);
     }
 
     private void setReportsReporterNull(User user) {
         List<Report> reports = reportJpaRepository.findByReporter(user);
-        reports.forEach(report -> report.setReporter(null));
+        reports.forEach(Report::deleteReporter);
     }
 
     private void setReportsReportedUserNull(User user) {
         List<Report> reports = reportJpaRepository.findByReportedUser(user);
-        reports.forEach(report -> report.setReportedUser(null));
+        reports.forEach(Report::deleteReportedUser);
     }
+
+
+    //==DTO 변환 함수==//
+    private List<UserDto.Response> convertToDtoList(List<User> users){
+        return users.stream().map(user ->
+                new UserDto.Response(user, getUserReportedCount(user), getUserReviewCount(user), getUserEscapeCompleteCount(user))
+        ).collect(toList());
+    }
+
+    private UserDto.Response convertToDto(User user){
+        return new UserDto.Response(user, getUserReportedCount(user), getUserReviewCount(user), getUserEscapeCompleteCount(user));
+    }
+
 }

@@ -27,6 +27,7 @@ public class CategoryService {
     }
 
     // 카테고리 전체 조회
+    @Transactional(readOnly = true)
     public List<Category> getCategories() {
         return categoryJpaRepository.findAll();
     }

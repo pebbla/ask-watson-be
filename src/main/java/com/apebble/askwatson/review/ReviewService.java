@@ -4,7 +4,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
-import javax.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.apebble.askwatson.cafe.Cafe;
 import com.apebble.askwatson.escapecomplete.EscapeCompleteService;
@@ -41,7 +41,10 @@ public class ReviewService {
     private final EscapeCompleteService escapeCompleteService;
     private final ReportJpaRepository reportJpaRepository;
 
-    // 리뷰 등록(탈출완료 여부 확인)
+
+    /**
+     * 리뷰 등록
+     */
     public ReviewDto.Response createReviewByCheckingEscapeComplete(Long userId, Long themeId, ReviewParams params) {
         EscapeComplete escapeComplete = findOrCreateEscapeComplete(userId, themeId);
         return convertToReviewDto(createReview(userId, themeId, escapeComplete, params));
@@ -87,7 +90,7 @@ public class ReviewService {
         int reviewCount = cafe.getReviewCount();
         double newRating = calculateNewValue(cafe.getRating(), review.getRating(), reviewCount);
 
-        cafe.updateCafeByReview(newRating);
+        cafe.updateRating(newRating);
         cafe.incReviewCount();
     }
 
@@ -97,7 +100,7 @@ public class ReviewService {
         double newDeviceRatio = calculateNewValue(theme.getDeviceRatio(), review.getDeviceRatio(), reviewCount);
         double newActivity = calculateNewValue(theme.getActivity(), review.getActivity(), reviewCount);
 
-        theme.updateThemeByReview(newRating, newDeviceRatio, newActivity);
+        theme.updateByReview(newRating, newDeviceRatio, newActivity);
         theme.incReviewCount();
     }
 
@@ -110,24 +113,38 @@ public class ReviewService {
         escapeComplete.update(parseLocalDate);
     }
 
-    // 유저별 리뷰 리스트 조회
+
+    /**
+     * 사용자별 리뷰 목록 조회
+     */
+    @Transactional(readOnly = true)
     public List<ReviewDto.Response> getReviewsByUserId(Long userId) {
         User user = userJpaRepository.findById(userId).orElseThrow(UserNotFoundException::new);
         return convertToReviewDtoList(reviewJpaRepository.findByUser(user));
     }
 
-    // 테마별 리뷰 리스트 조회
+    /**
+     * 테마별 리뷰 리스트 조회
+     */
+    @Transactional(readOnly = true)
     public List<ReviewDto.Response> getReviewsByThemeId(Long themeId) {
         return convertToReviewDtoList(reviewJpaRepository.findByThemeId(themeId));
     }
 
-    // 리뷰 단건 조회
+
+    /**
+     * 리뷰 단건 조회
+     */
+    @Transactional(readOnly = true)
     public ReviewDto.Response getOneReview(Long reviewId) {
         Review review = reviewJpaRepository.findById(reviewId).orElseThrow(ReviewNotFoundException::new);
         return convertToReviewDto(review);
     }
 
-    // 리뷰 수정
+
+    /**
+     * 리뷰 수정
+     */
     public ReviewDto.Response modifyReview(Long reviewId, ReviewParams params) {
         Review review = reviewJpaRepository.findById(reviewId).orElseThrow(ReviewNotFoundException::new);
         reflectModifiedReviewInCafeAndTheme(review, params, review.getTheme());
@@ -136,36 +153,41 @@ public class ReviewService {
     }
 
     private void reflectModifiedReviewInCafeAndTheme(Review oldReview, ReviewParams newReview, Theme theme) {
-        reflectReviewDeletionInCafeAndTheme(oldReview, theme);
+        reflectReviewDeletionInCafeAndTheme(oldReview);
         reflectReviewCreationInCafeAndTheme(newReview, theme);
     }
 
-    // 리뷰 삭제
+
+    /**
+     * 리뷰 삭제
+     */
     public void deleteReview(Long reviewId) {
         Review review = reviewJpaRepository.findById(reviewId).orElseThrow(ReviewNotFoundException::new);
-        reflectReviewDeletionInCafeAndTheme(review, review.getTheme());
-        setReportsReviewNull(review);
+        reflectReviewDeletionInCafeAndTheme(review);
+        deleteReviewInReport(review);
         reviewJpaRepository.delete(review);
     }
 
-    private void reflectReviewDeletionInCafeAndTheme(Review review, Theme theme) {
-        reflectReviewDeletionInCafe(review, theme.getCafe());
-        reflectReviewDeletionInTheme(review, theme);
+    private void reflectReviewDeletionInCafeAndTheme(Review review) {
+        deleteReviewInCafe(review);
+        deleteReviewInTheme(review);
     }
 
-    private void reflectReviewDeletionInCafe(Review review, Cafe cafe) {
+    private void deleteReviewInCafe(Review review) {
+        Cafe cafe = review.getTheme().getCafe();
         int reviewCount = cafe.getReviewCount();
-        double deletedRating=0;
 
+        double deletedRating=0;
         if(reviewCount > 1) {
             deletedRating = calculateDeletedValue(cafe.getRating(), review.getRating(),reviewCount);
         }
 
-        cafe.updateCafeByReview(deletedRating);
+        cafe.updateRating(deletedRating);
         cafe.decReviewCount();
     }
 
-    private void reflectReviewDeletionInTheme(Review review, Theme theme) {
+    private void deleteReviewInTheme(Review review) {
+        Theme theme = review.getTheme();
         int reviewCount = theme.getReviewCount();
         double deletedRating=0, deletedDeviceRatio=0, deletedActivity=0;
 
@@ -175,7 +197,7 @@ public class ReviewService {
             deletedActivity = calculateDeletedValue(theme.getActivity(), review.getActivity(), reviewCount);
         }
 
-        theme.updateThemeByReview(deletedRating, deletedDeviceRatio, deletedActivity);
+        theme.updateByReview(deletedRating, deletedDeviceRatio, deletedActivity);
         theme.decReviewCount();
     }
 
@@ -183,11 +205,13 @@ public class ReviewService {
         return ((oldValue * reviewCount) - valueToDelete) / (reviewCount - 1);
     }
 
-    private void setReportsReviewNull(Review review) {
+    private void deleteReviewInReport(Review review) {
         List<Report> reports = reportJpaRepository.findByReview(review);
-        reports.forEach(report -> report.setReview(null));
+        reports.forEach(Report::deleteReview);
     }
 
+
+    //==DTO 변환 메서드==//
     private List<ReviewDto.Response> convertToReviewDtoList(List<Review> reviewList){
         return reviewList.stream().map(ReviewDto.Response::new).collect(toList());
     }
@@ -195,4 +219,5 @@ public class ReviewService {
     private ReviewDto.Response convertToReviewDto(Review review){
         return new ReviewDto.Response(review);
     }
+
 }

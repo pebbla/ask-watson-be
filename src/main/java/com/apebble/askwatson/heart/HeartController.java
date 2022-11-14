@@ -19,13 +19,11 @@ public class HeartController {
     private final HeartService heartService;
     private final ResponseService responseService;
 
-
     // 좋아요 등록
     @PostMapping(value="/user/{userId}/themes/{themeId}/hearts")
-    public SingleResponse<Heart> createHeart(@PathVariable Long userId, @PathVariable Long themeId) {
+    public SingleResponse<Long> createHeart(@PathVariable Long userId, @PathVariable Long themeId) {
         return responseService.getSingleResponse(heartService.createHeart(userId, themeId));
     }
-
 
     // 좋아요 해제
     @DeleteMapping(value = "/user/hearts/{heartId}")
@@ -34,10 +32,10 @@ public class HeartController {
         return responseService.getSuccessResponse();
     }
 
-
     // 좋아요 목록
     @GetMapping(value="/user/{userId}/hearts")
     public ListResponse<HeartDto.Response> getHeartByUserId(@PathVariable Long userId) {
         return responseService.getListResponse(heartService.getHeartsByUserId(userId));
     }
+    
 }

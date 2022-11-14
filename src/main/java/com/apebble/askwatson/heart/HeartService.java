@@ -30,7 +30,7 @@ public class HeartService {
     private final ThemeJpaRepository themeJpaRepository;
     
     // 좋아요 등록
-    public Heart createHeart(Long userId, Long themeId) {
+    public Long createHeart(Long userId, Long themeId) {
         User user = userJpaRepository.findById(userId).orElseThrow(UserNotFoundException::new);
         Theme theme = themeJpaRepository.findById(themeId).orElseThrow(ThemeNotFoundException::new);
         Heart heart = Heart.builder()
@@ -40,7 +40,7 @@ public class HeartService {
 
         theme.incHeartCount();
 
-        return heartJpaRepository.save(heart);
+        return heartJpaRepository.save(heart).getId();
     }
 
     // 좋아요 해제
@@ -51,6 +51,7 @@ public class HeartService {
     }
 
     // 좋아요 목록 조회
+    @Transactional(readOnly = true)
     public List<HeartDto.Response> getHeartsByUserId(Long userId){
         List<Heart> heartList = heartJpaRepository.findByUserId(userId);
         return convertToHeartDtoList(heartList);
