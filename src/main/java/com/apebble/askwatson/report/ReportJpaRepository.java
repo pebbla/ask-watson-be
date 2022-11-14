@@ -14,7 +14,7 @@ public interface ReportJpaRepository extends JpaRepository<Report, Long> {
     List<Report> findAllReports();
 
     @Query(value = "select r from Report r join fetch r.reporter join fetch r.reportedUser where r.handledYn=:handledYn")
-    List<Report> findByHandledYn(boolean handledYn);
+    List<Report> findByHandledYn(@Param("handledYn") boolean handledYn);
 
     List<Report> findByReview(Review review);
 
