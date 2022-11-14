@@ -6,8 +6,6 @@ import lombok.RequiredArgsConstructor;
 
 import java.util.Map;
 
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
 
 @Api(tags = {"회원"})
@@ -20,14 +18,21 @@ public class UserController {
     private final ResponseService responseService;
 
     // 카카오 토큰으로 로그인
-    @PostMapping(value = "/kakao/signin")
+    @PostMapping(value = "/signin/kakao")
     public SingleResponse<Map<String, Object>> signInByKakaoToken(String accessToken){
         //TODO : 회원가입 된 경우 access token, refresh token 전달
         // 403리턴 값 전달
         return responseService.getSingleResponse(userService.signInByKakaoToken(accessToken));
     }
 
+
     // 네이버 토큰으로 로그인
+    @PostMapping(value = "/signin/naver")
+    public SingleResponse<Map<String, Object>> signInByNaverToken(@RequestParam String accessToken){
+        System.out.println(accessToken);
+        return responseService.getSingleResponse(userService.signInByNaverToken(accessToken));
+    }
+    
 
     // 구글 토큰으로 로그인
 
