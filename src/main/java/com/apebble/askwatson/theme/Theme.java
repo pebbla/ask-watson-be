@@ -87,6 +87,7 @@ public class Theme extends BaseTime {
         this.minNumPeople = params.getMinNumPeople();
         this.price = params.getPrice();
         this.reservationUrl = params.getReservationUrl();
+        this.isAvailable = params.getIsAvailable();
     }
 
     public void updateThemeByReview(double newRating, double newDeviceRatio, double newActivity) {
@@ -106,5 +107,7 @@ public class Theme extends BaseTime {
     public void incReviewCount() { this.reviewCount++; }
 
     public void decReviewCount() { this.reviewCount--; }
+
+    public void makeUnavailable() {this.isAvailable = false;}
 
 }

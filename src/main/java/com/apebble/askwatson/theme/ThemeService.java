@@ -56,6 +56,7 @@ public class ThemeService {
                 .price(params.getPrice())
                 .reservationUrl(params.getReservationUrl())
                 .imageUrl(params.getImageUrl())
+                .isAvailable(params.getIsAvailable())
                 .build();
         Theme savedTheme = themeJpaRepository.save(theme);
 
