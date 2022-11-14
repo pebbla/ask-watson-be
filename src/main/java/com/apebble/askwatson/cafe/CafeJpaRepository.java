@@ -12,7 +12,7 @@ import java.util.Optional;
 public interface CafeJpaRepository extends JpaRepository<Cafe, Long> {
 
     @Query(value = "select c from Cafe c join fetch c.location where c.id=:id")
-    Optional<Cafe> findByIdWithLocation(Long id);
+    Optional<Cafe> findByIdWithLocation(@Param("id") Long id);
 
     @Query(value = "select c from Cafe c join fetch c.location")
     List<Cafe> findAllCafes();
