@@ -155,7 +155,7 @@ public class ThemeService {
      * 테마 정보 수정
      */
     public ThemeDto.Response modifyTheme(Long themeId, ThemeParams params, @Nullable MultipartFile file) {
-        Theme theme = themeJpaRepository.findById(themeId).orElseThrow(ThemeNotFoundException::new);
+        Theme theme = themeJpaRepository.findByIdWithCategory(themeId).orElseThrow(ThemeNotFoundException::new);
         Category category = categoryJpaRepository.findById(params.getCategoryId()).orElseThrow(CategoryNotFoundException::new);
         String imageUrl = params.getImageUrl();
 

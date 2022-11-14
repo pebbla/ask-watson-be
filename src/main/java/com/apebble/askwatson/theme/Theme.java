@@ -3,7 +3,6 @@ package com.apebble.askwatson.theme;
 import com.apebble.askwatson.cafe.Cafe;
 import com.apebble.askwatson.comm.BaseTime;
 import com.apebble.askwatson.theme.category.Category;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
