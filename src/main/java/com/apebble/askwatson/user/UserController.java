@@ -4,6 +4,7 @@ import com.apebble.askwatson.comm.response.*;
 import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.web.bind.annotation.*;
@@ -28,9 +29,9 @@ public class UserController {
 
     // 네이버 토큰으로 로그인
     @PostMapping(value = "/signin/naver")
-    public SingleResponse<Map<String, Object>> signInByNaverToken(@RequestParam String accessToken){
-        System.out.println(accessToken);
-        return responseService.getSingleResponse(userService.signInByNaverToken(accessToken));
+    public SingleResponse<Map<String, Object>> signInByNaverToken(@RequestBody HashMap<String, Object> map){
+        System.out.println(map.get("accessToken"));
+        return responseService.getSingleResponse(userService.signInByNaverToken(map.get("accessToken").toString()));
     }
     
 
