@@ -119,7 +119,7 @@ public class CafeService {
 
     // 방탈출 카페 수정
     public CafeDto.Response modifyCafe(Long cafeId, CafeParams params, @Nullable MultipartFile file) throws ParseException {
-        Cafe cafe = cafeJpaRepository.findById(cafeId).orElseThrow(CafeNotFoundException::new);
+        Cafe cafe = cafeJpaRepository.findByIdWithLocation(cafeId).orElseThrow(CafeNotFoundException::new);
         Location location = locationJpaRepository.findById(params.getLocationId()).orElseThrow(LocationNotFoundException::new);
 
         if(file != null) params.setImageUrl(updateGoogleStorage(cafeId, file));
