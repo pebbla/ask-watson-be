@@ -6,6 +6,9 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+
+import java.io.IOException;
+
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 
@@ -125,7 +128,14 @@ public class ExceptionAdvice {
         return responseService.getErrorResponse(500, "구글 스토리지에 에러가 발생했습니다.");
     }
 
-    
+
+    @ExceptionHandler(ServerException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    protected CommonResponse ioException(){
+        return responseService.getErrorResponse(500, "서버 에러입니다. 문제가 지속될 경우 고객센터로 문의해주세요!");
+    }
+
+
     //TODO : 런칭 시 주석제거, -> 포스트맨, 스웨거에서 에러메세지 보기위함
 //    @ExceptionHandler({ Exception.class })
 //    protected CommonResponse handleServerException(Exception ex) {
