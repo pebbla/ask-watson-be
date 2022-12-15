@@ -13,12 +13,13 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 @RequestMapping(value = "/v1")
 public class CategoryController {
+
     private final CategoryService categoryService;
     private final ResponseService responseService;
 
     // 카테고리 등록
     @PostMapping(value="/admin/categories")
-    public SingleResponse<Category> createCategory(@RequestBody CategoryParams params) {
+    public SingleResponse<Long> createCategory(@RequestBody CategoryParams params) {
         return responseService.getSingleResponse(categoryService.createCategory(params));
     }
 
@@ -30,8 +31,9 @@ public class CategoryController {
 
     // 카테고리 수정
     @PutMapping(value = "/admin/categories/{categoryId}")
-    public SingleResponse<Category> modifyCategory(@PathVariable Long categoryId, @RequestBody CategoryParams params) {
-        return responseService.getSingleResponse(categoryService.modifyCategory(categoryId, params));
+    public CommonResponse modifyCategory(@PathVariable Long categoryId, @RequestBody CategoryParams params) {
+        categoryService.modifyCategory(categoryId, params);
+        return responseService.getSuccessResponse();
     }
 
     // 카테고리 삭제
@@ -40,4 +42,5 @@ public class CategoryController {
         categoryService.deleteCategory(categoryId);
         return responseService.getSuccessResponse();
     }
+
 }

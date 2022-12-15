@@ -20,5 +20,5 @@ public class ThemeParams {
 
     private String imageUrl;
 
-    private Boolean isAvailable;
+    private boolean isAvailable;
 }

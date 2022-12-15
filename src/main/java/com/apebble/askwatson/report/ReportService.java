@@ -25,19 +25,10 @@ public class ReportService {
     private final ReviewJpaRepository reviewJpaRepository;
 
     // 신고 등록
-    public ReportDto.Response createReport(Long reporterId, Long reviewId, ReportParams params) {
+    public Long createReport(Long reporterId, Long reviewId, ReportParams params) {
         User reporter = userJpaRepository.findById(reporterId).orElseThrow(UserNotFoundException::new);
         Review review = reviewJpaRepository.findByIdWithUser(reviewId).orElseThrow(ReviewNotFoundException::new);
-
-        Report report = Report.builder()
-                .reporter(reporter)
-                .reportedUser(review.getUser())
-                .content(params.getContent())
-                .review(review)
-                .reviewContent(review.getContent())
-                .build();
-
-        return convertToReportDto(reportJpaRepository.save(report));
+        return reportJpaRepository.save(Report.create(reporter, review, params)).getId();
     }
 
     // 신고 전체 조회
@@ -68,10 +59,6 @@ public class ReportService {
     //== DTO 변환 메서드==//
     private List<ReportDto.Response> convertToReportDtoList(List<Report> reportList){
         return reportList.stream().map(ReportDto.Response::new).collect(toList());
-    }
-
-    private ReportDto.Response convertToReportDto(Report report){
-        return new ReportDto.Response(report);
     }
 
 }

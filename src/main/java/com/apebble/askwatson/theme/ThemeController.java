@@ -20,7 +20,7 @@ public class ThemeController {
 
     // 방탈출 테마 등록
     @PostMapping(value="/admin/cafes/{cafeId}/themes", consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
-    public SingleResponse<ThemeDto.Response> createTheme(@PathVariable Long cafeId, @RequestPart ThemeParams params, @RequestPart(value = "file", required = false) MultipartFile file) {
+    public SingleResponse<Long> createTheme(@PathVariable Long cafeId, @RequestPart ThemeParams params, @RequestPart(value = "file", required = false) MultipartFile file) {
         return responseService.getSingleResponse(themeService.createTheme(cafeId, params, file));
     }
 
@@ -50,8 +50,9 @@ public class ThemeController {
 
     // 테마 수정
     @PutMapping(value = "/admin/themes/{themeId}", consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
-    public SingleResponse<ThemeDto.Response> modifyTheme(@PathVariable Long themeId, @RequestPart ThemeParams params, @RequestPart(value = "file", required=false) MultipartFile file) {
-        return responseService.getSingleResponse(themeService.modifyTheme(themeId, params, file));
+    public CommonResponse modifyTheme(@PathVariable Long themeId, @RequestPart ThemeParams params, @RequestPart(value = "file", required=false) MultipartFile file) {
+        themeService.modifyTheme(themeId, params, file);
+        return responseService.getSuccessResponse();
     }
 
     // 테마 이용가능여부 변경

@@ -3,20 +3,15 @@ package com.apebble.askwatson.user;
 import com.apebble.askwatson.comm.BaseTime;
 import com.apebble.askwatson.comm.util.DateConverter;
 import com.fasterxml.jackson.annotation.JsonFormat;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import java.time.LocalDate;
 
 @Entity
-@Builder
 @Getter
-@AllArgsConstructor
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class User extends BaseTime {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,6 +25,18 @@ public class User extends BaseTime {
     private Boolean marketingAgreeYn;   // 마케팅 수신 동의 여부
 
 
+    //==생성 메서드==//
+    public static User create(UserParams params) {
+        User user = new User();
+        user.userNickname = params.getUserNickname();
+        user.userPhoneNum = params.getUserPhoneNum();
+        user.userBirth = DateConverter.strToLocalDate(params.getUserBirth());
+        user.userGender = params.getUserGender();
+        user.marketingAgreeYn = params.getMarketingAgreeYn();
+        return user;
+    }
+
+
     //==수정 로직==//
     public void update(UserParams params) {
         this.userNickname = params.getUserNickname();
@@ -39,4 +46,3 @@ public class User extends BaseTime {
     }
 
 }
-

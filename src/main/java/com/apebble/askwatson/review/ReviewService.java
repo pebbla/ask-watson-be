@@ -45,48 +45,36 @@ public class ReviewService {
     /**
      * 리뷰 등록
      */
-    public ReviewDto.Response createReviewByCheckingEscapeComplete(Long userId, Long themeId, ReviewParams params) {
+    public Long createReviewByCheckingEscapeComplete(Long userId, Long themeId, ReviewParams params) {
         EscapeComplete escapeComplete = findOrCreateEscapeComplete(userId, themeId);
-        return convertToReviewDto(createReview(userId, themeId, escapeComplete, params));
+        return createReview(userId, themeId, escapeComplete, params);
     }
 
     private EscapeComplete findOrCreateEscapeComplete(Long userId, Long themeId) {
         Optional<EscapeComplete> escapeComplete = escapeCompleteJpaRepository.findByUserIdAndThemeId(userId, themeId);
-        if(escapeComplete.isPresent())
+        if(escapeComplete.isPresent()) {
             return escapeComplete.orElseThrow(EscapeCompleteNotFoundException::new);
-        else
-            return escapeCompleteService.createEscapeComplete(userId, themeId);
+        }
+        else {
+            Long id = escapeCompleteService.createEscapeComplete(userId, themeId);
+            return escapeCompleteJpaRepository.findById(id).orElseThrow(EscapeCompleteNotFoundException::new);
+        }
     }
 
-    private Review createReview(Long userId, Long themeId, EscapeComplete escapeComplete, ReviewParams params) {
+    private Long createReview(Long userId, Long themeId, EscapeComplete escapeComplete, ReviewParams params) {
         User user = userJpaRepository.findById(userId).orElseThrow(UserNotFoundException::new);
         Theme theme = themeJpaRepository.findById(themeId).orElseThrow(ThemeNotFoundException::new);
-        
-        Review review = Review.builder()
-            .user(user)
-            .rating(params.getRating())
-            .difficulty(params.getDifficulty())
-            .timeTaken(params.getTimeTaken())
-            .usedHintNum(params.getUsedHintNum())
-            .deviceRatio(params.getDeviceRatio())
-            .activity(params.getActivity())
-            .content(params.getContent())
-            .theme(theme)
-            .escapeComplete(escapeComplete)
-            .build();
-
-        reflectReviewCreationInCafeAndTheme(params, theme);
-        reflectReviewCreationInEscapeComplete(escapeComplete, params.getEscapeCompleteDate());
-
-        return reviewJpaRepository.save(review);
+        addReviewToCafeAndTheme(params, theme);
+        updateEscapeCompleteDt(escapeComplete, params.getEscapeCompleteDate());
+        return reviewJpaRepository.save(Review.create(user, theme, escapeComplete, params)).getId();
     }
 
-    private void reflectReviewCreationInCafeAndTheme(ReviewParams review, Theme theme) {
-        reflectReviewCreationInCafe(review, theme.getCafe());
-        reflectReviewCreationInTheme(review, theme);
+    private void addReviewToCafeAndTheme(ReviewParams review, Theme theme) {
+        addReviewToCafe(review, theme.getCafe());
+        addReviewToTheme(review, theme);
     }
 
-    private void reflectReviewCreationInCafe(ReviewParams review, Cafe cafe) {
+    private void addReviewToCafe(ReviewParams review, Cafe cafe) {
         int reviewCount = cafe.getReviewCount();
         double newRating = calculateNewValue(cafe.getRating(), review.getRating(), reviewCount);
 
@@ -94,7 +82,7 @@ public class ReviewService {
         cafe.incReviewCount();
     }
 
-    private void reflectReviewCreationInTheme(ReviewParams review, Theme theme) {
+    private void addReviewToTheme(ReviewParams review, Theme theme) {
         int reviewCount = theme.getReviewCount();
         double newRating = calculateNewValue(theme.getRating(), review.getRating(), reviewCount);
         double newDeviceRatio = calculateNewValue(theme.getDeviceRatio(), review.getDeviceRatio(), reviewCount);
@@ -108,7 +96,7 @@ public class ReviewService {
         return ((oldValue * reviewCount) + newValue) / (reviewCount + 1);
     }
 
-    private void reflectReviewCreationInEscapeComplete(EscapeComplete escapeComplete, String newEscapeCompleteDt) {
+    private void updateEscapeCompleteDt(EscapeComplete escapeComplete, String newEscapeCompleteDt) {
         LocalDate parseLocalDate = DateConverter.strToLocalDate(newEscapeCompleteDt);
         escapeComplete.update(parseLocalDate);
     }
@@ -145,16 +133,15 @@ public class ReviewService {
     /**
      * 리뷰 수정
      */
-    public ReviewDto.Response modifyReview(Long reviewId, ReviewParams params) {
+    public void modifyReview(Long reviewId, ReviewParams params) {
         Review review = reviewJpaRepository.findById(reviewId).orElseThrow(ReviewNotFoundException::new);
-        reflectModifiedReviewInCafeAndTheme(review, params, review.getTheme());
+        updateCafeAndTheme(review, params, review.getTheme());
         review.update(params);
-        return convertToReviewDto(review);
     }
 
-    private void reflectModifiedReviewInCafeAndTheme(Review oldReview, ReviewParams newReview, Theme theme) {
-        reflectReviewDeletionInCafeAndTheme(oldReview);
-        reflectReviewCreationInCafeAndTheme(newReview, theme);
+    private void updateCafeAndTheme(Review oldReview, ReviewParams newReview, Theme theme) {
+        deleteReviewInCafeAndTheme(oldReview);
+        addReviewToCafeAndTheme(newReview, theme);
     }
 
 
@@ -163,12 +150,12 @@ public class ReviewService {
      */
     public void deleteReview(Long reviewId) {
         Review review = reviewJpaRepository.findById(reviewId).orElseThrow(ReviewNotFoundException::new);
-        reflectReviewDeletionInCafeAndTheme(review);
+        deleteReviewInCafeAndTheme(review);
         deleteReviewInReport(review);
         reviewJpaRepository.delete(review);
     }
 
-    private void reflectReviewDeletionInCafeAndTheme(Review review) {
+    private void deleteReviewInCafeAndTheme(Review review) {
         deleteReviewInCafe(review);
         deleteReviewInTheme(review);
     }

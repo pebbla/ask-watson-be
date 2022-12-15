@@ -20,10 +20,11 @@ public class CafeController {
 
     private final CafeService cafeService;
     private final ResponseService responseService;
+    private final CafeJpaRepository cafeRepository;
 
     // 방탈출 카페 등록
     @PostMapping(value="/admin/cafes", consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
-    public SingleResponse<CafeDto.Response> createCafe(@RequestPart CafeParams params, @RequestPart(value = "file", required = false) MultipartFile file) throws ParseException  {
+    public SingleResponse<Long> createCafe(@RequestPart CafeParams params, @RequestPart(value = "file", required = false) MultipartFile file) throws ParseException  {
         return responseService.getSingleResponse(cafeService.createCafe(params, file));
     }
 
@@ -47,8 +48,9 @@ public class CafeController {
 
     // 방탈출 카페 수정
     @PutMapping(value = "/admin/cafes/{cafeId}", consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
-    public SingleResponse<CafeDto.Response> modifyCafe(@PathVariable Long cafeId, @RequestPart CafeParams params, @RequestPart(value = "file", required = false) MultipartFile file) throws ParseException {
-        return responseService.getSingleResponse(cafeService.modifyCafe(cafeId, params, file));
+    public CommonResponse modifyCafe(@PathVariable Long cafeId, @RequestPart CafeParams params, @RequestPart(value = "file", required = false) MultipartFile file) throws ParseException {
+        cafeService.modifyCafe(cafeId, params, file);
+        return responseService.getSuccessResponse();
     }
 
     // 방탈출 카페 삭제
@@ -57,4 +59,5 @@ public class CafeController {
         cafeService.deleteUselessCafeInfo(cafeId);
         return responseService.getSuccessResponse();
     }
+
 }

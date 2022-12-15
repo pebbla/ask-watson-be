@@ -7,6 +7,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
+import static java.util.stream.Collectors.toList;
+
 @Slf4j
 @Service
 @Transactional
@@ -15,38 +17,42 @@ public class FaqService {
 
     private final FaqJpaRepository faqJpaRepository;
 
-    // 방탈출 카페 등록
-    public Faq createFaq(FaqParams params) {
-        Faq faq = Faq.builder()
-                .title(params.getTitle())
-                .content(params.getContent())
-                .build();
-        return faqJpaRepository.save(faq);
+    // 자주묻는질문 등록
+    public Long createFaq(FaqParams params) {
+        return faqJpaRepository.save(Faq.create(params)).getId();
     }
 
-    // 방탈출 카페 전체 조회
+    // 자주묻는질문 전체 조회
     @Transactional(readOnly = true)
-    public List<Faq> getFaqs(String searchWord) {
-        return (searchWord == null)
+    public List<FaqDto.Response> getFaqs(String searchWord) {
+        List<Faq> faqs =  (searchWord == null)
                 ? faqJpaRepository.findAll()
                 : faqJpaRepository.findFaqsBySearchWord(searchWord);
+
+        return convertToDtoList(faqs);
     }
 
-    // 방탈출 카페 단건 조회
-    public Faq getOneFaq(Long faqId) {
-        return faqJpaRepository.findById(faqId).orElseThrow(FaqNotFoundException::new);
+    // 자주묻는질문 단건 조회
+    public FaqDto.Response getOneFaq(Long faqId) {
+        Faq faq = faqJpaRepository.findById(faqId).orElseThrow(FaqNotFoundException::new);
+        return new FaqDto.Response(faq);
     }
 
-    // 방탈출 카페 수정
-    public Faq modifyFaq(Long faqId, FaqParams params) {
+    // 자주묻는질문 수정
+    public void modifyFaq(Long faqId, FaqParams params) {
         Faq faq = faqJpaRepository.findById(faqId).orElseThrow(FaqNotFoundException::new);
         faq.update(params);
-        return faq;
     }
 
-    // 방탈출 카페 삭제
+    // 자주묻는질문 삭제
     public void deleteFaq(Long faqId) {
         Faq faq = faqJpaRepository.findById(faqId).orElseThrow(FaqNotFoundException::new);
         faqJpaRepository.delete(faq);
     }
+
+    //==DTO 변환 메서드==//
+    private List<FaqDto.Response> convertToDtoList(List<Faq> faqs){
+        return faqs.stream().map(FaqDto.Response::new).collect(toList());
+    }
+
 }

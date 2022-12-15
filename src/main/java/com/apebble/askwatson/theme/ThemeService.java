@@ -45,30 +45,20 @@ public class ThemeService {
     /**
      * 방탈출 테마 등록
      */
-    public ThemeDto.Response createTheme(Long cafeId, ThemeParams params, MultipartFile file) {
+    public Long createTheme(Long cafeId, ThemeParams params, MultipartFile file) {
         Cafe cafe = cafeJpaRepository.findById(cafeId).orElseThrow(CafeNotFoundException::new);
         Category category = categoryJpaRepository.findById(params.getCategoryId()).orElseThrow(CategoryNotFoundException::new);
 
-        Theme theme = Theme.builder()
-                .cafe(cafe)
-                .themeName(params.getThemeName())
-                .themeExplanation(params.getThemeExplanation())
-                .timeLimit(params.getTimeLimit())
-                .category(category)
-                .minNumPeople(params.getMinNumPeople())
-                .price(params.getPrice())
-                .reservationUrl(params.getReservationUrl())
-                .imageUrl(params.getImageUrl())
-                .isAvailable(params.getIsAvailable())
-                .build();
+        Theme savedTheme = themeJpaRepository.save(Theme.create(cafe, category, params));
+        if(file !=null) savedTheme.updateImageUrl(addToGoogleStorage(savedTheme.getId(), file));
 
-        Theme savedTheme = themeJpaRepository.save(theme);
+        return savedTheme.getId();
+    }
 
-        if (file != null) {
-            String imageUrl = googleCloudConfig.uploadObject("theme/" + savedTheme.getId() + "_theme", file);
-            savedTheme.updateImageUrl(imageUrl);
-        }
-        return convertToThemeDto(savedTheme);
+    private String addToGoogleStorage(Long themeId, MultipartFile file) {
+        String gcsPath = "theme/" + themeId + "_theme";
+        String imageUrl = googleCloudConfig.uploadObject(gcsPath, file);
+        return imageUrl;
     }
 
 
@@ -154,19 +144,19 @@ public class ThemeService {
     /**
      * 테마 정보 수정
      */
-    public ThemeDto.Response modifyTheme(Long themeId, ThemeParams params, @Nullable MultipartFile file) {
+    public void modifyTheme(Long themeId, ThemeParams params, @Nullable MultipartFile file) {
         Theme theme = themeJpaRepository.findByIdWithCategory(themeId).orElseThrow(ThemeNotFoundException::new);
         Category category = categoryJpaRepository.findById(params.getCategoryId()).orElseThrow(CategoryNotFoundException::new);
-        String imageUrl = params.getImageUrl();
 
-        if(file != null) {
-            googleCloudConfig.deleteObject("theme/" + theme.getId() + "_theme");
-            imageUrl = googleCloudConfig.uploadObject("theme/" + theme.getId() + "_theme", file);
-            params.setImageUrl(imageUrl);
-        }
-
+        if(file != null) params.setImageUrl(updateGoogleStorage(theme.getId(), file));
         theme.update(params, category);
-        return convertToThemeDto(theme);
+    }
+
+    private String updateGoogleStorage(Long themeId, MultipartFile file) {
+        String gcsPath = "theme/" + themeId + "_theme";
+        googleCloudConfig.deleteObject(gcsPath);
+        String imageUrl = googleCloudConfig.uploadObject(gcsPath, file);
+        return imageUrl;
     }
 
 
@@ -200,10 +190,6 @@ public class ThemeService {
 
     private List<ThemeDto.Response> convertToThemeDtoList(List<Theme> themeList){
         return themeList.stream().map(ThemeDto.Response::new).collect(toList());
-    }
-
-    private ThemeDto.Response convertToThemeDto(Theme theme){
-        return new ThemeDto.Response(theme);
     }
 
     private OneThemeDto.Response convertToOneThemeDto(Theme theme, Long userId){

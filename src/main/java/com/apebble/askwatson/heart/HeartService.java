@@ -28,20 +28,16 @@ public class HeartService {
     private final HeartJpaRepository heartJpaRepository;
     private final UserJpaRepository userJpaRepository;
     private final ThemeJpaRepository themeJpaRepository;
-    
+
+
     // 좋아요 등록
     public Long createHeart(Long userId, Long themeId) {
         User user = userJpaRepository.findById(userId).orElseThrow(UserNotFoundException::new);
         Theme theme = themeJpaRepository.findById(themeId).orElseThrow(ThemeNotFoundException::new);
-        Heart heart = Heart.builder()
-                .user(user)
-                .theme(theme)
-                .build();
-
         theme.incHeartCount();
-
-        return heartJpaRepository.save(heart).getId();
+        return heartJpaRepository.save(Heart.create(user, theme)).getId();
     }
+
 
     // 좋아요 해제
     public void deleteHeart(Long heartId) {
@@ -50,14 +46,15 @@ public class HeartService {
         heartJpaRepository.delete(heart);
     }
 
+
     // 좋아요 목록 조회
     @Transactional(readOnly = true)
     public List<HeartDto.Response> getHeartsByUserId(Long userId){
         List<Heart> heartList = heartJpaRepository.findByUserIdWithCategory(userId);
-        return convertToHeartDtoList(heartList);
+        return convertToDtoList(heartList);
     }
 
-    private List<HeartDto.Response> convertToHeartDtoList(List<Heart> heartList){
+    private List<HeartDto.Response> convertToDtoList(List<Heart> heartList){
         return heartList.stream().map(HeartDto.Response::new).collect(toList());
     }
 

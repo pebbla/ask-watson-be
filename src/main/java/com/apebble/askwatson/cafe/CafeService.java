@@ -4,6 +4,7 @@ import com.apebble.askwatson.cafe.location.Location;
 import com.apebble.askwatson.cafe.location.LocationJpaRepository;
 import com.apebble.askwatson.comm.exception.CafeNotFoundException;
 import com.apebble.askwatson.comm.exception.LocationNotFoundException;
+import org.locationtech.jts.geom.Point;
 import com.apebble.askwatson.comm.util.GeographyConverter;
 import com.apebble.askwatson.config.GoogleCloudConfig;
 
@@ -37,30 +38,29 @@ public class CafeService {
     private final GoogleCloudConfig googleCloudConfig;
 
 
-    // 방탈출 카페 등록
-    public CafeDto.Response createCafe(CafeParams params, MultipartFile file) throws ParseException {
+    /**
+     * 방탈출 카페 등록
+     */
+    public Long createCafe(CafeParams params, MultipartFile file) throws ParseException {
         Location location = locationJpaRepository.findById(params.getLocationId()).orElseThrow(LocationNotFoundException::new);
+        Point geography = GeographyConverter.strToPoint(params.getLongitude(), params.getLatitude());
 
-        Cafe cafe = Cafe.builder()
-            .cafeName(params.getCafeName())
-            .cafePhoneNum(params.getCafePhoneNum())
-            .website(params.getWebsite())
-            .address(params.getAddress())
-            .location(location)
-            .geography(GeographyConverter.strToPoint(params.getLongitude(), params.getLatitude()))
-            .isEnglishPossible(params.getIsEnglishPossible())
-            .isAvailable(params.getIsAvailable())
-            .build();
-        Cafe savedCafe = cafeJpaRepository.save(cafe);
+        Cafe savedCafe = cafeJpaRepository.save(Cafe.create(params, location, geography));
+        if(file != null) savedCafe.updateImageUrl(addToGoogleStorage(savedCafe.getId(), file));
 
-        if (file != null) {
-            String imageUrl = googleCloudConfig.uploadObject("cafe/" + cafe.getId() + "_cafe" , file);
-            savedCafe.updateImageUrl(imageUrl);
-        }
-        return convertToCafeDto(savedCafe);
+        return savedCafe.getId();
     }
 
-    // 방탈출 카페 전체 조회
+    private String addToGoogleStorage(Long cafeId, MultipartFile file) {
+        String gcsPath = "cafe/" + cafeId + "_cafe";
+        String imageUrl = googleCloudConfig.uploadObject(gcsPath, file);
+        return imageUrl;
+    }
+
+
+    /**
+     * 방탈출 카페 전체 조회
+     */
     @Transactional(readOnly = true)
     public Page<CafeDto.Response> getCafes(CafeSearchOptions searchOptions, Pageable pageable) {
         Page<Cafe> cafeList;
@@ -71,7 +71,10 @@ public class CafeService {
         return convertToCafeDtoPage(cafeList);
     }
 
-    // 방탈출 카페 전체 조회(리스트 - 관리자웹 개발용)
+
+    /**
+     * 방탈출 카페 전체 조회(리스트 - 관리자웹 개발용)
+     */
     @Transactional(readOnly = true)
     public List<CafeDto.Response> getCafeList(String searchWord, Boolean sortByUpdateYn) {
        List<Cafe> cafeList = (searchWord == null)
@@ -111,27 +114,35 @@ public class CafeService {
         return result;
     }
 
+
+    /**
+     * 방탈출 카페 전체 조회(리스트 - 관리자웹 개발용)
+     */
     // 방탈출 카페 단건 조회
     @Transactional(readOnly = true)
     public CafeDto.Response getOneCafe(Long cafeId) {
         return convertToCafeDto(cafeJpaRepository.findByIdWithLocation(cafeId).orElseThrow(CafeNotFoundException::new));
     }
 
-    // 방탈출 카페 수정
-    public CafeDto.Response modifyCafe(Long cafeId, CafeParams params, @Nullable MultipartFile file) throws ParseException {
+
+    /**
+     * 방탈출 카페 수정
+     */
+    public void modifyCafe(Long cafeId, CafeParams params, @Nullable MultipartFile file) throws ParseException {
         Cafe cafe = cafeJpaRepository.findByIdWithLocation(cafeId).orElseThrow(CafeNotFoundException::new);
         Location location = locationJpaRepository.findById(params.getLocationId()).orElseThrow(LocationNotFoundException::new);
+        Point geography = GeographyConverter.strToPoint(params.getLongitude(), params.getLatitude());
 
         if(file != null) params.setImageUrl(updateGoogleStorage(cafeId, file));
         updateThemesAvailability(cafe, params.getIsAvailable());
 
-        cafe.update(params, location);
-        return convertToCafeDto(cafe);
+        cafe.update(params, location, geography);
     }
 
     private String updateGoogleStorage(Long cafeId, MultipartFile file) {
-        googleCloudConfig.deleteObject("cafe/" + cafeId + "_cafe");
-        String imageUrl = googleCloudConfig.uploadObject("cafe/" + cafeId + "_cafe", file);
+        String gcsPath = "cafe/" + cafeId + "_cafe";
+        googleCloudConfig.deleteObject(gcsPath);
+        String imageUrl = googleCloudConfig.uploadObject(gcsPath, file);
         return imageUrl;
     }
 
@@ -141,7 +152,10 @@ public class CafeService {
         }
     }
 
-    // 방탈출 카페 삭제
+
+    /**
+     * 방탈출 카페 삭제
+     */
     public void deleteUselessCafeInfo(Long cafeId) {
         Cafe cafe = cafeJpaRepository.findById(cafeId).orElseThrow(CafeNotFoundException::new);
         setThemesUnavailable(cafe);

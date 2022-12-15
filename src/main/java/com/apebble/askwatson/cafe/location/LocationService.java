@@ -19,13 +19,8 @@ public class LocationService {
     private final LocationJpaRepository locationJpaRepository;
 
     // 위치 등록
-    public Location createLocation(LocationParams params) {
-        Location location = Location.builder()
-                .state(params.getState())
-                .city(params.getCity())
-                .build();
-
-        return locationJpaRepository.save(location);
+    public Long createLocation(LocationParams params) {
+        return locationJpaRepository.save(Location.create(params)).getId();
     }
 
     // 위치 전체 조회
@@ -35,11 +30,9 @@ public class LocationService {
     }
 
     // 위치 수정
-    public Location modifyLocation(Long locationId, LocationParams params) {
+    public void modifyLocation(Long locationId, LocationParams params) {
         Location location =locationJpaRepository.findById(locationId).orElseThrow(LocationNotFoundException::new);
         location.update(params);
-
-        return location;
     }
 
     // 위치 삭제

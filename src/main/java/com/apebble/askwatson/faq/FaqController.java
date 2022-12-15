@@ -18,26 +18,27 @@ public class FaqController {
 
     // 자주묻는질문 등록
     @PostMapping(value="/admin/faqs")
-    public SingleResponse<Faq> createFaq(@RequestBody FaqParams params) {
+    public SingleResponse<Long> createFaq(@RequestBody FaqParams params) {
         return responseService.getSingleResponse(faqService.createFaq(params));
     }
 
     // 자주묻는질문 전체 조회
     @GetMapping(value="/faqs")
-    public ListResponse<Faq> getFaqs(@RequestParam(required = false) String searchWord) {
+    public ListResponse<FaqDto.Response> getFaqs(@RequestParam(required = false) String searchWord) {
         return responseService.getListResponse(faqService.getFaqs(searchWord));
     }
 
     // 자주묻는질문 단건 조회
     @GetMapping(value = "/faqs/{faqId}")
-    public SingleResponse<Faq> getFaq(@PathVariable Long faqId) {
+    public SingleResponse<FaqDto.Response> getFaq(@PathVariable Long faqId) {
         return responseService.getSingleResponse(faqService.getOneFaq(faqId));
     }
 
     // 자주묻는질문 수정
     @PutMapping(value = "/admin/faqs/{faqId}")
-    public SingleResponse<Faq> modifyFaq(@PathVariable Long faqId, @RequestBody FaqParams params) {
-        return responseService.getSingleResponse( faqService.modifyFaq(faqId, params));
+    public CommonResponse modifyFaq(@PathVariable Long faqId, @RequestBody FaqParams params) {
+        faqService.modifyFaq(faqId, params);
+        return responseService.getSuccessResponse();
     }
 
     // 자주묻는질문 삭제

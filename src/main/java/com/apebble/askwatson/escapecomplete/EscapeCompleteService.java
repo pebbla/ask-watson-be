@@ -31,24 +31,13 @@ public class EscapeCompleteService {
 
 
     /**
-     * 탈출 완료 등록(DTO)
+     * 탈출 완료 등록
      */
-    public EscapeCompleteDto.Response createEscapeCompleteWithDto(Long userId, Long themeId) {
-        return convertToDto(createEscapeComplete(userId, themeId));
-    }
-
-    // 탈출 완료 등록
-    public EscapeComplete createEscapeComplete(Long userId, Long themeId) {
+    public Long createEscapeComplete(Long userId, Long themeId) {
         User user = userJpaRepository.findById(userId).orElseThrow(UserNotFoundException::new);
         Theme theme = themeJpaRepository.findById(themeId).orElseThrow(ThemeNotFoundException::new);
-
-        EscapeComplete escapeComplete = EscapeComplete.builder()
-                .user(user)
-                .theme(theme)
-                .build();
-
         theme.incEscapeCount();
-        return escapeCompleteJpaRepository.save(escapeComplete);
+        return escapeCompleteJpaRepository.save(EscapeComplete.create(user, theme)).getId();
     }
 
 
@@ -64,11 +53,9 @@ public class EscapeCompleteService {
     /**
      * 탈출 완료 일시 수정
      */
-    public EscapeCompleteDto.Response modifyEscapeCompleteDt(Long escapeCompleteId, LocalDate newEcDt) {
+    public void modifyEscapeCompleteDt(Long escapeCompleteId, LocalDate newEcDt) {
         EscapeComplete escapeComplete = escapeCompleteJpaRepository.findById(escapeCompleteId).orElseThrow(EscapeCompleteNotFoundException::new);
         escapeComplete.update(newEcDt);
-
-        return convertToDto(escapeComplete);
     }
 
 
@@ -100,10 +87,6 @@ public class EscapeCompleteService {
     //==DTO 변환 함수==//
     private List<EscapeCompleteDto.Response> convertToDtoList(List<EscapeComplete> escapeCompleteList){
         return escapeCompleteList.stream().map(EscapeCompleteDto.Response::new).collect(toList());
-    }
-
-    private EscapeCompleteDto.Response convertToDto(EscapeComplete escapeComplete){
-        return new EscapeCompleteDto.Response(escapeComplete);
     }
 
 }

@@ -21,8 +21,8 @@ public class ReviewController {
 
     // 리뷰 등록
     @PostMapping(value = "/user/{userId}/themes/{themeId}/reviews")
-    public SingleResponse<ReviewDto.Response> createReview(@PathVariable Long userId, @PathVariable Long themeId,
-            @RequestBody ReviewParams params) {
+    public SingleResponse<Long> createReview(
+            @PathVariable Long userId, @PathVariable Long themeId, @RequestBody ReviewParams params) {
         return responseService.getSingleResponse(reviewService.createReviewByCheckingEscapeComplete(userId, themeId, params));
     }
 
@@ -46,8 +46,9 @@ public class ReviewController {
 
     // 리뷰 수정
     @PutMapping(value = "/user/reviews/{reviewId}")
-    public SingleResponse<ReviewDto.Response> modifyReview(@PathVariable Long reviewId, @RequestBody ReviewParams params) {
-        return responseService.getSingleResponse(reviewService.modifyReview(reviewId, params));
+    public CommonResponse modifyReview(@PathVariable Long reviewId, @RequestBody ReviewParams params) {
+        reviewService.modifyReview(reviewId, params);
+        return responseService.getSuccessResponse();
     }
 
     // 리뷰 삭제

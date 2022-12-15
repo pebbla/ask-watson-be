@@ -6,17 +6,14 @@ import javax.persistence.*;
 
 import com.apebble.askwatson.theme.Theme;
 import com.apebble.askwatson.user.User;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 import static javax.persistence.FetchType.*;
 
 @Entity
-@Builder
 @Getter
-@AllArgsConstructor
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Heart {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,5 +26,14 @@ public class Heart {
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "theme_id")
     private Theme theme;            // 테마
+
+
+    //==생성 메서드==//
+    public static Heart create(User user, Theme theme) {
+        Heart heart = new Heart();
+        heart.user = user;
+        heart.theme = theme;
+        return heart;
+    }
     
 }

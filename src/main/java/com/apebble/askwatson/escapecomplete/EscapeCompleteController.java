@@ -14,13 +14,15 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 @RequestMapping(value = "/v1")
 public class EscapeCompleteController {
+
     private final ResponseService responseService;
     private final EscapeCompleteService escapeCompleteService;
 
     // 유저 탈출 완료
     @PostMapping(value = "/user/{userId}/themes/{themeId}/escape-completes")
-    public SingleResponse<EscapeCompleteDto.Response> createEscapeComplete(@PathVariable Long userId, @PathVariable Long themeId) {
-        return responseService.getSingleResponse(escapeCompleteService.createEscapeCompleteWithDto(userId, themeId));
+    public CommonResponse createEscapeComplete(@PathVariable Long userId, @PathVariable Long themeId) {
+        escapeCompleteService.createEscapeComplete(userId, themeId);
+        return responseService.getSuccessResponse();
     }
 
     // 사용자별 탈출완료 목록 조회
@@ -31,9 +33,9 @@ public class EscapeCompleteController {
 
     // 탈출 완료 일시 수정
     @PatchMapping(value = "/user/escape-completes/{escapeCompleteId}")
-    public SingleResponse<EscapeCompleteDto.Response> modifyEscapeCompleteDt(@PathVariable Long escapeCompleteId, @RequestParam(name="escapeCompleteDt") String escapeCompleteDtStr) {
-        return responseService.getSingleResponse(escapeCompleteService.modifyEscapeCompleteDt(
-                escapeCompleteId, DateConverter.strToLocalDate(escapeCompleteDtStr)));
+    public CommonResponse modifyEscapeCompleteDt(@PathVariable Long escapeCompleteId, @RequestParam(name="escapeCompleteDt") String escapeCompleteDtStr) {
+        escapeCompleteService.modifyEscapeCompleteDt(escapeCompleteId, DateConverter.strToLocalDate(escapeCompleteDtStr));
+        return responseService.getSuccessResponse();
     }
 
     // 탈출 완료 취소
@@ -42,4 +44,5 @@ public class EscapeCompleteController {
         escapeCompleteService.deleteEscapeCompleteByCheckingReview(escapeCompleteId);
         return responseService.getSuccessResponse();
     }
+
 }

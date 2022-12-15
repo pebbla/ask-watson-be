@@ -3,7 +3,6 @@ package com.apebble.askwatson.escapecomplete;
 import com.apebble.askwatson.theme.Theme;
 import com.apebble.askwatson.user.User;
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.lang.Nullable;
@@ -14,10 +13,8 @@ import java.time.LocalDate;
 import static javax.persistence.FetchType.*;
 
 @Entity
-@Builder
 @Getter
-@AllArgsConstructor
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class EscapeComplete {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,7 +23,7 @@ public class EscapeComplete {
     @Nullable
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
-    private LocalDate escapeCompleteDt;     // 탈출 완료 일시 (Default: 오늘 날짜)
+    private LocalDate escapeCompleteDt;     // 탈출 완료 일시
 
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "user_id")
@@ -35,6 +32,15 @@ public class EscapeComplete {
     @OneToOne(fetch = LAZY)
     @JoinColumn(name = "theme_id")
     private Theme theme;                    // 탈출 완료한 테마
+
+
+    //==생성 메서드==//
+    public static EscapeComplete create(User user, Theme theme) {
+        EscapeComplete escapeComplete = new EscapeComplete();
+        escapeComplete.user = user;
+        escapeComplete.theme = theme;
+        return escapeComplete;
+    }
 
 
     //==수정 로직==//

@@ -64,14 +64,14 @@ public class UserService {
             BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
 
             String br_line = "";
-            String result = "";
+            StringBuilder result = new StringBuilder();
 
             while ((br_line = br.readLine()) != null) {
-                result += br_line;
+                result.append(br_line);
             }
             System.out.println("response:" + result);
 
-            JsonElement element = JsonParser.parseString(result);
+            JsonElement element = JsonParser.parseString(result.toString());
             System.out.println("element:: " + element);
             JsonObject kakaoAccount = element.getAsJsonObject().get("kakao_account").getAsJsonObject();
             // TODO : 카카오 비즈니스 앱 등록 후 email -> phone num
@@ -140,16 +140,8 @@ public class UserService {
     /**
      * 회원 등록
      */
-    public UserDto.Response createUser(UserParams params) {
-        User user = User.builder()
-                .userNickname(params.getUserNickname())
-                .userPhoneNum(params.getUserPhoneNum())
-                .userBirth(DateConverter.strToLocalDate(params.getUserBirth()))
-                .userGender(params.getUserGender())
-                .marketingAgreeYn(params.getMarketingAgreeYn())
-                .build();
-
-        return convertToDto(userJpaRepository.save(user));
+    public Long createUser(UserParams params) {
+        return userJpaRepository.save(User.create(params)).getId();
     }
 
     /**
@@ -180,11 +172,9 @@ public class UserService {
     /**
      * 회원정보 수정
      */
-    public UserDto.Response modifyUser(Long userId, UserParams params) {
+    public void modifyUser(Long userId, UserParams params) {
         User user = userJpaRepository.findById(userId).orElseThrow(UserNotFoundException::new);
         user.update(params);
-
-        return convertToDto(user);
     }
 
 

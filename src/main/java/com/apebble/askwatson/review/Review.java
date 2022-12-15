@@ -5,7 +5,6 @@ import com.apebble.askwatson.escapecomplete.EscapeComplete;
 import com.apebble.askwatson.theme.Theme;
 import com.apebble.askwatson.user.User;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -14,9 +13,7 @@ import javax.persistence.*;
 import static javax.persistence.FetchType.*;
 
 @Entity
-@Builder
 @Getter
-@AllArgsConstructor
 @NoArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
 public class Review extends BaseTime {
@@ -44,12 +41,28 @@ public class Review extends BaseTime {
     private EscapeComplete escapeComplete;  // 탈출완료
 
 
-    //==연관관계 편의 메서드==//
     //==생성 메서드==//
+    public static Review create(User user, Theme theme, EscapeComplete escapeComplete, ReviewParams params) {
+        Review review = new Review();
+        review.difficulty = params.getDifficulty();
+        review.timeTaken = params.getTimeTaken();
+        review.usedHintNum = params.getUsedHintNum();
+        review.rating = params.getRating();
+        review.deviceRatio = params.getDeviceRatio();
+        review.activity = params.getActivity();
+        review.content = params.getContent();
+        review.user = user;
+        review.theme = theme;
+        review.escapeComplete = escapeComplete;
+        return review;
+    }
+
+
     //==조회 로직==//
     public boolean isUserNull(){
         return this.user == null;
     }
+
 
     //==수정 로직==//
     public void deleteUser() { this.user = null; }
@@ -63,7 +76,5 @@ public class Review extends BaseTime {
        this.activity = params.getActivity();
        this.content = params.getContent();
     }
-
-    //==비즈니스 로직==//
 
 }

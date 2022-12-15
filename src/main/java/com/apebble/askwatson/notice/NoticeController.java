@@ -19,26 +19,27 @@ public class NoticeController {
 
     // 공지사항 등록
     @PostMapping(value="/admin/notices")
-    public SingleResponse<Notice> createNotice(@RequestBody NoticeParams params) {
+    public SingleResponse<Long> createNotice(@RequestBody NoticeDto.Params params) {
         return responseService.getSingleResponse(noticeService.createNotice(params));
     }
 
     // 공지사항 전제 조회
     @GetMapping(value="/notices")
-    public ListResponse<Notice> getNotices(@RequestParam(required = false) String searchWord) {
+    public ListResponse<NoticeDto.Response> getNotices(@RequestParam(required = false) String searchWord) {
         return responseService.getListResponse(noticeService.getNotices(searchWord));
     }
 
     // 공지사항 단건 조회
     @GetMapping(value="/notices/{noticeId}")
-    public SingleResponse<Notice> getOneNotice(@PathVariable Long noticeId) {
+    public SingleResponse<NoticeDto.Response> getOneNotice(@PathVariable Long noticeId) {
         return responseService.getSingleResponse(noticeService.getOneNotice(noticeId));
     }
 
     // 공지사항 수정
     @PutMapping(value = "/admin/notices/{noticeId}")
-    public SingleResponse<Notice> modifyNotice(@PathVariable Long noticeId, @RequestBody NoticeParams params) {
-        return responseService.getSingleResponse(noticeService.modifyNotice(noticeId, params));
+    public CommonResponse modifyNotice(@PathVariable Long noticeId, @RequestBody NoticeDto.Params params) {
+        noticeService.modifyNotice(noticeId, params);
+        return responseService.getSuccessResponse();
     }
 
     // 공지사항 삭제
