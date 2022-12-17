@@ -170,6 +170,15 @@ public class UserService {
 
 
     /**
+     * 회원 단건 조회
+     */
+    @Transactional(readOnly = true)
+    public User findOne(Long userId) {
+        return userJpaRepository.findById(userId).orElseThrow(UserNotFoundException::new);
+    }
+
+
+    /**
      * 회원정보 수정
      */
     public void modifyUser(Long userId, UserParams params) {

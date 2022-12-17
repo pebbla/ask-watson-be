@@ -40,8 +40,9 @@ public class UserController {
 
     // 회원 등록
     @PostMapping(value = "/users")
-    public SingleResponse<Long> createUser(@RequestBody UserParams params) {
-        return responseService.getSingleResponse(userService.createUser(params));
+    public SingleResponse<UserDto.Response> createUser(@RequestBody UserParams params) {
+        Long userId = userService.createUser(params);
+        return responseService.getSingleResponse(new UserDto.Response(userService.findOne(userId),0,0,0));
     }
 
     // 회원 전체 조회

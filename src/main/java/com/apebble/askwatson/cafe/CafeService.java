@@ -88,6 +88,11 @@ public class CafeService {
         return convertToCafeDtoList(cafeList);
     }
 
+    @Transactional(readOnly = true)
+    public Cafe findOne(Long cafeId) {
+        return cafeJpaRepository.findByIdWithLocation(cafeId).orElseThrow(CafeNotFoundException::new);
+    }
+
     private List<Cafe> sortByUpdate(List<Cafe> cafeList) {
         List<Cafe> nullModifiedAtList = new ArrayList<>();
         List<Cafe> nullColumnList = new ArrayList<>();

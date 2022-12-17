@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface ReportJpaRepository extends JpaRepository<Report, Long> {
 
@@ -31,6 +32,9 @@ public interface ReportJpaRepository extends JpaRepository<Report, Long> {
             "where r.handledYn =:handledYn " +
             "and :searchWord is null or (reporter.userNickname like %:searchWord% or reportedUser.userNickname like %:searchWord% or r.content like %:searchWord% or r.review.content like %:searchWord% or r.review.theme.themeName like %:searchWord% or r.review.theme.cafe.cafeName like %:searchWord%)")
     List<Report> findReportsByHandledYnAndSearchWord(@Param("searchWord") String searchWord, @Param("handledYn") Boolean handledYn);
+
+    @Query(value = "select r from Report r join fetch r.reporter reporter join fetch r.reportedUser reportedUser join fetch r.review review where r.id=:id")
+    Optional<Report> findByIdWithReporterReportedUserReview(@Param("id") Long id);
 
     int countByReportedUser(User user);
 

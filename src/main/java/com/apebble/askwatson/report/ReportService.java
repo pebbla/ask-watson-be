@@ -41,6 +41,12 @@ public class ReportService {
         return convertToReportDtoList(reportList);
     }
 
+    // 신고 단건 조회
+    @Transactional(readOnly = true)
+    public Report getOneReport(Long reportId) {
+        return reportJpaRepository.findByIdWithReporterReportedUserReview(reportId).orElseThrow(ReportNotFoundException::new);
+    }
+
     // 처리 여부에 따른 신고 목록 조정
     public List<ReportDto.Response> getReportsByHandledYn(String searchWord, Boolean handledYn) {
         List<Report> reportList = (searchWord == null)

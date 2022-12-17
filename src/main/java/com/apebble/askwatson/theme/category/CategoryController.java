@@ -19,8 +19,9 @@ public class CategoryController {
 
     // 카테고리 등록
     @PostMapping(value="/admin/categories")
-    public SingleResponse<Long> createCategory(@RequestBody CategoryParams params) {
-        return responseService.getSingleResponse(categoryService.createCategory(params));
+    public SingleResponse<Category> createCategory(@RequestBody CategoryParams params) {
+        Long categoryId = categoryService.createCategory(params);
+        return responseService.getSingleResponse(categoryService.findOne(categoryId));
     }
 
     // 카테고리 목록 전체 조회
@@ -31,9 +32,9 @@ public class CategoryController {
 
     // 카테고리 수정
     @PutMapping(value = "/admin/categories/{categoryId}")
-    public CommonResponse modifyCategory(@PathVariable Long categoryId, @RequestBody CategoryParams params) {
+    public SingleResponse<Category> modifyCategory(@PathVariable Long categoryId, @RequestBody CategoryParams params) {
         categoryService.modifyCategory(categoryId, params);
-        return responseService.getSuccessResponse();
+        return responseService.getSingleResponse(categoryService.findOne(categoryId));
     }
 
     // 카테고리 삭제

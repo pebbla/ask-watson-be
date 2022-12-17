@@ -33,9 +33,8 @@ public class FaqService {
     }
 
     // 자주묻는질문 단건 조회
-    public FaqDto.Response getOneFaq(Long faqId) {
-        Faq faq = faqJpaRepository.findById(faqId).orElseThrow(FaqNotFoundException::new);
-        return new FaqDto.Response(faq);
+    public Faq getOneFaq(Long faqId) {
+        return faqJpaRepository.findById(faqId).orElseThrow(FaqNotFoundException::new);
     }
 
     // 자주묻는질문 수정

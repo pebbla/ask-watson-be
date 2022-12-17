@@ -20,9 +20,9 @@ public class EscapeCompleteController {
 
     // 유저 탈출 완료
     @PostMapping(value = "/user/{userId}/themes/{themeId}/escape-completes")
-    public CommonResponse createEscapeComplete(@PathVariable Long userId, @PathVariable Long themeId) {
-        escapeCompleteService.createEscapeComplete(userId, themeId);
-        return responseService.getSuccessResponse();
+    public SingleResponse<EscapeCompleteDto.Response> createEscapeComplete(@PathVariable Long userId, @PathVariable Long themeId) {
+        Long ecId = escapeCompleteService.createEscapeComplete(userId, themeId);
+        return responseService.getSingleResponse(new EscapeCompleteDto.Response(escapeCompleteService.findOneWithTheme(ecId)));
     }
 
     // 사용자별 탈출완료 목록 조회
@@ -33,9 +33,9 @@ public class EscapeCompleteController {
 
     // 탈출 완료 일시 수정
     @PatchMapping(value = "/user/escape-completes/{escapeCompleteId}")
-    public CommonResponse modifyEscapeCompleteDt(@PathVariable Long escapeCompleteId, @RequestParam(name="escapeCompleteDt") String escapeCompleteDtStr) {
+    public SingleResponse<EscapeCompleteDto.UpdateResponse> modifyEscapeCompleteDt(@PathVariable Long escapeCompleteId, @RequestParam(name="escapeCompleteDt") String escapeCompleteDtStr) {
         escapeCompleteService.modifyEscapeCompleteDt(escapeCompleteId, DateConverter.strToLocalDate(escapeCompleteDtStr));
-        return responseService.getSuccessResponse();
+        return responseService.getSingleResponse(new EscapeCompleteDto.UpdateResponse(escapeCompleteService.findOneWithTheme(escapeCompleteId)));
     }
 
     // 탈출 완료 취소

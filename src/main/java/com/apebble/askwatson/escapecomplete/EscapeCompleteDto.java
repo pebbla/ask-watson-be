@@ -15,7 +15,23 @@ public class EscapeCompleteDto {
 
         public Response(EscapeComplete entity) {
             this.id = entity.getId();
+            if (entity.getEscapeCompleteDt() != null) {
+                this.escapeCompleteDt = entity.getEscapeCompleteDt().toString();
+            }
             this.theme = new ThemeDto.Response(entity.getTheme());
+        }
+    }
+
+    @Getter @Setter
+    public static class UpdateResponse {
+        private Long id;
+        private String escapeCompleteDt;
+
+        public UpdateResponse(EscapeComplete entity) {
+            this.id = entity.getId();
+            if (entity.getEscapeCompleteDt() != null) {
+                this.escapeCompleteDt = entity.getEscapeCompleteDt().toString();
+            }
         }
     }
 }

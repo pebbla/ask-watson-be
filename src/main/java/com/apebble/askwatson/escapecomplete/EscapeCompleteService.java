@@ -49,6 +49,14 @@ public class EscapeCompleteService {
         return convertToDtoList(escapeCompleteJpaRepository.findByUserId(userId));
     }
 
+    /**
+     * 탈출완료 단건 조회
+     */
+    @Transactional(readOnly = true)
+    public EscapeComplete findOneWithTheme(Long escapeCompleteId) {
+        return escapeCompleteJpaRepository.findByIdWithTheme(escapeCompleteId).orElseThrow(EscapeCompleteNotFoundException::new);
+    }
+
 
     /**
      * 탈출 완료 일시 수정

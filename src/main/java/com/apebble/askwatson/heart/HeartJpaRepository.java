@@ -14,5 +14,8 @@ public interface HeartJpaRepository extends JpaRepository<Heart, Long> {
     @Query(value = "select h from Heart h join fetch h.theme t join fetch t.cafe cf join fetch t.category c where h.user.id=:userId")
     List<Heart> findByUserIdWithCategory(@Param("userId") Long userId);
 
+    @Query(value = "select h from Heart h join fetch h.theme t join fetch t.cafe cf join fetch t.category c where h.id=:id")
+    Optional<Heart> findByIdWithTheme(@Param("id") Long id);
+
 }
 

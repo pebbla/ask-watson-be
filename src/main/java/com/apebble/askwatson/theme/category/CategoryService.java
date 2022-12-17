@@ -29,6 +29,12 @@ public class CategoryService {
         return categoryJpaRepository.findAll();
     }
 
+    // 카테고리 단건 조회
+    @Transactional(readOnly = true)
+    public Category findOne(Long categoryId) {
+        return categoryJpaRepository.findById(categoryId).orElseThrow(CategoryNotFoundException::new);
+    }
+
     // 카테고리 수정
     public void modifyCategory(Long categoryId, CategoryParams params) {
         Category category = categoryJpaRepository.findById(categoryId).orElseThrow(CategoryNotFoundException::new);

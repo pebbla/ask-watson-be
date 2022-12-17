@@ -29,6 +29,12 @@ public class LocationService {
         return locationJpaRepository.findAll();
     }
 
+    // 위치 단건 조회
+    @Transactional(readOnly = true)
+    public Location findOne(Long locationId) {
+        return locationJpaRepository.findById(locationId).orElseThrow(LocationNotFoundException::new);
+    }
+
     // 위치 수정
     public void modifyLocation(Long locationId, LocationParams params) {
         Location location =locationJpaRepository.findById(locationId).orElseThrow(LocationNotFoundException::new);

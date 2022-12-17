@@ -132,12 +132,20 @@ public class ThemeService {
 
 
     /**
+     * 테마 단건 조회(회원 하트 같이)
+     */
+    @Transactional(readOnly = true)
+    public OneThemeDto.Response getOneThemeWithUserHearted(Long themeId, Long userId) {
+        Theme theme = themeJpaRepository.findByIdWithCategory(themeId).orElseThrow(ThemeNotFoundException::new);
+        return convertToOneThemeDto(theme, userId);
+    }
+
+    /**
      * 테마 단건 조회
      */
     @Transactional(readOnly = true)
-    public OneThemeDto.Response getOneTheme(Long themeId, Long userId) {
-        Theme theme = themeJpaRepository.findByIdWithCategory(themeId).orElseThrow(ThemeNotFoundException::new);
-        return convertToOneThemeDto(theme, userId);
+    public Theme findOne(Long themeId) {
+        return themeJpaRepository.findByIdWithCategory(themeId).orElseThrow(ThemeNotFoundException::new);
     }
 
 

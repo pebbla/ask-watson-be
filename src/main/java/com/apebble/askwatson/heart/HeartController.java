@@ -21,8 +21,9 @@ public class HeartController {
 
     // 좋아요 등록
     @PostMapping(value="/user/{userId}/themes/{themeId}/hearts")
-    public SingleResponse<Long> createHeart(@PathVariable Long userId, @PathVariable Long themeId) {
-        return responseService.getSingleResponse(heartService.createHeart(userId, themeId));
+    public SingleResponse<HeartDto.Response> createHeart(@PathVariable Long userId, @PathVariable Long themeId) {
+        Long heartId = heartService.createHeart(userId, themeId);
+        return responseService.getSingleResponse(new HeartDto.Response(heartService.getOneHeartWithTheme(heartId)));
     }
 
     // 좋아요 해제

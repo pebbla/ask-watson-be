@@ -46,6 +46,12 @@ public class HeartService {
         heartJpaRepository.delete(heart);
     }
 
+    //좋아요 단건 조회
+    @Transactional(readOnly = true)
+    public Heart getOneHeartWithTheme(Long heartId){
+        return heartJpaRepository.findByIdWithTheme(heartId).orElseThrow(HeartNotFoundException::new);
+    }
+
 
     // 좋아요 목록 조회
     @Transactional(readOnly = true)
