@@ -7,7 +7,7 @@ import lombok.Data;
 public class NoticeDto {
 
     @Data
-    public static class Params {
+    public static class Request {
         private String title;
         private String content;
     }

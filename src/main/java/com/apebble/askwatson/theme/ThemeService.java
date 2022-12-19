@@ -8,8 +8,8 @@ import com.apebble.askwatson.comm.exception.ThemeNotFoundException;
 import com.apebble.askwatson.config.GoogleCloudConfig;
 import com.apebble.askwatson.heart.Heart;
 import com.apebble.askwatson.heart.HeartJpaRepository;
-import com.apebble.askwatson.escapecomplete.EscapeComplete;
-import com.apebble.askwatson.escapecomplete.EscapeCompleteJpaRepository;
+import com.apebble.askwatson.check.Check;
+import com.apebble.askwatson.check.CheckJpaRepository;
 import com.apebble.askwatson.theme.category.Category;
 import com.apebble.askwatson.theme.category.CategoryJpaRepository;
 import lombok.RequiredArgsConstructor;
@@ -38,7 +38,7 @@ public class ThemeService {
     private final CategoryJpaRepository categoryJpaRepository;
     private final ThemeJpaRepository themeJpaRepository;
     private final HeartJpaRepository heartJpaRepository;
-    private final EscapeCompleteJpaRepository escapeCompleteJpaRepository;
+    private final CheckJpaRepository checkJpaRepository;
     private final GoogleCloudConfig googleCloudConfig;
 
     
@@ -186,8 +186,8 @@ public class ThemeService {
     private boolean checkUserCompletedTheme(Long userId, Long themeId) {
         if(userId == null) return false;
 
-        Optional<EscapeComplete> escapeComplete = escapeCompleteJpaRepository.findByUserIdAndThemeId(userId, themeId);
-        return escapeComplete.isPresent();
+        Optional<Check> check = checkJpaRepository.findByUserIdAndThemeId(userId, themeId);
+        return check.isPresent();
     }
 
 

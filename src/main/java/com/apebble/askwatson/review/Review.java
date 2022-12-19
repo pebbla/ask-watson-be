@@ -1,7 +1,7 @@
 package com.apebble.askwatson.review;
 
 import com.apebble.askwatson.comm.BaseTime;
-import com.apebble.askwatson.escapecomplete.EscapeComplete;
+import com.apebble.askwatson.check.Check;
 import com.apebble.askwatson.theme.Theme;
 import com.apebble.askwatson.user.User;
 
@@ -14,7 +14,7 @@ import static javax.persistence.FetchType.*;
 
 @Entity
 @Getter
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EntityListeners(AuditingEntityListener.class)
 public class Review extends BaseTime {
 
@@ -37,12 +37,12 @@ public class Review extends BaseTime {
     private Theme theme;                    // 테마
 
     @OneToOne(fetch = LAZY)
-    @JoinColumn(name = "escape_complete_id")
-    private EscapeComplete escapeComplete;  // 탈출완료
+    @JoinColumn(name = "check_id")
+    private Check check;  // 탈출완료
 
 
     //==생성 메서드==//
-    public static Review create(User user, Theme theme, EscapeComplete escapeComplete, ReviewParams params) {
+    public static Review create(User user, Theme theme, Check check, ReviewParams params) {
         Review review = new Review();
         review.difficulty = params.getDifficulty();
         review.timeTaken = params.getTimeTaken();
@@ -53,7 +53,7 @@ public class Review extends BaseTime {
         review.content = params.getContent();
         review.user = user;
         review.theme = theme;
-        review.escapeComplete = escapeComplete;
+        review.check = check;
         return review;
     }
 
@@ -66,7 +66,7 @@ public class Review extends BaseTime {
 
     //==수정 로직==//
     public void deleteUser() { this.user = null; }
-    public void deleteEscapeComplete() { this.escapeComplete = null; }
+    public void deleteCheck() { this.check = null; }
     public void update(ReviewParams params) {
        this.difficulty = params.getDifficulty();
        this.timeTaken = params.getTimeTaken();

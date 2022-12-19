@@ -92,9 +92,9 @@ public class ExceptionAdvice {
         return responseService.getErrorResponse(404, "카테고리를 찾을 수 없습니다.");
     }
 
-    @ExceptionHandler(EscapeCompleteNotFoundException.class)
+    @ExceptionHandler(CheckNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    protected CommonResponse escapeCompleteNotFoundException(){
+    protected CommonResponse checkNotFoundException(){
         return responseService.getErrorResponse(404, "탈출 완료를 찾을 수 없습니다.");
     }
 
@@ -113,9 +113,9 @@ public class ExceptionAdvice {
         return responseService.getErrorResponse(405, "연관 관계 문제로 삭제할 수 없습니다.");
     }
 
-    @ExceptionHandler(EscapeCompleteUndeletableException.class)
+    @ExceptionHandler(CheckUndeletableException.class)
     @ResponseStatus(HttpStatus.METHOD_NOT_ALLOWED)
-    protected CommonResponse escapeCompleteUndeletableException(){
+    protected CommonResponse checkUndeletableException(){
         return responseService.getErrorResponse(405, "탈출 완료를 취소할 수 없습니다. 리뷰 작성 여부를 확인해주십시오.");
     }
 

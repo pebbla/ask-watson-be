@@ -7,18 +7,18 @@ import java.util.Optional;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.apebble.askwatson.cafe.Cafe;
-import com.apebble.askwatson.escapecomplete.EscapeCompleteService;
+import com.apebble.askwatson.check.CheckService;
 import com.apebble.askwatson.report.Report;
 import com.apebble.askwatson.report.ReportJpaRepository;
 import org.springframework.stereotype.Service;
 
-import com.apebble.askwatson.comm.exception.EscapeCompleteNotFoundException;
+import com.apebble.askwatson.comm.exception.CheckNotFoundException;
 import com.apebble.askwatson.comm.exception.ReviewNotFoundException;
 import com.apebble.askwatson.comm.exception.ThemeNotFoundException;
 import com.apebble.askwatson.comm.exception.UserNotFoundException;
 import com.apebble.askwatson.comm.util.DateConverter;
-import com.apebble.askwatson.escapecomplete.EscapeComplete;
-import com.apebble.askwatson.escapecomplete.EscapeCompleteJpaRepository;
+import com.apebble.askwatson.check.Check;
+import com.apebble.askwatson.check.CheckJpaRepository;
 import com.apebble.askwatson.theme.Theme;
 import com.apebble.askwatson.theme.ThemeJpaRepository;
 import com.apebble.askwatson.user.User;
@@ -37,36 +37,36 @@ public class ReviewService {
     private final ReviewJpaRepository reviewJpaRepository;
     private final UserJpaRepository userJpaRepository;
     private final ThemeJpaRepository themeJpaRepository;
-    private final EscapeCompleteJpaRepository escapeCompleteJpaRepository;
-    private final EscapeCompleteService escapeCompleteService;
+    private final CheckJpaRepository checkJpaRepository;
+    private final CheckService checkService;
     private final ReportJpaRepository reportJpaRepository;
 
 
     /**
      * 리뷰 등록
      */
-    public Long createReviewByCheckingEscapeComplete(Long userId, Long themeId, ReviewParams params) {
-        EscapeComplete escapeComplete = findOrCreateEscapeComplete(userId, themeId);
-        return createReview(userId, themeId, escapeComplete, params);
+    public Long createReviewByChecks(Long userId, Long themeId, ReviewParams params) {
+        Check check = findOrCreateCheck(userId, themeId);
+        return createReview(userId, themeId, check, params);
     }
 
-    private EscapeComplete findOrCreateEscapeComplete(Long userId, Long themeId) {
-        Optional<EscapeComplete> escapeComplete = escapeCompleteJpaRepository.findByUserIdAndThemeId(userId, themeId);
-        if(escapeComplete.isPresent()) {
-            return escapeComplete.orElseThrow(EscapeCompleteNotFoundException::new);
+    private Check findOrCreateCheck(Long userId, Long themeId) {
+        Optional<Check> check = checkJpaRepository.findByUserIdAndThemeId(userId, themeId);
+        if(check.isPresent()) {
+            return check.orElseThrow(CheckNotFoundException::new);
         }
         else {
-            Long id = escapeCompleteService.createEscapeComplete(userId, themeId);
-            return escapeCompleteJpaRepository.findById(id).orElseThrow(EscapeCompleteNotFoundException::new);
+            Long id = checkService.createCheck(userId, themeId);
+            return checkJpaRepository.findById(id).orElseThrow(CheckNotFoundException::new);
         }
     }
 
-    private Long createReview(Long userId, Long themeId, EscapeComplete escapeComplete, ReviewParams params) {
+    private Long createReview(Long userId, Long themeId, Check check, ReviewParams params) {
         User user = userJpaRepository.findById(userId).orElseThrow(UserNotFoundException::new);
         Theme theme = themeJpaRepository.findById(themeId).orElseThrow(ThemeNotFoundException::new);
         addReviewToCafeAndTheme(params, theme);
-        updateEscapeCompleteDt(escapeComplete, params.getEscapeCompleteDate());
-        return reviewJpaRepository.save(Review.create(user, theme, escapeComplete, params)).getId();
+        updateCheckDt(check, params.getCheckDate());
+        return reviewJpaRepository.save(Review.create(user, theme, check, params)).getId();
     }
 
     private void addReviewToCafeAndTheme(ReviewParams review, Theme theme) {
@@ -96,9 +96,9 @@ public class ReviewService {
         return ((oldValue * reviewCount) + newValue) / (reviewCount + 1);
     }
 
-    private void updateEscapeCompleteDt(EscapeComplete escapeComplete, String newEscapeCompleteDt) {
-        LocalDate parseLocalDate = DateConverter.strToLocalDate(newEscapeCompleteDt);
-        escapeComplete.update(parseLocalDate);
+    private void updateCheckDt(Check check, String newCheckDt) {
+        LocalDate parseLocalDate = DateConverter.strToLocalDate(newCheckDt);
+        check.update(parseLocalDate);
     }
 
 

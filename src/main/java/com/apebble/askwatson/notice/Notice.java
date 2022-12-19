@@ -17,7 +17,7 @@ public class Notice extends BaseTime {
 
 
     //==생성 메서드==//
-    public static Notice create(NoticeDto.Params params) {
+    public static Notice create(NoticeDto.Request params) {
         Notice notice = new Notice();
         notice.title = params.getTitle();
         notice.content = params.getContent();
@@ -26,7 +26,7 @@ public class Notice extends BaseTime {
 
 
     //==수정 로직==//
-    public void update(NoticeDto.Params params) {
+    public void update(NoticeDto.Request params) {
         this.title = params.getTitle();
         this.content = params.getContent();
     }

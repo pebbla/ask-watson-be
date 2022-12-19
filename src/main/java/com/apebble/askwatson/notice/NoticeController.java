@@ -19,8 +19,8 @@ public class NoticeController {
 
     // 공지사항 등록
     @PostMapping(value="/admin/notices")
-    public SingleResponse<NoticeDto.Response> createNotice(@RequestBody NoticeDto.Params params) {
-        Long noticeId = noticeService.createNotice(params);
+    public SingleResponse<NoticeDto.Response> createNotice(@RequestBody NoticeDto.Request request) {
+        Long noticeId = noticeService.createNotice(request);
         return responseService.getSingleResponse(noticeService.getOneNotice(noticeId));
     }
 
@@ -38,7 +38,7 @@ public class NoticeController {
 
     // 공지사항 수정
     @PutMapping(value = "/admin/notices/{noticeId}")
-    public SingleResponse<NoticeDto.Response> modifyNotice(@PathVariable Long noticeId, @RequestBody NoticeDto.Params params) {
+    public SingleResponse<NoticeDto.Response> modifyNotice(@PathVariable Long noticeId, @RequestBody NoticeDto.Request params) {
         noticeService.modifyNotice(noticeId, params);
         return responseService.getSingleResponse(noticeService.getOneNotice(noticeId));
     }

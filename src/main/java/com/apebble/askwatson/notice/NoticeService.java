@@ -19,8 +19,8 @@ public class NoticeService {
     private final NoticeJpaRepository noticeJpaRepository;
 
     // 공지사항 등록
-    public Long createNotice(NoticeDto.Params params) {
-        return noticeJpaRepository.save(Notice.create(params)).getId();
+    public Long createNotice(NoticeDto.Request request) {
+        return noticeJpaRepository.save(Notice.create(request)).getId();
     }
 
     // 공지사항 전체 조회
@@ -40,7 +40,7 @@ public class NoticeService {
     }
 
     // 공지사항 수정
-    public void modifyNotice(Long noticeId, NoticeDto.Params params) {
+    public void modifyNotice(Long noticeId, NoticeDto.Request params) {
         Notice notice = noticeJpaRepository.findById(noticeId).orElseThrow(NoticeNotFoundException::new);
         notice.update(params);
     }

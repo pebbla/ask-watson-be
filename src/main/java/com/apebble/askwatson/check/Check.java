@@ -1,4 +1,4 @@
-package com.apebble.askwatson.escapecomplete;
+package com.apebble.askwatson.check;
 
 import com.apebble.askwatson.theme.Theme;
 import com.apebble.askwatson.user.User;
@@ -9,13 +9,14 @@ import org.springframework.lang.Nullable;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import static javax.persistence.FetchType.*;
 
-@Entity
+@Entity(name ="checks")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class EscapeComplete {
+public class Check {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;                        // pk
@@ -23,7 +24,7 @@ public class EscapeComplete {
     @Nullable
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
-    private LocalDate escapeCompleteDt;     // 탈출 완료 일시
+    private LocalDate checkDt;     // 탈출 완료 일시
 
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "user_id")
@@ -35,17 +36,18 @@ public class EscapeComplete {
 
 
     //==생성 메서드==//
-    public static EscapeComplete create(User user, Theme theme) {
-        EscapeComplete escapeComplete = new EscapeComplete();
-        escapeComplete.user = user;
-        escapeComplete.theme = theme;
-        return escapeComplete;
+    public static Check create(User user, Theme theme) {
+        Check check = new Check();
+        check.checkDt = LocalDate.now();
+        check.user = user;
+        check.theme = theme;
+        return check;
     }
 
 
     //==수정 로직==//
-    public void update(LocalDate escapeCompleteDt) {
-        this.escapeCompleteDt = escapeCompleteDt;
+    public void update(LocalDate checkDt) {
+        this.checkDt = checkDt;
     }
 
 }

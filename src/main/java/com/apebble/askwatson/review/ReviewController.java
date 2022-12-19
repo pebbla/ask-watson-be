@@ -23,7 +23,7 @@ public class ReviewController {
     @PostMapping(value = "/user/{userId}/themes/{themeId}/reviews")
     public SingleResponse<ReviewDto.Response> createReview(
             @PathVariable Long userId, @PathVariable Long themeId, @RequestBody ReviewParams params) {
-        Long reviewId = reviewService.createReviewByCheckingEscapeComplete(userId, themeId, params);
+        Long reviewId = reviewService.createReviewByChecks(userId, themeId, params);
         return responseService.getSingleResponse(reviewService.getOneReview(reviewId));
     }
 

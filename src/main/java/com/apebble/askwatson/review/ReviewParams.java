@@ -21,5 +21,5 @@ public class ReviewParams {
 
     private String content;                 // 내용
 
-    private String escapeCompleteDate;            // 탈출 날짜
+    private String checkDate;            // 탈출 날짜
 }
