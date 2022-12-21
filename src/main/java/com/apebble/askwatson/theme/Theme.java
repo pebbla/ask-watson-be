@@ -67,7 +67,7 @@ public class Theme extends BaseTime {
 
 
     //==생성 메서드==//
-    public static Theme create(Cafe cafe, Category category, ThemeParams params) {
+    public static Theme create(Cafe cafe, Category category, ThemeDto.Request params) {
         Theme theme = new Theme();
         theme.themeName = params.getThemeName();
         theme.themeExplanation = params.getThemeExplanation();
@@ -94,7 +94,7 @@ public class Theme extends BaseTime {
     public void changeAvailability(boolean value) {this.isAvailable = value;}
     public void updateImageUrl(String url) { this.imageUrl = url; }
 
-    public void update(ThemeParams params, Category category) {
+    public void update(ThemeDto.Request params, Category category) {
         this.themeName = params.getThemeName();
         this.themeExplanation = params.getThemeExplanation();
         this.category = category;

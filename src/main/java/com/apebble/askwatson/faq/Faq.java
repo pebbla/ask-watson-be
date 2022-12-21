@@ -20,7 +20,7 @@ public class Faq extends BaseTime {
 
 
     //==생성 메서드==//
-    public static Faq create(FaqParams params) {
+    public static Faq create(FaqDto.Request params) {
         Faq faq = new Faq();
         faq.title = params.getTitle();
         faq.content = params.getContent();
@@ -29,7 +29,7 @@ public class Faq extends BaseTime {
 
 
     //==수정 로직==//
-    public void update(FaqParams params) {
+    public void update(FaqDto.Request params) {
         this.title = params.getTitle();
         this.content = params.getContent();
     }

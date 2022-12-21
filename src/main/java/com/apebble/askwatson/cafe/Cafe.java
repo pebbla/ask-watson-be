@@ -11,7 +11,6 @@ import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import static javax.persistence.CascadeType.*;
 import static javax.persistence.FetchType.*;
 
 @Entity
@@ -45,7 +44,7 @@ public class Cafe extends BaseTime {
     private double rating=0;                                    // 평균 별점
 
     @Singular("theme")
-    @OneToMany(fetch = LAZY, mappedBy = "cafe", cascade = ALL)
+    @OneToMany(fetch = LAZY, mappedBy = "cafe")
     private List<Theme> themeList = new ArrayList<>();          // 방탈출 테마 리스트(fk)
 
 
@@ -57,7 +56,7 @@ public class Cafe extends BaseTime {
 
 
     //==생성 메서드==//
-    public static Cafe create(CafeParams params, Location location, Point geography) {
+    public static Cafe create(CafeDto.Request params, Location location, Point geography) {
         Cafe cafe = new Cafe();
         cafe.cafeName = params.getCafeName();
         cafe.cafePhoneNum = params.getCafePhoneNum();
@@ -87,7 +86,7 @@ public class Cafe extends BaseTime {
     public void incReviewCount() { this.reviewCount++; }
     public void decReviewCount() { this.reviewCount--; }
 
-    public void update(CafeParams params, Location location, Point geography) {
+    public void update(CafeDto.Request params, Location location, Point geography) {
         this.cafeName = params.getCafeName();
         this.cafePhoneNum = params.getCafePhoneNum();
         this.location = location;

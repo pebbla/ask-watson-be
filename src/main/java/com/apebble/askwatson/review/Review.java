@@ -42,7 +42,7 @@ public class Review extends BaseTime {
 
 
     //==생성 메서드==//
-    public static Review create(User user, Theme theme, Check check, ReviewParams params) {
+    public static Review create(User user, Theme theme, Check check, ReviewDto.Request params) {
         Review review = new Review();
         review.difficulty = params.getDifficulty();
         review.timeTaken = params.getTimeTaken();
@@ -67,7 +67,7 @@ public class Review extends BaseTime {
     //==수정 로직==//
     public void deleteUser() { this.user = null; }
     public void deleteCheck() { this.check = null; }
-    public void update(ReviewParams params) {
+    public void update(ReviewDto.Request params) {
        this.difficulty = params.getDifficulty();
        this.timeTaken = params.getTimeTaken();
        this.usedHintNum = params.getUsedHintNum();

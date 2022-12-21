@@ -26,7 +26,7 @@ public class User extends BaseTime {
 
 
     //==생성 메서드==//
-    public static User create(UserParams params) {
+    public static User create(UserDto.Request params) {
         User user = new User();
         user.userNickname = params.getUserNickname();
         user.userPhoneNum = params.getUserPhoneNum();
@@ -38,7 +38,7 @@ public class User extends BaseTime {
 
 
     //==수정 로직==//
-    public void update(UserParams params) {
+    public void update(UserDto.Request params) {
         this.userNickname = params.getUserNickname();
         this.userPhoneNum = params.getUserPhoneNum();
         this.userBirth = DateConverter.strToLocalDate(params.getUserBirth());

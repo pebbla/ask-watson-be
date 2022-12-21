@@ -1,15 +1,28 @@
 package com.apebble.askwatson.cafe;
 
 import com.apebble.askwatson.cafe.location.Location;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.Data;
 import org.locationtech.jts.geom.Point;
 
-@Getter @Setter
+@Data
 public class CafeDto {
 
-    @Getter @Setter
+    @Data
+    public static class Request {
+        private String cafeName;
+        private String cafePhoneNum;
+        private String website;
+        private String address;
+        private String imageUrl;
+        private Long locationId;
+        private Double longitude;
+        private Double latitude;
+        private Boolean isEnglishPossible;
+        private Boolean isAvailable;
+    }
+
+
+    @Data
     public static class Response {
         private Long id;
         private String cafeName;
@@ -40,7 +53,7 @@ public class CafeDto {
         }
     }
 
-    @Getter @NoArgsConstructor
+    @Data
     private static class PointDto {
         private Double longitude;
         private Double latitude;

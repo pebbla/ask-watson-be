@@ -45,7 +45,7 @@ public class ThemeService {
     /**
      * 방탈출 테마 등록
      */
-    public Long createTheme(Long cafeId, ThemeParams params, MultipartFile file) {
+    public Long createTheme(Long cafeId, ThemeDto.Request params, MultipartFile file) {
         Cafe cafe = cafeJpaRepository.findById(cafeId).orElseThrow(CafeNotFoundException::new);
         Category category = categoryJpaRepository.findById(params.getCategoryId()).orElseThrow(CategoryNotFoundException::new);
 
@@ -140,6 +140,7 @@ public class ThemeService {
         return convertToOneThemeDto(theme, userId);
     }
 
+
     /**
      * 테마 단건 조회
      */
@@ -152,7 +153,7 @@ public class ThemeService {
     /**
      * 테마 정보 수정
      */
-    public void modifyTheme(Long themeId, ThemeParams params, @Nullable MultipartFile file) {
+    public void modifyTheme(Long themeId, ThemeDto.Request params, @Nullable MultipartFile file) {
         Theme theme = themeJpaRepository.findByIdWithCategory(themeId).orElseThrow(ThemeNotFoundException::new);
         Category category = categoryJpaRepository.findById(params.getCategoryId()).orElseThrow(CategoryNotFoundException::new);
 

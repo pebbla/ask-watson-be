@@ -1,15 +1,12 @@
 package com.apebble.askwatson.check;
 
-import com.apebble.askwatson.theme.Theme;
 import com.apebble.askwatson.theme.ThemeDto;
-import com.apebble.askwatson.theme.category.Category;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
-@Getter @Setter
+@Data
 public class CheckDto {
 
-    @Getter @Setter
+    @Data
     public static class Response {
         private Long id;
         private String checkDt;
@@ -24,7 +21,7 @@ public class CheckDto {
         }
     }
 
-    @Getter @Setter
+    @Data
     public static class SimpleResponse {
         private Long id;
         private String checkDt;

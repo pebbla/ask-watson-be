@@ -1,15 +1,25 @@
 package com.apebble.askwatson.review;
 
 import com.apebble.askwatson.user.User;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.Data;
 
-@Getter @Setter
+@Data
 public class ReviewDto {
 
-    @Getter
-    @Setter
+    @Data
+    public static class Request {
+        private double difficulty;
+        private double timeTaken;
+        private Integer usedHintNum;
+        private double rating;
+        private double deviceRatio;
+        private double activity;
+        private String content;
+        private String checkDate;
+    }
+
+
+    @Data
     public static class Response {
         private Long id;
         private UserDto user=null;
@@ -35,7 +45,7 @@ public class ReviewDto {
         }
     }
 
-    @Getter @NoArgsConstructor
+    @Data
     private static class UserDto {
         private Long id;
         private String userNickname;

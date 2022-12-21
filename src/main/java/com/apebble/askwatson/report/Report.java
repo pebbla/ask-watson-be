@@ -39,7 +39,7 @@ public class Report extends BaseTime {
 
 
     //==생성 메서드==//
-    public static Report create(User reporter, Review review, ReportParams params) {
+    public static Report create(User reporter, Review review, ReportDto.Request params) {
         Report report = new Report();
         report.reporter = reporter;
         report.reportedUser = review.getUser();

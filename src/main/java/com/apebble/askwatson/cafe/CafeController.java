@@ -23,20 +23,23 @@ public class CafeController {
 
     // 방탈출 카페 등록
     @PostMapping(value="/admin/cafes", consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
-    public SingleResponse<CafeDto.Response> createCafe(@RequestPart CafeParams params, @RequestPart(value = "file", required = false) MultipartFile file) throws ParseException  {
+    public SingleResponse<CafeDto.Response> createCafe(@RequestPart CafeDto.Request params,
+                                                       @RequestPart(value = "file", required = false) MultipartFile file) throws ParseException  {
         Long cafeId = cafeService.createCafe(params, file);
         return responseService.getSingleResponse(new CafeDto.Response(cafeService.findOne(cafeId)));
     }
 
     // 방탈출 카페 전체 조회
     @GetMapping(value="/cafes")
-    public PageResponse<CafeDto.Response> getCafes(CafeSearchOptions searchOptions, @PageableDefault(size=20) Pageable pageable) {
+    public PageResponse<CafeDto.Response> getCafes(CafeSearchOptions searchOptions,
+                                                   @PageableDefault(size=20) Pageable pageable) {
         return responseService.getPageResponse(cafeService.getCafes(searchOptions, pageable));
     }
 
     // 방탈출 카페 전체 조회(리스트 - 관리자웹 개발용)
     @GetMapping(value="/admin/cafes")
-    public ListResponse<CafeDto.Response> getCafeList(@RequestParam(required = false) String searchWord, @RequestParam(required = false) Boolean sortByUpdateYn) {
+    public ListResponse<CafeDto.Response> getCafeList(@RequestParam(required = false) String searchWord,
+                                                      @RequestParam(required = false) Boolean sortByUpdateYn) {
         return responseService.getListResponse(cafeService.getCafeList(searchWord, sortByUpdateYn));
     }
 
@@ -48,7 +51,9 @@ public class CafeController {
 
     // 방탈출 카페 수정
     @PutMapping(value = "/admin/cafes/{cafeId}", consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
-    public SingleResponse<CafeDto.Response> modifyCafe(@PathVariable Long cafeId, @RequestPart CafeParams params, @RequestPart(value = "file", required = false) MultipartFile file) throws ParseException {
+    public SingleResponse<CafeDto.Response> modifyCafe(@PathVariable Long cafeId,
+                                                       @RequestPart CafeDto.Request params,
+                                                       @RequestPart(value = "file", required = false) MultipartFile file) throws ParseException {
         cafeService.modifyCafe(cafeId, params, file);
         return responseService.getSingleResponse(new CafeDto.Response(cafeService.findOne(cafeId)));
     }

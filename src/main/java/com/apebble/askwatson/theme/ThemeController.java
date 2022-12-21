@@ -20,26 +20,31 @@ public class ThemeController {
 
     // 방탈출 테마 등록
     @PostMapping(value="/admin/cafes/{cafeId}/themes", consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
-    public SingleResponse<ThemeDto.Response> createTheme(@PathVariable Long cafeId, @RequestPart ThemeParams params, @RequestPart(value = "file", required = false) MultipartFile file) {
+    public SingleResponse<ThemeDto.Response> createTheme(@PathVariable Long cafeId,
+                                                         @RequestPart ThemeDto.Request params,
+                                                         @RequestPart(value = "file", required = false) MultipartFile file) {
         Long themeId = themeService.createTheme(cafeId, params, file);
         return responseService.getSingleResponse(new ThemeDto.Response(themeService.findOne(themeId)));
     }
 
     // 테마 목록 전체 조회
     @GetMapping(value = "/themes")
-    public PageResponse<ThemeDto.Response> getThemes(ThemeSearchOptions searchOptions, @PageableDefault(size=20) Pageable pageable) {
+    public PageResponse<ThemeDto.Response> getThemes(ThemeSearchOptions searchOptions,
+                                                     @PageableDefault(size=20) Pageable pageable) {
         return responseService.getPageResponse(themeService.getThemes(searchOptions, pageable));
     }
 
     // 방탈출 테마 전체 조회(리스트 - 관리자웹용)
     @GetMapping(value="/admin/themes")
-    public ListResponse<ThemeDto.Response> getThemeList(@RequestParam(required = false) String searchWord, @RequestParam(required = false) Boolean sortByUpdateYn) {
+    public ListResponse<ThemeDto.Response> getThemeList(@RequestParam(required = false) String searchWord,
+                                                        @RequestParam(required = false) Boolean sortByUpdateYn) {
         return responseService.getListResponse(themeService.getThemeList(searchWord, sortByUpdateYn));
     }
 
     // 테마 단건 조회
     @GetMapping(value = "/themes/{themeId}")
-    public SingleResponse<OneThemeDto.Response> getTheme(@PathVariable Long themeId, @RequestParam(required = false) Long userId) {
+    public SingleResponse<OneThemeDto.Response> getTheme(@PathVariable Long themeId,
+                                                         @RequestParam(required = false) Long userId) {
         return responseService.getSingleResponse(themeService.getOneThemeWithUserHearted(themeId, userId));
     }
 
@@ -51,7 +56,9 @@ public class ThemeController {
 
     // 테마 수정
     @PutMapping(value = "/admin/themes/{themeId}", consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
-    public SingleResponse<ThemeDto.Response> modifyTheme(@PathVariable Long themeId, @RequestPart ThemeParams params, @RequestPart(value = "file", required=false) MultipartFile file) {
+    public SingleResponse<ThemeDto.Response> modifyTheme(@PathVariable Long themeId,
+                                                         @RequestPart ThemeDto.Request params,
+                                                         @RequestPart(value = "file", required=false) MultipartFile file) {
         themeService.modifyTheme(themeId, params, file);
         return responseService.getSingleResponse(new ThemeDto.Response(themeService.findOne(themeId)));
     }

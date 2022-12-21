@@ -1,12 +1,21 @@
 package com.apebble.askwatson.user;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
-@Getter @Setter
+@Data
 public class UserDto {
 
-    @Getter @Setter
+    @Data
+    public static class Request {
+        private String userNickname;
+        private String userPhoneNum;
+        private String userBirth;
+        private char userGender;
+        private Boolean marketingAgreeYn;
+    }
+
+
+    @Data
     public static class Response {
         private Long id;
         private String userNickname;

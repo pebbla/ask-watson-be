@@ -19,14 +19,17 @@ public class ReportController {
 
     // 신고 등록
     @PostMapping(value = "/user/{userId}/reviews/{reviewId}/reports")
-    public SingleResponse<ReportDto.Response> createReport(@PathVariable Long userId, @PathVariable Long reviewId, @RequestBody ReportParams params) {
+    public SingleResponse<ReportDto.Response> createReport(@PathVariable Long userId,
+                                                           @PathVariable Long reviewId,
+                                                           @RequestBody ReportDto.Request params) {
         Long reportId = reportService.createReport(userId, reviewId, params);
         return responseService.getSingleResponse(new ReportDto.Response(reportService.getOneReport(reportId)));
     }
 
     // 신고 목록 조회
     @GetMapping(value = "/admin/reports")
-    public ListResponse<ReportDto.Response> getReports(@RequestParam(required = false) Boolean handledYn, @RequestParam(required = false) String searchWord) {
+    public ListResponse<ReportDto.Response> getReports(@RequestParam(required = false) Boolean handledYn,
+                                                       @RequestParam(required = false) String searchWord) {
         if(handledYn == null) {
             return responseService.getListResponse(reportService.getAllReports(searchWord));
         } else {

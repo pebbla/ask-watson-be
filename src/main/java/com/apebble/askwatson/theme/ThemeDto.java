@@ -1,15 +1,28 @@
 package com.apebble.askwatson.theme;
 
-import javax.annotation.Nullable;
-
 import com.apebble.askwatson.cafe.Cafe;
 import com.apebble.askwatson.theme.category.Category;
-import lombok.*;
+import lombok.Data;
 
-@Getter @Setter
+
+@Data
 public class ThemeDto {
 
-    @Getter @Setter
+    @Data
+    public static class Request {
+        private String themeName;
+        private String themeExplanation;
+        private Long categoryId;
+        private int timeLimit;
+        private int minNumPeople;
+        private int price;
+        private String reservationUrl;
+        private String imageUrl;
+        private boolean isAvailable;
+    }
+
+
+    @Data
     public static class Response {
         private Long id;
         private String themeName;

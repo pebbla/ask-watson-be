@@ -1,13 +1,18 @@
 package com.apebble.askwatson.faq;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
 
-@Getter @Setter
+@Data
 public class FaqDto {
 
-    @Getter @Setter
+    @Data
+    public static class Request {
+        private String title;
+        private String content;
+    }
+
+    @Data
     public static class Response {
         private Long id;
         private String title;

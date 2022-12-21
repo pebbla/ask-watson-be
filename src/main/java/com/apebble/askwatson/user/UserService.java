@@ -42,6 +42,7 @@ public class UserService {
     private final CheckJpaRepository checkJpaRepository;
     private final CheckService checkService;
 
+
     /**
      * 로그인(카카오)
      */
@@ -88,6 +89,7 @@ public class UserService {
         resultMap.put("refresh_token", "refresh_token");
         return resultMap;
     }
+
 
     /**
      * 로그인(네이버)
@@ -139,9 +141,10 @@ public class UserService {
     /**
      * 회원 등록
      */
-    public Long createUser(UserParams params) {
+    public Long createUser(UserDto.Request params) {
         return userJpaRepository.save(User.create(params)).getId();
     }
+
 
     /**
      * 회원 전체 조회
@@ -180,7 +183,7 @@ public class UserService {
     /**
      * 회원정보 수정
      */
-    public void modifyUser(Long userId, UserParams params) {
+    public void modifyUser(Long userId, UserDto.Request params) {
         User user = userJpaRepository.findById(userId).orElseThrow(UserNotFoundException::new);
         user.update(params);
     }

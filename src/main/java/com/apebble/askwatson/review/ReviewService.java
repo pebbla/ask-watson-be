@@ -45,7 +45,7 @@ public class ReviewService {
     /**
      * 리뷰 등록
      */
-    public Long createReviewByChecks(Long userId, Long themeId, ReviewParams params) {
+    public Long createReviewByChecks(Long userId, Long themeId, ReviewDto.Request params) {
         Check check = findOrCreateCheck(userId, themeId);
         return createReview(userId, themeId, check, params);
     }
@@ -61,7 +61,7 @@ public class ReviewService {
         }
     }
 
-    private Long createReview(Long userId, Long themeId, Check check, ReviewParams params) {
+    private Long createReview(Long userId, Long themeId, Check check, ReviewDto.Request params) {
         User user = userJpaRepository.findById(userId).orElseThrow(UserNotFoundException::new);
         Theme theme = themeJpaRepository.findById(themeId).orElseThrow(ThemeNotFoundException::new);
         addReviewToCafeAndTheme(params, theme);
@@ -69,12 +69,12 @@ public class ReviewService {
         return reviewJpaRepository.save(Review.create(user, theme, check, params)).getId();
     }
 
-    private void addReviewToCafeAndTheme(ReviewParams review, Theme theme) {
+    private void addReviewToCafeAndTheme(ReviewDto.Request review, Theme theme) {
         addReviewToCafe(review, theme.getCafe());
         addReviewToTheme(review, theme);
     }
 
-    private void addReviewToCafe(ReviewParams review, Cafe cafe) {
+    private void addReviewToCafe(ReviewDto.Request review, Cafe cafe) {
         int reviewCount = cafe.getReviewCount();
         double newRating = calculateNewValue(cafe.getRating(), review.getRating(), reviewCount);
 
@@ -82,7 +82,7 @@ public class ReviewService {
         cafe.incReviewCount();
     }
 
-    private void addReviewToTheme(ReviewParams review, Theme theme) {
+    private void addReviewToTheme(ReviewDto.Request review, Theme theme) {
         int reviewCount = theme.getReviewCount();
         double newRating = calculateNewValue(theme.getRating(), review.getRating(), reviewCount);
         double newDeviceRatio = calculateNewValue(theme.getDeviceRatio(), review.getDeviceRatio(), reviewCount);
@@ -133,13 +133,13 @@ public class ReviewService {
     /**
      * 리뷰 수정
      */
-    public void modifyReview(Long reviewId, ReviewParams params) {
+    public void modifyReview(Long reviewId, ReviewDto.Request params) {
         Review review = reviewJpaRepository.findById(reviewId).orElseThrow(ReviewNotFoundException::new);
         updateCafeAndTheme(review, params, review.getTheme());
         review.update(params);
     }
 
-    private void updateCafeAndTheme(Review oldReview, ReviewParams newReview, Theme theme) {
+    private void updateCafeAndTheme(Review oldReview, ReviewDto.Request newReview, Theme theme) {
         deleteReviewInCafeAndTheme(oldReview);
         addReviewToCafeAndTheme(newReview, theme);
     }

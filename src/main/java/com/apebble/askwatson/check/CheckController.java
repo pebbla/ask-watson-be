@@ -33,7 +33,8 @@ public class CheckController {
 
     // 탈출 완료 일시 수정
     @PatchMapping(value = "/user/checks/{checkId}")
-    public SingleResponse<CheckDto.SimpleResponse> modifyCheckDt(@PathVariable Long checkId, @RequestParam(name="checkDt") String checkDtStr) {
+    public SingleResponse<CheckDto.SimpleResponse> modifyCheckDt(@PathVariable Long checkId,
+                                                                 @RequestParam(name="checkDt") String checkDtStr) {
         checkService.modifyCheckDt(checkId, DateConverter.strToLocalDate(checkDtStr));
         return responseService.getSingleResponse(new CheckDto.SimpleResponse(checkService.findOneWithTheme(checkId)));
     }

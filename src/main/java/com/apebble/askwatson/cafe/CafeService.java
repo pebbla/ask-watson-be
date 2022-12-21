@@ -41,7 +41,7 @@ public class CafeService {
     /**
      * 방탈출 카페 등록
      */
-    public Long createCafe(CafeParams params, MultipartFile file) throws ParseException {
+    public Long createCafe(CafeDto.Request params, MultipartFile file) throws ParseException {
         Location location = locationJpaRepository.findById(params.getLocationId()).orElseThrow(LocationNotFoundException::new);
         Point geography = GeographyConverter.strToPoint(params.getLongitude(), params.getLatitude());
 
@@ -88,6 +88,9 @@ public class CafeService {
         return convertToCafeDtoList(cafeList);
     }
 
+    /**
+     * 방탈출 카페 단건 조회
+     */
     @Transactional(readOnly = true)
     public Cafe findOne(Long cafeId) {
         return cafeJpaRepository.findByIdWithLocation(cafeId).orElseThrow(CafeNotFoundException::new);
@@ -133,7 +136,7 @@ public class CafeService {
     /**
      * 방탈출 카페 수정
      */
-    public void modifyCafe(Long cafeId, CafeParams params, @Nullable MultipartFile file) throws ParseException {
+    public void modifyCafe(Long cafeId, CafeDto.Request params, @Nullable MultipartFile file) throws ParseException {
         Cafe cafe = cafeJpaRepository.findByIdWithLocation(cafeId).orElseThrow(CafeNotFoundException::new);
         Location location = locationJpaRepository.findById(params.getLocationId()).orElseThrow(LocationNotFoundException::new);
         Point geography = GeographyConverter.strToPoint(params.getLongitude(), params.getLatitude());
