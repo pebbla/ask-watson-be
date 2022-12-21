@@ -27,13 +27,13 @@ import com.apebble.askwatson.user.UserJpaRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-import static java.util.stream.Collectors.toList;
 
 @Slf4j
 @Service
 @Transactional
 @RequiredArgsConstructor
 public class ReviewService {
+
     private final ReviewJpaRepository reviewJpaRepository;
     private final UserJpaRepository userJpaRepository;
     private final ThemeJpaRepository themeJpaRepository;
@@ -106,17 +106,17 @@ public class ReviewService {
      * 사용자별 리뷰 목록 조회
      */
     @Transactional(readOnly = true)
-    public List<ReviewDto.Response> getReviewsByUserId(Long userId) {
+    public List<Review> getReviewsByUserId(Long userId) {
         User user = userJpaRepository.findById(userId).orElseThrow(UserNotFoundException::new);
-        return convertToReviewDtoList(reviewJpaRepository.findByUser(user));
+        return reviewJpaRepository.findByUser(user);
     }
 
     /**
      * 테마별 리뷰 리스트 조회
      */
     @Transactional(readOnly = true)
-    public List<ReviewDto.Response> getReviewsByThemeId(Long themeId) {
-        return convertToReviewDtoList(reviewJpaRepository.findByThemeId(themeId));
+    public List<Review> getReviewsByThemeId(Long themeId) {
+        return reviewJpaRepository.findByThemeId(themeId);
     }
 
 
@@ -124,9 +124,8 @@ public class ReviewService {
      * 리뷰 단건 조회
      */
     @Transactional(readOnly = true)
-    public ReviewDto.Response getOneReview(Long reviewId) {
-        Review review = reviewJpaRepository.findById(reviewId).orElseThrow(ReviewNotFoundException::new);
-        return convertToReviewDto(review);
+    public Review getOneReview(Long reviewId) {
+        return reviewJpaRepository.findById(reviewId).orElseThrow(ReviewNotFoundException::new);
     }
 
 
@@ -195,16 +194,6 @@ public class ReviewService {
     private void deleteReviewInReport(Review review) {
         List<Report> reports = reportJpaRepository.findByReview(review);
         reports.forEach(Report::deleteReview);
-    }
-
-
-    //==DTO 변환 메서드==//
-    private List<ReviewDto.Response> convertToReviewDtoList(List<Review> reviewList){
-        return reviewList.stream().map(ReviewDto.Response::new).collect(toList());
-    }
-
-    private ReviewDto.Response convertToReviewDto(Review review){
-        return new ReviewDto.Response(review);
     }
 
 }

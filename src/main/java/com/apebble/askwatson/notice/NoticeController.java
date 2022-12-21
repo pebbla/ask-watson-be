@@ -8,6 +8,10 @@ import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
+import static java.util.stream.Collectors.toList;
+
 @Api(tags = {"공지사항"})
 @RestController
 @RequiredArgsConstructor
@@ -27,7 +31,7 @@ public class NoticeController {
     // 공지사항 전제 조회
     @GetMapping(value="/notices")
     public ListResponse<NoticeDto.Response> getNotices(@RequestParam(required = false) String searchWord) {
-        return responseService.getListResponse(noticeService.getNotices(searchWord));
+        return responseService.getListResponse(toDtoList(noticeService.getNotices(searchWord)));
     }
 
     // 공지사항 단건 조회
@@ -49,6 +53,11 @@ public class NoticeController {
     public CommonResponse deleteNotice(@PathVariable Long noticeId) {
         noticeService.deleteNotice(noticeId);
         return responseService.getSuccessResponse();
+    }
+
+    //==DTO 변환 메서드==//
+    private List<NoticeDto.Response> toDtoList(List<Notice> notices){
+        return notices.stream().map(NoticeDto.Response::new).collect(toList());
     }
 
 }

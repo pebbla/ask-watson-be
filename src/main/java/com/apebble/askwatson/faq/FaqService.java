@@ -29,12 +29,12 @@ public class FaqService {
      * 자주묻는질문 전체 조회
      */
     @Transactional(readOnly = true)
-    public List<FaqDto.Response> getFaqs(String searchWord) {
+    public List<Faq> getFaqs(String searchWord) {
         List<Faq> faqs =  (searchWord == null)
                 ? faqJpaRepository.findAll()
                 : faqJpaRepository.findFaqsBySearchWord(searchWord);
 
-        return convertToDtoList(faqs);
+        return faqs;
     }
 
 
@@ -62,12 +62,6 @@ public class FaqService {
     public void deleteFaq(Long faqId) {
         Faq faq = faqJpaRepository.findById(faqId).orElseThrow(FaqNotFoundException::new);
         faqJpaRepository.delete(faq);
-    }
-
-
-    //==DTO 변환 메서드==//
-    private List<FaqDto.Response> convertToDtoList(List<Faq> faqs){
-        return faqs.stream().map(FaqDto.Response::new).collect(toList());
     }
 
 }

@@ -21,10 +21,7 @@ import java.util.List;
 
 import javax.annotation.Nullable;
 
-import static java.util.stream.Collectors.toList;
-
 import org.locationtech.jts.io.ParseException;
-
 
 
 @Slf4j
@@ -62,13 +59,13 @@ public class CafeService {
      * 방탈출 카페 전체 조회
      */
     @Transactional(readOnly = true)
-    public Page<CafeDto.Response> getCafes(CafeSearchOptions searchOptions, Pageable pageable) {
+    public Page<Cafe> getCafes(CafeSearchOptions searchOptions, Pageable pageable) {
         Page<Cafe> cafeList;
         cafeList = (searchOptions == null)
                 ? cafeJpaRepository.findCafesByIsAvailable(true, pageable)
                 : cafeJpaRepository.findCafesByOptionsAndIsAvailable(searchOptions, true, pageable);
 
-        return convertToCafeDtoPage(cafeList);
+        return cafeList;
     }
 
 
@@ -76,7 +73,7 @@ public class CafeService {
      * 방탈출 카페 전체 조회(리스트 - 관리자웹 개발용)
      */
     @Transactional(readOnly = true)
-    public List<CafeDto.Response> getCafeList(String searchWord, Boolean sortByUpdateYn) {
+    public List<Cafe> getCafeList(String searchWord, Boolean sortByUpdateYn) {
        List<Cafe> cafeList = (searchWord == null)
                 ? cafeJpaRepository.findAllCafes()
                 : cafeJpaRepository.findCafesBySearchWord(searchWord);
@@ -85,7 +82,7 @@ public class CafeService {
            cafeList = sortByUpdate(cafeList);
        }
 
-        return convertToCafeDtoList(cafeList);
+        return cafeList;
     }
 
     /**
@@ -124,12 +121,11 @@ public class CafeService {
 
 
     /**
-     * 방탈출 카페 전체 조회(리스트 - 관리자웹 개발용)
+     * 방탈출 카페 단건 조회
      */
-    // 방탈출 카페 단건 조회
     @Transactional(readOnly = true)
-    public CafeDto.Response getOneCafe(Long cafeId) {
-        return convertToCafeDto(cafeJpaRepository.findByIdWithLocation(cafeId).orElseThrow(CafeNotFoundException::new));
+    public Cafe getOneCafe(Long cafeId) {
+        return cafeJpaRepository.findByIdWithLocation(cafeId).orElseThrow(CafeNotFoundException::new);
     }
 
 
@@ -174,19 +170,6 @@ public class CafeService {
     private void setThemesUnavailable(Cafe cafe) {
         cafe.getThemeList().forEach(theme -> theme.changeAvailability(false));
     }
-
-    private Page<CafeDto.Response> convertToCafeDtoPage(Page<Cafe> cafeList){
-        return cafeList.map(CafeDto.Response::new);
-    }
-
-    private List<CafeDto.Response> convertToCafeDtoList(List<Cafe> cafeList){
-        return cafeList.stream().map(CafeDto.Response::new).collect(toList());
-    }
-
-    private CafeDto.Response convertToCafeDto(Cafe cafe){
-        return new CafeDto.Response(cafe);
-    }
-
 }
 
 

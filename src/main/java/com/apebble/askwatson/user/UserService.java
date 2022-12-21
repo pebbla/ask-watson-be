@@ -239,8 +239,4 @@ public class UserService {
         ).collect(toList());
     }
 
-    private UserDto.Response convertToDto(User user){
-        return new UserDto.Response(user, getUserReportedCount(user), getUserReviewCount(user), getUserCheckCount(user));
-    }
-
 }

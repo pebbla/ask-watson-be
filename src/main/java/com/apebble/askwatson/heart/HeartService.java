@@ -16,8 +16,6 @@ import com.apebble.askwatson.theme.ThemeJpaRepository;
 import com.apebble.askwatson.user.User;
 import com.apebble.askwatson.user.UserJpaRepository;
 
-import static java.util.stream.Collectors.toList;
-
 
 @Slf4j
 @Service
@@ -64,13 +62,8 @@ public class HeartService {
      * 좋아요 목록 조회
      */
     @Transactional(readOnly = true)
-    public List<HeartDto.Response> getHeartsByUserId(Long userId){
-        List<Heart> heartList = heartJpaRepository.findByUserIdWithCategory(userId);
-        return convertToDtoList(heartList);
-    }
-
-    private List<HeartDto.Response> convertToDtoList(List<Heart> heartList){
-        return heartList.stream().map(HeartDto.Response::new).collect(toList());
+    public List<Heart> getHeartsByUserId(Long userId){
+        return heartJpaRepository.findByUserIdWithCategory(userId);
     }
 
 }

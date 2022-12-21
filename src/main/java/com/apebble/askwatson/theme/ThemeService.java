@@ -66,9 +66,9 @@ public class ThemeService {
      * 카페별 테마 조회
      */
     @Transactional(readOnly = true)
-    public List<ThemeDto.Response> getThemesByCafe(Long cafeId) {
+    public List<Theme> getThemesByCafe(Long cafeId) {
         Cafe cafe = cafeJpaRepository.findById(cafeId).orElseThrow(CafeNotFoundException::new);
-        return convertToThemeDtoList(themeJpaRepository.findThemesByCafe(cafe));
+        return themeJpaRepository.findThemesByCafe(cafe);
     }
 
 
@@ -76,13 +76,13 @@ public class ThemeService {
      * 테마 목록 전체 조회
      */
     @Transactional(readOnly = true)
-    public Page<ThemeDto.Response> getThemes(ThemeSearchOptions searchOptions, Pageable pageable) {
+    public Page<Theme> getThemes(ThemeSearchOptions searchOptions, Pageable pageable) {
         Page<Theme> themeList;
         themeList = (searchOptions == null)
             ? themeJpaRepository.findThemesByIsAvailable(true, pageable)
             : themeJpaRepository.findThemesByOptionsAndIsAvailable(searchOptions, true, pageable);
 
-        return convertToThemeDtoPage(themeList);
+        return themeList;
     }
 
 
@@ -90,7 +90,7 @@ public class ThemeService {
      * 방탈출 테마 전체 조회(리스트 - 관리자웹용)
      */
     @Transactional(readOnly = true)
-    public List<ThemeDto.Response> getThemeList(String searchWord, Boolean sortByUpdateYn) {
+    public List<Theme> getThemeList(String searchWord, Boolean sortByUpdateYn) {
         List<Theme> themeList = (searchWord == null)
                 ? themeJpaRepository.findAllThemes()
                 : themeJpaRepository.findThemesBySearchWord(searchWord);
@@ -99,7 +99,7 @@ public class ThemeService {
             themeList = sortByUpdate(themeList);
         }
 
-        return convertToThemeDtoList(themeList);
+        return themeList;
     }
 
     private List<Theme> sortByUpdate(List<Theme> themeList) {
@@ -177,6 +177,14 @@ public class ThemeService {
         theme.changeAvailability(isAvailable);
     }
 
+    //==DTO 변환 메서드==//
+    private OneThemeDto.Response convertToOneThemeDto(Theme theme, Long userId){
+        return new OneThemeDto.Response(
+                theme,
+                checkUserHeartedTheme(userId, theme.getId()),
+                checkUserCompletedTheme(userId, theme.getId()));
+    }
+
     private boolean checkUserHeartedTheme(Long userId, Long themeId) {
         if(userId == null) return false;
 
@@ -189,23 +197,6 @@ public class ThemeService {
 
         Optional<Check> check = checkJpaRepository.findByUserIdAndThemeId(userId, themeId);
         return check.isPresent();
-    }
-
-
-    //==DTO 변환 메서드==//
-    private Page<ThemeDto.Response> convertToThemeDtoPage(Page<Theme> themeList){
-        return themeList.map(ThemeDto.Response::new);
-    }
-
-    private List<ThemeDto.Response> convertToThemeDtoList(List<Theme> themeList){
-        return themeList.stream().map(ThemeDto.Response::new).collect(toList());
-    }
-
-    private OneThemeDto.Response convertToOneThemeDto(Theme theme, Long userId){
-        return new OneThemeDto.Response(
-                theme,
-                checkUserHeartedTheme(userId, theme.getId()),
-                checkUserCompletedTheme(userId, theme.getId()));
     }
 
 }

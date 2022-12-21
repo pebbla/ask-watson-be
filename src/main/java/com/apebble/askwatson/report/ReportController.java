@@ -8,6 +8,10 @@ import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
+import static java.util.stream.Collectors.toList;
+
 @Api(tags = {"신고"})
 @RestController
 @RequiredArgsConstructor
@@ -31,9 +35,9 @@ public class ReportController {
     public ListResponse<ReportDto.Response> getReports(@RequestParam(required = false) Boolean handledYn,
                                                        @RequestParam(required = false) String searchWord) {
         if(handledYn == null) {
-            return responseService.getListResponse(reportService.getAllReports(searchWord));
+            return responseService.getListResponse(toDtoList(reportService.getAllReports(searchWord)));
         } else {
-            return responseService.getListResponse(reportService.getReportsByHandledYn(searchWord, handledYn));
+            return responseService.getListResponse(toDtoList(reportService.getReportsByHandledYn(searchWord, handledYn)));
         }
     }
 
@@ -42,6 +46,11 @@ public class ReportController {
     public CommonResponse modifyReportHandledYn(@PathVariable Long reportId, @RequestParam Boolean handledYn) {
         reportService.modifyReportHandledYn(reportId, handledYn);
         return responseService.getSuccessResponse();
+    }
+
+    //== DTO 변환 메서드==//
+    private List<ReportDto.Response> toDtoList(List<Report> reportList){
+        return reportList.stream().map(ReportDto.Response::new).collect(toList());
     }
 
 }

@@ -7,6 +7,10 @@ import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
+import static java.util.stream.Collectors.toList;
+
 @RestController
 @RequiredArgsConstructor
 @Api(tags = {"자주묻는질문"})
@@ -26,7 +30,7 @@ public class FaqController {
     // 자주묻는질문 전체 조회
     @GetMapping(value="/faqs")
     public ListResponse<FaqDto.Response> getFaqs(@RequestParam(required = false) String searchWord) {
-        return responseService.getListResponse(faqService.getFaqs(searchWord));
+        return responseService.getListResponse(toDtoList(faqService.getFaqs(searchWord)));
     }
 
     // 자주묻는질문 단건 조회
@@ -47,6 +51,11 @@ public class FaqController {
     public CommonResponse deleteCafe(@PathVariable Long faqId) {
         faqService.deleteFaq(faqId);
         return responseService.getSuccessResponse();
+    }
+
+    //==DTO 변환 메서드==//
+    private List<FaqDto.Response> toDtoList(List<Faq> faqs){
+        return faqs.stream().map(FaqDto.Response::new).collect(toList());
     }
 
 }

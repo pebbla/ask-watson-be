@@ -9,6 +9,10 @@ import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
+import static java.util.stream.Collectors.toList;
+
 @Api(tags = {"탈출완료"})
 @RestController
 @RequiredArgsConstructor
@@ -28,7 +32,7 @@ public class CheckController {
     // 사용자별 탈출완료 목록 조회
     @GetMapping(value = "/user/{userId}/checks")
     public ListResponse<CheckDto.Response> getChecksByUser(@PathVariable Long userId) {
-        return responseService.getListResponse(checkService.getChecksByUserId(userId));
+        return responseService.getListResponse(toDtoList(checkService.getChecksByUserId(userId)));
     }
 
     // 탈출 완료 일시 수정
@@ -44,6 +48,11 @@ public class CheckController {
     public CommonResponse cancelCheck(@PathVariable Long checkId) {
         checkService.deleteCheckIfNoReview(checkId);
         return responseService.getSuccessResponse();
+    }
+
+    //==DTO 변환 메서드==//
+    private List<CheckDto.Response> toDtoList(List<Check> checkList){
+        return checkList.stream().map(CheckDto.Response::new).collect(toList());
     }
 
 }

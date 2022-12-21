@@ -16,7 +16,6 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
-import static java.util.stream.Collectors.toList;
 
 @Slf4j
 @Service
@@ -45,8 +44,8 @@ public class CheckService {
      * 사용자별 탈출완료 리스트 조회
      */
     @Transactional(readOnly = true)
-    public List<CheckDto.Response> getChecksByUserId(Long userId) {
-        return convertToDtoList(checkJpaRepository.findByUserId(userId));
+    public List<Check> getChecksByUserId(Long userId) {
+        return checkJpaRepository.findByUserId(userId);
     }
 
     /**
@@ -89,12 +88,6 @@ public class CheckService {
     public void deleteCheck(Check check) {
         check.getTheme().decEscapeCount();
         checkJpaRepository.delete(check);
-    }
-
-
-    //==DTO 변환 함수==//
-    private List<CheckDto.Response> convertToDtoList(List<Check> checkList){
-        return checkList.stream().map(CheckDto.Response::new).collect(toList());
     }
 
 }

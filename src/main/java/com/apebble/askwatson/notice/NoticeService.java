@@ -8,7 +8,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-import static java.util.stream.Collectors.toList;
 
 @Slf4j
 @Service
@@ -30,11 +29,11 @@ public class NoticeService {
      * 공지사항 전체 조회
      */
     @Transactional(readOnly = true)
-    public List<NoticeDto.Response> getNotices(String searchWord) {
+    public List<Notice> getNotices(String searchWord) {
         List<Notice> notices = (searchWord == null)
                 ? noticeJpaRepository.findAll()
                 : noticeJpaRepository.findNoticesBySearchWord(searchWord);
-        return convertToDtoList(notices);
+        return notices;
     }
 
 
@@ -63,12 +62,6 @@ public class NoticeService {
     public void deleteNotice(Long noticeId) {
         Notice notice = noticeJpaRepository.findById(noticeId).orElseThrow(NoticeNotFoundException::new);
         noticeJpaRepository.delete(notice);
-    }
-
-
-    //==DTO 변환 메서드==//
-    private List<NoticeDto.Response> convertToDtoList(List<Notice> notices){
-        return notices.stream().map(NoticeDto.Response::new).collect(toList());
     }
 
 }

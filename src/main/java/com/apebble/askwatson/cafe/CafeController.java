@@ -1,4 +1,5 @@
 package com.apebble.askwatson.cafe;
+import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
 
 import com.apebble.askwatson.comm.response.*;
@@ -11,6 +12,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
+
+import static java.util.stream.Collectors.toList;
 
 @Api(tags = {"카페"})
 @RestController
@@ -26,27 +31,27 @@ public class CafeController {
     public SingleResponse<CafeDto.Response> createCafe(@RequestPart CafeDto.Request params,
                                                        @RequestPart(value = "file", required = false) MultipartFile file) throws ParseException  {
         Long cafeId = cafeService.createCafe(params, file);
-        return responseService.getSingleResponse(new CafeDto.Response(cafeService.findOne(cafeId)));
+        return responseService.getSingleResponse(toDto(cafeService.findOne(cafeId)));
     }
 
     // 방탈출 카페 전체 조회
     @GetMapping(value="/cafes")
     public PageResponse<CafeDto.Response> getCafes(CafeSearchOptions searchOptions,
                                                    @PageableDefault(size=20) Pageable pageable) {
-        return responseService.getPageResponse(cafeService.getCafes(searchOptions, pageable));
+        return responseService.getPageResponse(toDtoPage(cafeService.getCafes(searchOptions, pageable)));
     }
 
     // 방탈출 카페 전체 조회(리스트 - 관리자웹 개발용)
     @GetMapping(value="/admin/cafes")
     public ListResponse<CafeDto.Response> getCafeList(@RequestParam(required = false) String searchWord,
                                                       @RequestParam(required = false) Boolean sortByUpdateYn) {
-        return responseService.getListResponse(cafeService.getCafeList(searchWord, sortByUpdateYn));
+        return responseService.getListResponse(toDtoList(cafeService.getCafeList(searchWord, sortByUpdateYn)));
     }
 
     // 방탈출 카페 단건 조회
     @GetMapping(value = "/cafes/{cafeId}")
     public SingleResponse<CafeDto.Response> getCafe(@PathVariable Long cafeId) {
-        return responseService.getSingleResponse(cafeService.getOneCafe(cafeId));
+        return responseService.getSingleResponse(toDto(cafeService.getOneCafe(cafeId)));
     }
 
     // 방탈출 카페 수정
@@ -55,7 +60,7 @@ public class CafeController {
                                                        @RequestPart CafeDto.Request params,
                                                        @RequestPart(value = "file", required = false) MultipartFile file) throws ParseException {
         cafeService.modifyCafe(cafeId, params, file);
-        return responseService.getSingleResponse(new CafeDto.Response(cafeService.findOne(cafeId)));
+        return responseService.getSingleResponse(toDto(cafeService.findOne(cafeId)));
     }
 
     // 방탈출 카페 삭제
@@ -65,4 +70,16 @@ public class CafeController {
         return responseService.getSuccessResponse();
     }
 
+    //==DTO 변환 메서드==//
+    private Page<CafeDto.Response> toDtoPage(Page<Cafe> cafeList){
+        return cafeList.map(CafeDto.Response::new);
+    }
+
+    private List<CafeDto.Response> toDtoList(List<Cafe> cafeList){
+        return cafeList.stream().map(CafeDto.Response::new).collect(toList());
+    }
+
+    private CafeDto.Response toDto(Cafe cafe){
+        return new CafeDto.Response(cafe);
+    }
 }

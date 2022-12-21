@@ -12,7 +12,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-import static java.util.stream.Collectors.toList;
 
 @Slf4j
 @Service
@@ -39,12 +38,12 @@ public class ReportService {
      * 신고 전체 조회
      */
     @Transactional(readOnly = true)
-    public List<ReportDto.Response> getAllReports(String searchWord) {
+    public List<Report> getAllReports(String searchWord) {
         List<Report> reportList = (searchWord == null)
                 ? reportJpaRepository.findAllReports()
                 : reportJpaRepository.findReportsBySearchWord(searchWord);
 
-        return convertToReportDtoList(reportList);
+        return reportList;
     }
 
 
@@ -60,12 +59,12 @@ public class ReportService {
     /**
      * 처리 여부에 따른 신고 목록 조정
      */
-    public List<ReportDto.Response> getReportsByHandledYn(String searchWord, Boolean handledYn) {
+    public List<Report> getReportsByHandledYn(String searchWord, Boolean handledYn) {
         List<Report> reportList = (searchWord == null)
                 ? reportJpaRepository.findByHandledYn(handledYn)
                 : reportJpaRepository.findReportsByHandledYnAndSearchWord(searchWord, handledYn);
 
-        return convertToReportDtoList(reportList);
+        return reportList;
     }
 
 
@@ -75,12 +74,6 @@ public class ReportService {
     public void modifyReportHandledYn(Long reportId, Boolean handledYn) {
         Report report = reportJpaRepository.findById(reportId).orElseThrow(ReportNotFoundException::new);
         report.updateHandledYn(handledYn);
-    }
-
-
-    //== DTO 변환 메서드==//
-    private List<ReportDto.Response> convertToReportDtoList(List<Report> reportList){
-        return reportList.stream().map(ReportDto.Response::new).collect(toList());
     }
 
 }
