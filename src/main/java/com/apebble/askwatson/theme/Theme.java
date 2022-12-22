@@ -76,7 +76,8 @@ public class Theme extends BaseTime {
         theme.price = params.getPrice();
         theme.reservationUrl = params.getReservationUrl();
         theme.imageUrl = params.getImageUrl();
-        theme.isAvailable = params.isAvailable();
+        if(params.getIsAvailable() != null)
+            theme.isAvailable = params.getIsAvailable();
         theme.cafe = cafe;
         theme.category = category;
         return theme;
@@ -103,7 +104,8 @@ public class Theme extends BaseTime {
         this.minNumPeople = params.getMinNumPeople();
         this.price = params.getPrice();
         this.reservationUrl = params.getReservationUrl();
-        this.isAvailable = params.isAvailable();
+        if(params.getIsAvailable() != null)
+            this.isAvailable = params.getIsAvailable();
     }
 
     public void updateByReview(double newRating, double newDeviceRatio, double newActivity) {

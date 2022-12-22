@@ -18,7 +18,7 @@ public class ThemeDto {
         private int price;
         private String reservationUrl;
         private String imageUrl;
-        private boolean isAvailable;
+        private Boolean isAvailable;
     }
 
 
