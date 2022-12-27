@@ -2,10 +2,9 @@ package com.apebble.askwatson.user;
 
 import com.apebble.askwatson.comm.exception.ServerException;
 import com.apebble.askwatson.comm.exception.UserNotFoundException;
-import com.apebble.askwatson.comm.util.DateConverter;
-import com.apebble.askwatson.escapecomplete.EscapeComplete;
-import com.apebble.askwatson.escapecomplete.EscapeCompleteJpaRepository;
-import com.apebble.askwatson.escapecomplete.EscapeCompleteService;
+import com.apebble.askwatson.check.Check;
+import com.apebble.askwatson.check.CheckJpaRepository;
+import com.apebble.askwatson.check.CheckService;
 import com.apebble.askwatson.report.Report;
 import com.apebble.askwatson.report.ReportJpaRepository;
 import com.apebble.askwatson.review.Review;
@@ -40,8 +39,9 @@ public class UserService {
     private final UserJpaRepository userJpaRepository;
     private final ReportJpaRepository reportJpaRepository;
     private final ReviewJpaRepository reviewJpaRepository;
-    private final EscapeCompleteJpaRepository escapeCompleteJpaRepository;
-    private final EscapeCompleteService escapeCompleteService;
+    private final CheckJpaRepository checkJpaRepository;
+    private final CheckService checkService;
+
 
     /**
      * 로그인(카카오)
@@ -64,14 +64,14 @@ public class UserService {
             BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
 
             String br_line = "";
-            String result = "";
+            StringBuilder result = new StringBuilder();
 
             while ((br_line = br.readLine()) != null) {
-                result += br_line;
+                result.append(br_line);
             }
             System.out.println("response:" + result);
 
-            JsonElement element = JsonParser.parseString(result);
+            JsonElement element = JsonParser.parseString(result.toString());
             System.out.println("element:: " + element);
             JsonObject kakaoAccount = element.getAsJsonObject().get("kakao_account").getAsJsonObject();
             // TODO : 카카오 비즈니스 앱 등록 후 email -> phone num
@@ -89,6 +89,7 @@ public class UserService {
         resultMap.put("refresh_token", "refresh_token");
         return resultMap;
     }
+
 
     /**
      * 로그인(네이버)
@@ -140,17 +141,10 @@ public class UserService {
     /**
      * 회원 등록
      */
-    public UserDto.Response createUser(UserParams params) {
-        User user = User.builder()
-                .userNickname(params.getUserNickname())
-                .userPhoneNum(params.getUserPhoneNum())
-                .userBirth(DateConverter.strToLocalDate(params.getUserBirth()))
-                .userGender(params.getUserGender())
-                .marketingAgreeYn(params.getMarketingAgreeYn())
-                .build();
-
-        return convertToDto(userJpaRepository.save(user));
+    public Long createUser(UserDto.Request params) {
+        return userJpaRepository.save(User.create(params)).getId();
     }
+
 
     /**
      * 회원 전체 조회
@@ -172,19 +166,26 @@ public class UserService {
         return reviewJpaRepository.countByUser(user);
     }
 
-    private int getUserEscapeCompleteCount(User user) {
-        return escapeCompleteJpaRepository.countByUser(user);
+    private int getUserCheckCount(User user) {
+        return checkJpaRepository.countByUser(user);
+    }
+
+
+    /**
+     * 회원 단건 조회
+     */
+    @Transactional(readOnly = true)
+    public User findOne(Long userId) {
+        return userJpaRepository.findById(userId).orElseThrow(UserNotFoundException::new);
     }
 
 
     /**
      * 회원정보 수정
      */
-    public UserDto.Response modifyUser(Long userId, UserParams params) {
+    public void modifyUser(Long userId, UserDto.Request params) {
         User user = userJpaRepository.findById(userId).orElseThrow(UserNotFoundException::new);
         user.update(params);
-
-        return convertToDto(user);
     }
 
 
@@ -198,7 +199,7 @@ public class UserService {
     }
 
     private void handleUserAssociations(User user) {
-        deleteEscapeCompletesHandlingReviews(user);
+        deleteChecksHandlingReviews(user);
         setReviewsUserNull(user);
         setReportsReporterNull(user);
         setReportsReportedUserNull(user);
@@ -209,15 +210,15 @@ public class UserService {
         reviews.forEach(Review::deleteUser);
     }
 
-    private void deleteEscapeCompletesHandlingReviews(User user) {
-        List<EscapeComplete> escapeCompletes = escapeCompleteJpaRepository.findByUserId(user.getId());
-        setReviewsEscapeCompleteNull(user);
-        escapeCompletes.forEach(escapeCompleteService::deleteEscapeComplete);
+    private void deleteChecksHandlingReviews(User user) {
+        List<Check> checks = checkJpaRepository.findByUserId(user.getId());
+        setReviewsCheckNull(user);
+        checks.forEach(checkService::deleteCheck);
     }
 
-    private void setReviewsEscapeCompleteNull(User user) {
+    private void setReviewsCheckNull(User user) {
         List<Review> reviews = reviewJpaRepository.findByUser(user);
-        reviews.forEach(Review::deleteEscapeComplete);
+        reviews.forEach(Review::deleteCheck);
     }
 
     private void setReportsReporterNull(User user) {
@@ -234,12 +235,8 @@ public class UserService {
     //==DTO 변환 함수==//
     private List<UserDto.Response> convertToDtoList(List<User> users){
         return users.stream().map(user ->
-                new UserDto.Response(user, getUserReportedCount(user), getUserReviewCount(user), getUserEscapeCompleteCount(user))
+                new UserDto.Response(user, getUserReportedCount(user), getUserReviewCount(user), getUserCheckCount(user))
         ).collect(toList());
-    }
-
-    private UserDto.Response convertToDto(User user){
-        return new UserDto.Response(user, getUserReportedCount(user), getUserReviewCount(user), getUserEscapeCompleteCount(user));
     }
 
 }

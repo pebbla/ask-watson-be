@@ -1,11 +1,10 @@
 package com.apebble.askwatson.review;
 
 import com.apebble.askwatson.comm.BaseTime;
-import com.apebble.askwatson.escapecomplete.EscapeComplete;
+import com.apebble.askwatson.check.Check;
 import com.apebble.askwatson.theme.Theme;
 import com.apebble.askwatson.user.User;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -14,10 +13,8 @@ import javax.persistence.*;
 import static javax.persistence.FetchType.*;
 
 @Entity
-@Builder
 @Getter
-@AllArgsConstructor
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EntityListeners(AuditingEntityListener.class)
 public class Review extends BaseTime {
 
@@ -40,21 +37,37 @@ public class Review extends BaseTime {
     private Theme theme;                    // 테마
 
     @OneToOne(fetch = LAZY)
-    @JoinColumn(name = "escape_complete_id")
-    private EscapeComplete escapeComplete;  // 탈출완료
+    @JoinColumn(name = "check_id")
+    private Check check;  // 탈출완료
 
 
-    //==연관관계 편의 메서드==//
     //==생성 메서드==//
+    public static Review create(User user, Theme theme, Check check, ReviewDto.Request params) {
+        Review review = new Review();
+        review.difficulty = params.getDifficulty();
+        review.timeTaken = params.getTimeTaken();
+        review.usedHintNum = params.getUsedHintNum();
+        review.rating = params.getRating();
+        review.deviceRatio = params.getDeviceRatio();
+        review.activity = params.getActivity();
+        review.content = params.getContent();
+        review.user = user;
+        review.theme = theme;
+        review.check = check;
+        return review;
+    }
+
+
     //==조회 로직==//
     public boolean isUserNull(){
         return this.user == null;
     }
 
+
     //==수정 로직==//
     public void deleteUser() { this.user = null; }
-    public void deleteEscapeComplete() { this.escapeComplete = null; }
-    public void update(ReviewParams params) {
+    public void deleteCheck() { this.check = null; }
+    public void update(ReviewDto.Request params) {
        this.difficulty = params.getDifficulty();
        this.timeTaken = params.getTimeTaken();
        this.usedHintNum = params.getUsedHintNum();
@@ -63,7 +76,5 @@ public class Review extends BaseTime {
        this.activity = params.getActivity();
        this.content = params.getContent();
     }
-
-    //==비즈니스 로직==//
 
 }

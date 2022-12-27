@@ -8,6 +8,10 @@ import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
+import static java.util.stream.Collectors.toList;
+
 @Api(tags = {"공지사항"})
 @RestController
 @RequiredArgsConstructor
@@ -19,26 +23,29 @@ public class NoticeController {
 
     // 공지사항 등록
     @PostMapping(value="/admin/notices")
-    public SingleResponse<Notice> createNotice(@RequestBody NoticeParams params) {
-        return responseService.getSingleResponse(noticeService.createNotice(params));
+    public SingleResponse<NoticeDto.Response> createNotice(@RequestBody NoticeDto.Request request) {
+        Long noticeId = noticeService.createNotice(request);
+        return responseService.getSingleResponse(noticeService.getOneNotice(noticeId));
     }
 
     // 공지사항 전제 조회
     @GetMapping(value="/notices")
-    public ListResponse<Notice> getNotices(@RequestParam(required = false) String searchWord) {
-        return responseService.getListResponse(noticeService.getNotices(searchWord));
+    public ListResponse<NoticeDto.Response> getNotices(@RequestParam(required = false) String searchWord) {
+        return responseService.getListResponse(toDtoList(noticeService.getNotices(searchWord)));
     }
 
     // 공지사항 단건 조회
     @GetMapping(value="/notices/{noticeId}")
-    public SingleResponse<Notice> getOneNotice(@PathVariable Long noticeId) {
+    public SingleResponse<NoticeDto.Response> getOneNotice(@PathVariable Long noticeId) {
         return responseService.getSingleResponse(noticeService.getOneNotice(noticeId));
     }
 
     // 공지사항 수정
     @PutMapping(value = "/admin/notices/{noticeId}")
-    public SingleResponse<Notice> modifyNotice(@PathVariable Long noticeId, @RequestBody NoticeParams params) {
-        return responseService.getSingleResponse(noticeService.modifyNotice(noticeId, params));
+    public SingleResponse<NoticeDto.Response> modifyNotice(@PathVariable Long noticeId,
+                                                           @RequestBody NoticeDto.Request params) {
+        noticeService.modifyNotice(noticeId, params);
+        return responseService.getSingleResponse(noticeService.getOneNotice(noticeId));
     }
 
     // 공지사항 삭제
@@ -46,6 +53,11 @@ public class NoticeController {
     public CommonResponse deleteNotice(@PathVariable Long noticeId) {
         noticeService.deleteNotice(noticeId);
         return responseService.getSuccessResponse();
+    }
+
+    //==DTO 변환 메서드==//
+    private List<NoticeDto.Response> toDtoList(List<Notice> notices){
+        return notices.stream().map(NoticeDto.Response::new).collect(toList());
     }
 
 }

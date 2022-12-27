@@ -7,10 +7,8 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import javax.persistence.*;
 
 @Entity
-@Builder
 @Getter
-@AllArgsConstructor
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EntityListeners(AuditingEntityListener.class)
 public class Faq extends BaseTime {
 
@@ -21,8 +19,17 @@ public class Faq extends BaseTime {
     private String content;         // 내용
 
 
+    //==생성 메서드==//
+    public static Faq create(FaqDto.Request params) {
+        Faq faq = new Faq();
+        faq.title = params.getTitle();
+        faq.content = params.getContent();
+        return faq;
+    }
+
+
     //==수정 로직==//
-    public void update(FaqParams params) {
+    public void update(FaqDto.Request params) {
         this.title = params.getTitle();
         this.content = params.getContent();
     }

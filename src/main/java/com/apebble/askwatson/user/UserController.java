@@ -40,8 +40,9 @@ public class UserController {
 
     // 회원 등록
     @PostMapping(value = "/users")
-    public SingleResponse<UserDto.Response> createUser(@RequestBody UserParams params) {
-        return responseService.getSingleResponse(userService.createUser(params));
+    public SingleResponse<UserDto.Response> createUser(@RequestBody UserDto.Request params) {
+        Long userId = userService.createUser(params);
+        return responseService.getSingleResponse(new UserDto.Response(userService.findOne(userId),0,0,0));
     }
 
     // 회원 전체 조회
@@ -52,8 +53,9 @@ public class UserController {
 
     // 회원정보 수정
     @PutMapping(value = "/users/{userId}")
-    public SingleResponse<UserDto.Response> modifyUser(@PathVariable Long userId, @RequestBody UserParams params) {
-        return responseService.getSingleResponse(userService.modifyUser(userId, params));
+    public CommonResponse modifyUser(@PathVariable Long userId, @RequestBody UserDto.Request params) {
+        userService.modifyUser(userId, params);
+        return responseService.getSuccessResponse();
     }
 
     // 회원 삭제
@@ -62,4 +64,5 @@ public class UserController {
         userService.deleteUser(userId);
         return responseService.getSuccessResponse();
     }
+
 }

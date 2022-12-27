@@ -9,9 +9,7 @@ import javax.persistence.Id;
 import java.time.LocalDateTime;
 
 @Entity
-@Builder
 @Getter
-@AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Location {
 
@@ -20,6 +18,15 @@ public class Location {
     private Long id;                        // pk
     private String state;                   // 대분류(행정구역)
     private String city;                    // 소분류(도시명)
+
+
+    //==생성 메서드==//
+    public static Location create(LocationParams params) {
+        Location location = new Location();
+        location.state = params.getState();
+        location.city = params.getCity();
+        return location;
+    }
 
 
     //==수정 로직==//

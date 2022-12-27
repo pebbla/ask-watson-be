@@ -1,20 +1,33 @@
 package com.apebble.askwatson.theme;
 
-import javax.annotation.Nullable;
-
 import com.apebble.askwatson.cafe.Cafe;
 import com.apebble.askwatson.theme.category.Category;
-import lombok.*;
+import lombok.Data;
 
-@Getter @Setter
+
+@Data
 public class ThemeDto {
 
-    @Getter @Setter
+    @Data
+    public static class Request {
+        private String themeName;
+        private String themeExplanation;
+        private Long categoryId;
+        private int timeLimit;
+        private int minNumPeople;
+        private int price;
+        private String reservationUrl;
+        private String imageUrl;
+        private Boolean isAvailable;
+    }
+
+
+    @Data
     public static class Response {
         private Long id;
         private String themeName;
         private String themeExplanation;
-        private Category category;
+        private CategoryDto category;
         private double difficulty;
         private int timeLimit;
         private int minNumPeople;
@@ -34,7 +47,7 @@ public class ThemeDto {
             this.id = entity.getId();
             this.themeName = entity.getThemeName();
             this.themeExplanation = entity.getThemeExplanation();
-            this.category = entity.getCategory();
+            this.category = new CategoryDto(entity.getCategory());
             this.difficulty = entity.getDifficulty();
             this.timeLimit = entity.getTimeLimit();
             this.minNumPeople = entity.getMinNumPeople();
@@ -52,7 +65,7 @@ public class ThemeDto {
         }
     }
 
-    @Getter @NoArgsConstructor
+    @Data
     private static class CafeDto {
         private Long id;
         private String cafeName;
@@ -60,11 +73,21 @@ public class ThemeDto {
         private Long locationId=null;
 
         public CafeDto(Cafe entity) {
-
             this.id = entity.getId();
             this.cafeName = entity.getCafeName();
             this.cafePhoneNum = entity.getCafePhoneNum();
             if(!entity.isLocationNull()) this.locationId = entity.getLocation().getId();
+        }
+    }
+
+    @Data
+    private static class CategoryDto {
+        private Long id;
+        private String categoryName;
+
+        public CategoryDto(Category entity) {
+            this.id = entity.getId();
+            this.categoryName = entity.getCategoryName();
         }
     }
 }

@@ -12,7 +12,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-import static java.util.stream.Collectors.toList;
 
 @Slf4j
 @Service
@@ -24,54 +23,57 @@ public class ReportService {
     private final UserJpaRepository userJpaRepository;
     private final ReviewJpaRepository reviewJpaRepository;
 
-    // 신고 등록
-    public ReportDto.Response createReport(Long reporterId, Long reviewId, ReportParams params) {
+
+    /**
+     * 신고 등록
+     */
+    public Long createReport(Long reporterId, Long reviewId, ReportDto.Request params) {
         User reporter = userJpaRepository.findById(reporterId).orElseThrow(UserNotFoundException::new);
         Review review = reviewJpaRepository.findByIdWithUser(reviewId).orElseThrow(ReviewNotFoundException::new);
-
-        Report report = Report.builder()
-                .reporter(reporter)
-                .reportedUser(review.getUser())
-                .content(params.getContent())
-                .review(review)
-                .reviewContent(review.getContent())
-                .build();
-
-        return convertToReportDto(reportJpaRepository.save(report));
+        return reportJpaRepository.save(Report.create(reporter, review, params)).getId();
     }
 
-    // 신고 전체 조회
+
+    /**
+     * 신고 전체 조회
+     */
     @Transactional(readOnly = true)
-    public List<ReportDto.Response> getAllReports(String searchWord) {
+    public List<Report> getAllReports(String searchWord) {
         List<Report> reportList = (searchWord == null)
                 ? reportJpaRepository.findAllReports()
                 : reportJpaRepository.findReportsBySearchWord(searchWord);
 
-        return convertToReportDtoList(reportList);
+        return reportList;
     }
 
-    // 처리 여부에 따른 신고 목록 조정
-    public List<ReportDto.Response> getReportsByHandledYn(String searchWord, Boolean handledYn) {
+
+    /**
+     * 신고 단건 조회
+     */
+    @Transactional(readOnly = true)
+    public Report getOneReport(Long reportId) {
+        return reportJpaRepository.findByIdWithReporterReportedUserReview(reportId).orElseThrow(ReportNotFoundException::new);
+    }
+
+
+    /**
+     * 처리 여부에 따른 신고 목록 조정
+     */
+    public List<Report> getReportsByHandledYn(String searchWord, Boolean handledYn) {
         List<Report> reportList = (searchWord == null)
                 ? reportJpaRepository.findByHandledYn(handledYn)
                 : reportJpaRepository.findReportsByHandledYnAndSearchWord(searchWord, handledYn);
 
-        return convertToReportDtoList(reportList);
+        return reportList;
     }
 
-    // 신고 처리 상태 변경
+
+    /**
+     * 신고 처리 상태 변경
+     */
     public void modifyReportHandledYn(Long reportId, Boolean handledYn) {
         Report report = reportJpaRepository.findById(reportId).orElseThrow(ReportNotFoundException::new);
         report.updateHandledYn(handledYn);
-    }
-
-    //== DTO 변환 메서드==//
-    private List<ReportDto.Response> convertToReportDtoList(List<Report> reportList){
-        return reportList.stream().map(ReportDto.Response::new).collect(toList());
-    }
-
-    private ReportDto.Response convertToReportDto(Report report){
-        return new ReportDto.Response(report);
     }
 
 }

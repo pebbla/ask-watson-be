@@ -2,13 +2,12 @@ package com.apebble.askwatson.heart;
 
 import com.apebble.askwatson.theme.ThemeDto;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
-@Getter @Setter
+@Data
 public class HeartDto {
 
-    @Getter @Setter
+    @Data
     public static class Response {
         private Long id;
         private ThemeDto.Response themeDto;

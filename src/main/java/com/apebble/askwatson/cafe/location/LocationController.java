@@ -19,7 +19,8 @@ public class LocationController {
     // 위치 등록
     @PostMapping(value="/admin/locations")
     public SingleResponse<Location> createLocation(@RequestBody LocationParams params) {
-        return responseService.getSingleResponse(locationService.createLocation(params));
+        Long locationId = locationService.createLocation(params);
+        return responseService.getSingleResponse(locationService.findOne(locationId));
     }
 
     // 위치 목록 전체 조회
@@ -31,7 +32,8 @@ public class LocationController {
     // 위치 수정
     @PutMapping(value = "/admin/locations/{locationId}")
     public SingleResponse<Location> modifyLocation(@PathVariable Long locationId, @RequestBody LocationParams params) {
-        return responseService.getSingleResponse(locationService.modifyLocation(locationId, params));
+        locationService.modifyLocation(locationId, params);
+        return responseService.getSingleResponse(locationService.findOne(locationId));
     }
 
     // 위치 삭제

@@ -1,14 +1,17 @@
 package com.apebble.askwatson.report;
 
 import com.apebble.askwatson.user.User;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
-@Getter @Setter
+@Data
 public class ReportDto {
 
-    @Getter
-    @Setter
+    @Data
+    public static class Request {
+        private String content;
+    }
+
+    @Data
     public static class Response {
         private Long id;
         private User reporter;

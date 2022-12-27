@@ -8,8 +8,8 @@ import com.apebble.askwatson.comm.exception.ThemeNotFoundException;
 import com.apebble.askwatson.config.GoogleCloudConfig;
 import com.apebble.askwatson.heart.Heart;
 import com.apebble.askwatson.heart.HeartJpaRepository;
-import com.apebble.askwatson.escapecomplete.EscapeComplete;
-import com.apebble.askwatson.escapecomplete.EscapeCompleteJpaRepository;
+import com.apebble.askwatson.check.Check;
+import com.apebble.askwatson.check.CheckJpaRepository;
 import com.apebble.askwatson.theme.category.Category;
 import com.apebble.askwatson.theme.category.CategoryJpaRepository;
 import lombok.RequiredArgsConstructor;
@@ -38,37 +38,27 @@ public class ThemeService {
     private final CategoryJpaRepository categoryJpaRepository;
     private final ThemeJpaRepository themeJpaRepository;
     private final HeartJpaRepository heartJpaRepository;
-    private final EscapeCompleteJpaRepository escapeCompleteJpaRepository;
+    private final CheckJpaRepository checkJpaRepository;
     private final GoogleCloudConfig googleCloudConfig;
 
     
     /**
      * 방탈출 테마 등록
      */
-    public ThemeDto.Response createTheme(Long cafeId, ThemeParams params, MultipartFile file) {
+    public Long createTheme(Long cafeId, ThemeDto.Request params, MultipartFile file) {
         Cafe cafe = cafeJpaRepository.findById(cafeId).orElseThrow(CafeNotFoundException::new);
         Category category = categoryJpaRepository.findById(params.getCategoryId()).orElseThrow(CategoryNotFoundException::new);
 
-        Theme theme = Theme.builder()
-                .cafe(cafe)
-                .themeName(params.getThemeName())
-                .themeExplanation(params.getThemeExplanation())
-                .timeLimit(params.getTimeLimit())
-                .category(category)
-                .minNumPeople(params.getMinNumPeople())
-                .price(params.getPrice())
-                .reservationUrl(params.getReservationUrl())
-                .imageUrl(params.getImageUrl())
-                .isAvailable(params.getIsAvailable())
-                .build();
+        Theme savedTheme = themeJpaRepository.save(Theme.create(cafe, category, params));
+        if(file !=null) savedTheme.updateImageUrl(addToGoogleStorage(savedTheme.getId(), file));
 
-        Theme savedTheme = themeJpaRepository.save(theme);
+        return savedTheme.getId();
+    }
 
-        if (file != null) {
-            String imageUrl = googleCloudConfig.uploadObject("theme/" + savedTheme.getId() + "_theme", file);
-            savedTheme.updateImageUrl(imageUrl);
-        }
-        return convertToThemeDto(savedTheme);
+    private String addToGoogleStorage(Long themeId, MultipartFile file) {
+        String gcsPath = "theme/" + themeId + "_theme";
+        String imageUrl = googleCloudConfig.uploadObject(gcsPath, file);
+        return imageUrl;
     }
 
 
@@ -76,9 +66,9 @@ public class ThemeService {
      * 카페별 테마 조회
      */
     @Transactional(readOnly = true)
-    public List<ThemeDto.Response> getThemesByCafe(Long cafeId) {
+    public List<Theme> getThemesByCafe(Long cafeId) {
         Cafe cafe = cafeJpaRepository.findById(cafeId).orElseThrow(CafeNotFoundException::new);
-        return convertToThemeDtoList(themeJpaRepository.findThemesByCafe(cafe));
+        return themeJpaRepository.findThemesByCafe(cafe);
     }
 
 
@@ -86,13 +76,13 @@ public class ThemeService {
      * 테마 목록 전체 조회
      */
     @Transactional(readOnly = true)
-    public Page<ThemeDto.Response> getThemes(ThemeSearchOptions searchOptions, Pageable pageable) {
+    public Page<Theme> getThemes(ThemeSearchOptions searchOptions, Pageable pageable) {
         Page<Theme> themeList;
         themeList = (searchOptions == null)
             ? themeJpaRepository.findThemesByIsAvailable(true, pageable)
             : themeJpaRepository.findThemesByOptionsAndIsAvailable(searchOptions, true, pageable);
 
-        return convertToThemeDtoPage(themeList);
+        return themeList;
     }
 
 
@@ -100,7 +90,7 @@ public class ThemeService {
      * 방탈출 테마 전체 조회(리스트 - 관리자웹용)
      */
     @Transactional(readOnly = true)
-    public List<ThemeDto.Response> getThemeList(String searchWord, Boolean sortByUpdateYn) {
+    public List<Theme> getThemeList(String searchWord, Boolean sortByUpdateYn) {
         List<Theme> themeList = (searchWord == null)
                 ? themeJpaRepository.findAllThemes()
                 : themeJpaRepository.findThemesBySearchWord(searchWord);
@@ -109,7 +99,7 @@ public class ThemeService {
             themeList = sortByUpdate(themeList);
         }
 
-        return convertToThemeDtoList(themeList);
+        return themeList;
     }
 
     private List<Theme> sortByUpdate(List<Theme> themeList) {
@@ -142,31 +132,40 @@ public class ThemeService {
 
 
     /**
-     * 테마 단건 조회
+     * 테마 단건 조회(회원 하트 같이)
      */
     @Transactional(readOnly = true)
-    public OneThemeDto.Response getOneTheme(Long themeId, Long userId) {
+    public OneThemeDto.Response getOneThemeWithUserHearted(Long themeId, Long userId) {
         Theme theme = themeJpaRepository.findByIdWithCategory(themeId).orElseThrow(ThemeNotFoundException::new);
         return convertToOneThemeDto(theme, userId);
     }
 
 
     /**
+     * 테마 단건 조회
+     */
+    @Transactional(readOnly = true)
+    public Theme findOne(Long themeId) {
+        return themeJpaRepository.findByIdWithCategory(themeId).orElseThrow(ThemeNotFoundException::new);
+    }
+
+
+    /**
      * 테마 정보 수정
      */
-    public ThemeDto.Response modifyTheme(Long themeId, ThemeParams params, @Nullable MultipartFile file) {
+    public void modifyTheme(Long themeId, ThemeDto.Request params, @Nullable MultipartFile file) {
         Theme theme = themeJpaRepository.findByIdWithCategory(themeId).orElseThrow(ThemeNotFoundException::new);
         Category category = categoryJpaRepository.findById(params.getCategoryId()).orElseThrow(CategoryNotFoundException::new);
-        String imageUrl = params.getImageUrl();
 
-        if(file != null) {
-            googleCloudConfig.deleteObject("theme/" + theme.getId() + "_theme");
-            imageUrl = googleCloudConfig.uploadObject("theme/" + theme.getId() + "_theme", file);
-            params.setImageUrl(imageUrl);
-        }
-
+        if(file != null) params.setImageUrl(updateGoogleStorage(theme.getId(), file));
         theme.update(params, category);
-        return convertToThemeDto(theme);
+    }
+
+    private String updateGoogleStorage(Long themeId, MultipartFile file) {
+        String gcsPath = "theme/" + themeId + "_theme";
+        googleCloudConfig.deleteObject(gcsPath);
+        String imageUrl = googleCloudConfig.uploadObject(gcsPath, file);
+        return imageUrl;
     }
 
 
@@ -176,6 +175,14 @@ public class ThemeService {
     public void modifyThemeAvailability(Long themeId, Boolean isAvailable) {
         Theme theme = themeJpaRepository.findById(themeId).orElseThrow(ThemeNotFoundException::new);
         theme.changeAvailability(isAvailable);
+    }
+
+    //==DTO 변환 메서드==//
+    private OneThemeDto.Response convertToOneThemeDto(Theme theme, Long userId){
+        return new OneThemeDto.Response(
+                theme,
+                checkUserHeartedTheme(userId, theme.getId()),
+                checkUserCompletedTheme(userId, theme.getId()));
     }
 
     private boolean checkUserHeartedTheme(Long userId, Long themeId) {
@@ -188,29 +195,8 @@ public class ThemeService {
     private boolean checkUserCompletedTheme(Long userId, Long themeId) {
         if(userId == null) return false;
 
-        Optional<EscapeComplete> escapeComplete = escapeCompleteJpaRepository.findByUserIdAndThemeId(userId, themeId);
-        return escapeComplete.isPresent();
-    }
-
-
-    //==DTO 변환 메서드==//
-    private Page<ThemeDto.Response> convertToThemeDtoPage(Page<Theme> themeList){
-        return themeList.map(ThemeDto.Response::new);
-    }
-
-    private List<ThemeDto.Response> convertToThemeDtoList(List<Theme> themeList){
-        return themeList.stream().map(ThemeDto.Response::new).collect(toList());
-    }
-
-    private ThemeDto.Response convertToThemeDto(Theme theme){
-        return new ThemeDto.Response(theme);
-    }
-
-    private OneThemeDto.Response convertToOneThemeDto(Theme theme, Long userId){
-        return new OneThemeDto.Response(
-                theme,
-                checkUserHeartedTheme(userId, theme.getId()),
-                checkUserCompletedTheme(userId, theme.getId()));
+        Optional<Check> check = checkJpaRepository.findByUserIdAndThemeId(userId, themeId);
+        return check.isPresent();
     }
 
 }

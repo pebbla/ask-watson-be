@@ -2,26 +2,20 @@ package com.apebble.askwatson.cafe;
 
 import com.apebble.askwatson.cafe.location.Location;
 import com.apebble.askwatson.comm.BaseTime;
-import com.apebble.askwatson.comm.util.GeographyConverter;
 import com.apebble.askwatson.theme.Theme;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 import org.locationtech.jts.geom.Point;
-import org.locationtech.jts.io.ParseException;
 
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import static javax.persistence.CascadeType.*;
 import static javax.persistence.FetchType.*;
 
 @Entity
-@Builder
 @Getter
-@AllArgsConstructor
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Cafe extends BaseTime {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -34,9 +28,9 @@ public class Cafe extends BaseTime {
     private String address;                                     // 방탈출카페 주소
     @Column(length = 400)
     private String imageUrl;                                    // 방탈출카페 이미지 url
-    @Builder.Default @ColumnDefault("0")
+    @ColumnDefault("0")
     private Boolean isEnglishPossible=false;                    // 영어 가능 여부
-    @Builder.Default @ColumnDefault("1")
+    @ColumnDefault("1")
     private boolean isAvailable=true;                           // 카페 이용가능 여부
 
     @ManyToOne(fetch = LAZY) @JoinColumn(name = "location_id")
@@ -44,13 +38,13 @@ public class Cafe extends BaseTime {
     @Column(columnDefinition = "GEOMETRY")
     private Point geography;                                    // 방탈출카페 위치정보(경도, 위도)
 
-    @Builder.Default @ColumnDefault("0")
+    @ColumnDefault("0")
     private int reviewCount=0;                                  // 리뷰 수
-    @Builder.Default @ColumnDefault("0")
+    @ColumnDefault("0")
     private double rating=0;                                    // 평균 별점
 
     @Singular("theme")
-    @OneToMany(fetch = LAZY, mappedBy = "cafe", cascade = ALL)
+    @OneToMany(fetch = LAZY, mappedBy = "cafe")
     private List<Theme> themeList = new ArrayList<>();          // 방탈출 테마 리스트(fk)
 
 
@@ -60,10 +54,22 @@ public class Cafe extends BaseTime {
         if(theme.getCafe() != this) theme.setCafe(this);
     }
 
+
     //==생성 메서드==//
-//    public static createCafe(CafeParams params, MultipartFile file, Location location) {
-//
-//    }
+    public static Cafe create(CafeDto.Request params, Location location, Point geography) {
+        Cafe cafe = new Cafe();
+        cafe.cafeName = params.getCafeName();
+        cafe.cafePhoneNum = params.getCafePhoneNum();
+        cafe.location = location;
+        cafe.website = params.getWebsite();
+        cafe.address = params.getAddress();
+        cafe.imageUrl = params.getImageUrl();
+        cafe.geography = geography;
+        cafe.isEnglishPossible = params.getIsEnglishPossible();
+        cafe.isAvailable = params.getIsAvailable();
+        return cafe;
+    }
+
 
     //==조회 로직==//
     public boolean isLocationNull(){
@@ -73,23 +79,25 @@ public class Cafe extends BaseTime {
         return this.geography == null;
     }
 
+
     //==수정 로직==//
     public void updateRating(double newRating) { this.rating = newRating; }
     public void updateImageUrl(String url) { this.imageUrl = url; }
     public void incReviewCount() { this.reviewCount++; }
     public void decReviewCount() { this.reviewCount--; }
 
-    public void update(CafeParams params, Location location) throws ParseException{
+    public void update(CafeDto.Request params, Location location, Point geography) {
         this.cafeName = params.getCafeName();
         this.cafePhoneNum = params.getCafePhoneNum();
         this.location = location;
         this.website = params.getWebsite();
         this.address = params.getAddress();
         this.imageUrl = params.getImageUrl();
-        this.geography = GeographyConverter.strToPoint(params.getLongitude(), params.getLatitude());
+        this.geography = geography;
         this.isEnglishPossible = params.getIsEnglishPossible();
         this.isAvailable = params.getIsAvailable();
     }
+
 
     //==비즈니스 로직==//
     public void deleteUselessInfo() {

@@ -8,6 +8,10 @@ import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
+import static java.util.stream.Collectors.toList;
+
 @Api(tags = {"신고"})
 @RestController
 @RequiredArgsConstructor
@@ -19,17 +23,21 @@ public class ReportController {
 
     // 신고 등록
     @PostMapping(value = "/user/{userId}/reviews/{reviewId}/reports")
-    public SingleResponse<ReportDto.Response> createReport(@PathVariable Long userId, @PathVariable Long reviewId, @RequestBody ReportParams params) {
-        return responseService.getSingleResponse(reportService.createReport(userId, reviewId, params));
+    public SingleResponse<ReportDto.Response> createReport(@PathVariable Long userId,
+                                                           @PathVariable Long reviewId,
+                                                           @RequestBody ReportDto.Request params) {
+        Long reportId = reportService.createReport(userId, reviewId, params);
+        return responseService.getSingleResponse(new ReportDto.Response(reportService.getOneReport(reportId)));
     }
 
     // 신고 목록 조회
     @GetMapping(value = "/admin/reports")
-    public ListResponse<ReportDto.Response> getReports(@RequestParam(required = false) Boolean handledYn, @RequestParam(required = false) String searchWord) {
+    public ListResponse<ReportDto.Response> getReports(@RequestParam(required = false) Boolean handledYn,
+                                                       @RequestParam(required = false) String searchWord) {
         if(handledYn == null) {
-            return responseService.getListResponse(reportService.getAllReports(searchWord));
+            return responseService.getListResponse(toDtoList(reportService.getAllReports(searchWord)));
         } else {
-            return responseService.getListResponse(reportService.getReportsByHandledYn(searchWord, handledYn));
+            return responseService.getListResponse(toDtoList(reportService.getReportsByHandledYn(searchWord, handledYn)));
         }
     }
 
@@ -38,6 +46,11 @@ public class ReportController {
     public CommonResponse modifyReportHandledYn(@PathVariable Long reportId, @RequestParam Boolean handledYn) {
         reportService.modifyReportHandledYn(reportId, handledYn);
         return responseService.getSuccessResponse();
+    }
+
+    //== DTO 변환 메서드==//
+    private List<ReportDto.Response> toDtoList(List<Report> reportList){
+        return reportList.stream().map(ReportDto.Response::new).collect(toList());
     }
 
 }

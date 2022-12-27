@@ -12,10 +12,8 @@ import javax.persistence.*;
 import static javax.persistence.FetchType.*;
 
 @Entity
-@Builder
 @Getter
-@AllArgsConstructor
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EntityListeners(AuditingEntityListener.class)
 public class Theme extends BaseTime {
 
@@ -33,22 +31,22 @@ public class Theme extends BaseTime {
     private String reservationUrl;                  // 예약하기 url
     @Column(length = 400)
     private String imageUrl;                        // 방탈출테마 이미지 url
-    @Builder.Default @ColumnDefault("1")
+    @ColumnDefault("1")
     private boolean isAvailable=true;               // 테마 이용가능 여부
 
-    @Builder.Default @ColumnDefault("0")
+    @ColumnDefault("0")
     private double difficulty = 0;                      // 난이도
-    @Builder.Default @ColumnDefault("0")
+    @ColumnDefault("0")
     private int heartCount=0;                       // 좋아요 수
-    @Builder.Default @ColumnDefault("0")
+    @ColumnDefault("0")
     private int escapeCount=0;                      // 탈출 횟수
-    @Builder.Default @ColumnDefault("0")
+    @ColumnDefault("0")
     private int reviewCount=0;                      // 리뷰 수
-    @Builder.Default @ColumnDefault("0")
+    @ColumnDefault("0")
     private double rating=0;                        // 평균 별점
-    @Builder.Default @ColumnDefault("0")
+    @ColumnDefault("0")
     private double deviceRatio=0;                   // 장치 비율(적음, 보통, 많음)
-    @Builder.Default @ColumnDefault("0")
+    @ColumnDefault("0")
     private double activity=0;                      // 활동성(낮음, 보통, 높음)
 
     @ManyToOne(fetch = LAZY) @JoinColumn(name = "category_id")
@@ -67,7 +65,25 @@ public class Theme extends BaseTime {
             cafe.getThemeList().add(this);
     }
 
+
     //==생성 메서드==//
+    public static Theme create(Cafe cafe, Category category, ThemeDto.Request params) {
+        Theme theme = new Theme();
+        theme.themeName = params.getThemeName();
+        theme.themeExplanation = params.getThemeExplanation();
+        theme.timeLimit = params.getTimeLimit();
+        theme.minNumPeople = params.getMinNumPeople();
+        theme.price = params.getPrice();
+        theme.reservationUrl = params.getReservationUrl();
+        theme.imageUrl = params.getImageUrl();
+        if(params.getIsAvailable() != null)
+            theme.isAvailable = params.getIsAvailable();
+        theme.cafe = cafe;
+        theme.category = category;
+        return theme;
+    }
+
+
     //==조회 로직==//
     //==수정 로직==//
     public void incHeartCount() { this.heartCount++; }
@@ -79,7 +95,7 @@ public class Theme extends BaseTime {
     public void changeAvailability(boolean value) {this.isAvailable = value;}
     public void updateImageUrl(String url) { this.imageUrl = url; }
 
-    public void update(ThemeParams params, Category category) {
+    public void update(ThemeDto.Request params, Category category) {
         this.themeName = params.getThemeName();
         this.themeExplanation = params.getThemeExplanation();
         this.category = category;
@@ -88,7 +104,8 @@ public class Theme extends BaseTime {
         this.minNumPeople = params.getMinNumPeople();
         this.price = params.getPrice();
         this.reservationUrl = params.getReservationUrl();
-        this.isAvailable = params.getIsAvailable();
+        if(params.getIsAvailable() != null)
+            this.isAvailable = params.getIsAvailable();
     }
 
     public void updateByReview(double newRating, double newDeviceRatio, double newActivity) {

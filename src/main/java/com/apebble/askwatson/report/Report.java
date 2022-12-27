@@ -12,10 +12,8 @@ import javax.persistence.*;
 import static javax.persistence.FetchType.*;
 
 @Entity
-@Builder
 @Getter
-@AllArgsConstructor
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EntityListeners(AuditingEntityListener.class)
 public class Report extends BaseTime {
 
@@ -36,9 +34,20 @@ public class Report extends BaseTime {
 
     private String reviewContent;           // 신고당한 리뷰 내용
 
-    @Builder.Default @ColumnDefault("0")
+    @ColumnDefault("0")
     private boolean handledYn=false;        // 관리자 처리 여부
 
+
+    //==생성 메서드==//
+    public static Report create(User reporter, Review review, ReportDto.Request params) {
+        Report report = new Report();
+        report.reporter = reporter;
+        report.reportedUser = review.getUser();
+        report.content = params.getContent();
+        report.review = review;
+        report.reviewContent = review.getContent();
+        return report;
+    }
 
 
     //==연관관계 메서드==//
@@ -46,10 +55,12 @@ public class Report extends BaseTime {
         this.review = null;
     }
 
+
     //==조회 로직==//
     public boolean isReviewNull(){
         return this.review == null;
     }
+
 
     //==수정 로직==//
     public void updateHandledYn(boolean value) { this.handledYn = value; }

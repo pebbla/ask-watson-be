@@ -1,22 +1,26 @@
 package com.apebble.askwatson.theme.category;
 
 import lombok.*;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @Entity
-@Builder
 @Getter
-@AllArgsConstructor
-@NoArgsConstructor
+@EntityListeners(AuditingEntityListener.class)
 public class Category {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;                        // pk
     private String categoryName;            // 카테고리명
+
+
+    //==생성 메서드==//
+    public static Category create(CategoryParams params) {
+        Category category = new Category();
+        category.categoryName = params.getCategoryName();
+        return category;
+    }
 
 
     //==수정 로직==//

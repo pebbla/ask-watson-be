@@ -7,18 +7,18 @@ import java.util.Optional;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.apebble.askwatson.cafe.Cafe;
-import com.apebble.askwatson.escapecomplete.EscapeCompleteService;
+import com.apebble.askwatson.check.CheckService;
 import com.apebble.askwatson.report.Report;
 import com.apebble.askwatson.report.ReportJpaRepository;
 import org.springframework.stereotype.Service;
 
-import com.apebble.askwatson.comm.exception.EscapeCompleteNotFoundException;
+import com.apebble.askwatson.comm.exception.CheckNotFoundException;
 import com.apebble.askwatson.comm.exception.ReviewNotFoundException;
 import com.apebble.askwatson.comm.exception.ThemeNotFoundException;
 import com.apebble.askwatson.comm.exception.UserNotFoundException;
 import com.apebble.askwatson.comm.util.DateConverter;
-import com.apebble.askwatson.escapecomplete.EscapeComplete;
-import com.apebble.askwatson.escapecomplete.EscapeCompleteJpaRepository;
+import com.apebble.askwatson.check.Check;
+import com.apebble.askwatson.check.CheckJpaRepository;
 import com.apebble.askwatson.theme.Theme;
 import com.apebble.askwatson.theme.ThemeJpaRepository;
 import com.apebble.askwatson.user.User;
@@ -27,66 +27,54 @@ import com.apebble.askwatson.user.UserJpaRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-import static java.util.stream.Collectors.toList;
 
 @Slf4j
 @Service
 @Transactional
 @RequiredArgsConstructor
 public class ReviewService {
+
     private final ReviewJpaRepository reviewJpaRepository;
     private final UserJpaRepository userJpaRepository;
     private final ThemeJpaRepository themeJpaRepository;
-    private final EscapeCompleteJpaRepository escapeCompleteJpaRepository;
-    private final EscapeCompleteService escapeCompleteService;
+    private final CheckJpaRepository checkJpaRepository;
+    private final CheckService checkService;
     private final ReportJpaRepository reportJpaRepository;
 
 
     /**
      * 리뷰 등록
      */
-    public ReviewDto.Response createReviewByCheckingEscapeComplete(Long userId, Long themeId, ReviewParams params) {
-        EscapeComplete escapeComplete = findOrCreateEscapeComplete(userId, themeId);
-        return convertToReviewDto(createReview(userId, themeId, escapeComplete, params));
+    public Long createReviewByChecks(Long userId, Long themeId, ReviewDto.Request params) {
+        Check check = findOrCreateCheck(userId, themeId);
+        return createReview(userId, themeId, check, params);
     }
 
-    private EscapeComplete findOrCreateEscapeComplete(Long userId, Long themeId) {
-        Optional<EscapeComplete> escapeComplete = escapeCompleteJpaRepository.findByUserIdAndThemeId(userId, themeId);
-        if(escapeComplete.isPresent())
-            return escapeComplete.orElseThrow(EscapeCompleteNotFoundException::new);
-        else
-            return escapeCompleteService.createEscapeComplete(userId, themeId);
+    private Check findOrCreateCheck(Long userId, Long themeId) {
+        Optional<Check> check = checkJpaRepository.findByUserIdAndThemeId(userId, themeId);
+        if(check.isPresent()) {
+            return check.orElseThrow(CheckNotFoundException::new);
+        }
+        else {
+            Long id = checkService.createCheck(userId, themeId);
+            return checkJpaRepository.findById(id).orElseThrow(CheckNotFoundException::new);
+        }
     }
 
-    private Review createReview(Long userId, Long themeId, EscapeComplete escapeComplete, ReviewParams params) {
+    private Long createReview(Long userId, Long themeId, Check check, ReviewDto.Request params) {
         User user = userJpaRepository.findById(userId).orElseThrow(UserNotFoundException::new);
         Theme theme = themeJpaRepository.findById(themeId).orElseThrow(ThemeNotFoundException::new);
-        
-        Review review = Review.builder()
-            .user(user)
-            .rating(params.getRating())
-            .difficulty(params.getDifficulty())
-            .timeTaken(params.getTimeTaken())
-            .usedHintNum(params.getUsedHintNum())
-            .deviceRatio(params.getDeviceRatio())
-            .activity(params.getActivity())
-            .content(params.getContent())
-            .theme(theme)
-            .escapeComplete(escapeComplete)
-            .build();
-
-        reflectReviewCreationInCafeAndTheme(params, theme);
-        reflectReviewCreationInEscapeComplete(escapeComplete, params.getEscapeCompleteDate());
-
-        return reviewJpaRepository.save(review);
+        addReviewToCafeAndTheme(params, theme);
+        updateCheckDt(check, params.getCheckDate());
+        return reviewJpaRepository.save(Review.create(user, theme, check, params)).getId();
     }
 
-    private void reflectReviewCreationInCafeAndTheme(ReviewParams review, Theme theme) {
-        reflectReviewCreationInCafe(review, theme.getCafe());
-        reflectReviewCreationInTheme(review, theme);
+    private void addReviewToCafeAndTheme(ReviewDto.Request review, Theme theme) {
+        addReviewToCafe(review, theme.getCafe());
+        addReviewToTheme(review, theme);
     }
 
-    private void reflectReviewCreationInCafe(ReviewParams review, Cafe cafe) {
+    private void addReviewToCafe(ReviewDto.Request review, Cafe cafe) {
         int reviewCount = cafe.getReviewCount();
         double newRating = calculateNewValue(cafe.getRating(), review.getRating(), reviewCount);
 
@@ -94,7 +82,7 @@ public class ReviewService {
         cafe.incReviewCount();
     }
 
-    private void reflectReviewCreationInTheme(ReviewParams review, Theme theme) {
+    private void addReviewToTheme(ReviewDto.Request review, Theme theme) {
         int reviewCount = theme.getReviewCount();
         double newRating = calculateNewValue(theme.getRating(), review.getRating(), reviewCount);
         double newDeviceRatio = calculateNewValue(theme.getDeviceRatio(), review.getDeviceRatio(), reviewCount);
@@ -108,9 +96,9 @@ public class ReviewService {
         return ((oldValue * reviewCount) + newValue) / (reviewCount + 1);
     }
 
-    private void reflectReviewCreationInEscapeComplete(EscapeComplete escapeComplete, String newEscapeCompleteDt) {
-        LocalDate parseLocalDate = DateConverter.strToLocalDate(newEscapeCompleteDt);
-        escapeComplete.update(parseLocalDate);
+    private void updateCheckDt(Check check, String newCheckDt) {
+        LocalDate parseLocalDate = DateConverter.strToLocalDate(newCheckDt);
+        check.update(parseLocalDate);
     }
 
 
@@ -118,17 +106,17 @@ public class ReviewService {
      * 사용자별 리뷰 목록 조회
      */
     @Transactional(readOnly = true)
-    public List<ReviewDto.Response> getReviewsByUserId(Long userId) {
+    public List<Review> getReviewsByUserId(Long userId) {
         User user = userJpaRepository.findById(userId).orElseThrow(UserNotFoundException::new);
-        return convertToReviewDtoList(reviewJpaRepository.findByUser(user));
+        return reviewJpaRepository.findByUser(user);
     }
 
     /**
      * 테마별 리뷰 리스트 조회
      */
     @Transactional(readOnly = true)
-    public List<ReviewDto.Response> getReviewsByThemeId(Long themeId) {
-        return convertToReviewDtoList(reviewJpaRepository.findByThemeId(themeId));
+    public List<Review> getReviewsByThemeId(Long themeId) {
+        return reviewJpaRepository.findByThemeId(themeId);
     }
 
 
@@ -136,25 +124,23 @@ public class ReviewService {
      * 리뷰 단건 조회
      */
     @Transactional(readOnly = true)
-    public ReviewDto.Response getOneReview(Long reviewId) {
-        Review review = reviewJpaRepository.findById(reviewId).orElseThrow(ReviewNotFoundException::new);
-        return convertToReviewDto(review);
+    public Review getOneReview(Long reviewId) {
+        return reviewJpaRepository.findById(reviewId).orElseThrow(ReviewNotFoundException::new);
     }
 
 
     /**
      * 리뷰 수정
      */
-    public ReviewDto.Response modifyReview(Long reviewId, ReviewParams params) {
+    public void modifyReview(Long reviewId, ReviewDto.Request params) {
         Review review = reviewJpaRepository.findById(reviewId).orElseThrow(ReviewNotFoundException::new);
-        reflectModifiedReviewInCafeAndTheme(review, params, review.getTheme());
+        updateCafeAndTheme(review, params, review.getTheme());
         review.update(params);
-        return convertToReviewDto(review);
     }
 
-    private void reflectModifiedReviewInCafeAndTheme(Review oldReview, ReviewParams newReview, Theme theme) {
-        reflectReviewDeletionInCafeAndTheme(oldReview);
-        reflectReviewCreationInCafeAndTheme(newReview, theme);
+    private void updateCafeAndTheme(Review oldReview, ReviewDto.Request newReview, Theme theme) {
+        deleteReviewInCafeAndTheme(oldReview);
+        addReviewToCafeAndTheme(newReview, theme);
     }
 
 
@@ -163,12 +149,12 @@ public class ReviewService {
      */
     public void deleteReview(Long reviewId) {
         Review review = reviewJpaRepository.findById(reviewId).orElseThrow(ReviewNotFoundException::new);
-        reflectReviewDeletionInCafeAndTheme(review);
+        deleteReviewInCafeAndTheme(review);
         deleteReviewInReport(review);
         reviewJpaRepository.delete(review);
     }
 
-    private void reflectReviewDeletionInCafeAndTheme(Review review) {
+    private void deleteReviewInCafeAndTheme(Review review) {
         deleteReviewInCafe(review);
         deleteReviewInTheme(review);
     }
@@ -208,16 +194,6 @@ public class ReviewService {
     private void deleteReviewInReport(Review review) {
         List<Report> reports = reportJpaRepository.findByReview(review);
         reports.forEach(Report::deleteReview);
-    }
-
-
-    //==DTO 변환 메서드==//
-    private List<ReviewDto.Response> convertToReviewDtoList(List<Review> reviewList){
-        return reviewList.stream().map(ReviewDto.Response::new).collect(toList());
-    }
-
-    private ReviewDto.Response convertToReviewDto(Review review){
-        return new ReviewDto.Response(review);
     }
 
 }

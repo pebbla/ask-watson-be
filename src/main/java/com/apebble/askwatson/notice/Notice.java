@@ -5,10 +5,8 @@ import lombok.*;
 import javax.persistence.*;
 
 @Entity
-@Builder
 @Getter
-@AllArgsConstructor
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Notice extends BaseTime {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -18,8 +16,17 @@ public class Notice extends BaseTime {
     private String content;             // 내용
 
 
+    //==생성 메서드==//
+    public static Notice create(NoticeDto.Request params) {
+        Notice notice = new Notice();
+        notice.title = params.getTitle();
+        notice.content = params.getContent();
+        return notice;
+    }
+
+
     //==수정 로직==//
-    public void update(NoticeParams params) {
+    public void update(NoticeDto.Request params) {
         this.title = params.getTitle();
         this.content = params.getContent();
     }

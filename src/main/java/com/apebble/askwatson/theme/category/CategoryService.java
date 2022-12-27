@@ -15,15 +15,12 @@ import java.util.List;
 @Transactional
 @RequiredArgsConstructor
 public class CategoryService {
+
     private final CategoryJpaRepository categoryJpaRepository;
 
     // 카테고리 등록
-    public Category createCategory(CategoryParams params) {
-        Category category = Category.builder()
-                .categoryName(params.getCategoryName())
-                .build();
-
-        return categoryJpaRepository.save(category);
+    public Long createCategory(CategoryParams params) {
+        return categoryJpaRepository.save(Category.create(params)).getId();
     }
 
     // 카테고리 전체 조회
@@ -32,12 +29,16 @@ public class CategoryService {
         return categoryJpaRepository.findAll();
     }
 
+    // 카테고리 단건 조회
+    @Transactional(readOnly = true)
+    public Category findOne(Long categoryId) {
+        return categoryJpaRepository.findById(categoryId).orElseThrow(CategoryNotFoundException::new);
+    }
+
     // 카테고리 수정
-    public Category modifyCategory(Long categoryId, CategoryParams params) {
+    public void modifyCategory(Long categoryId, CategoryParams params) {
         Category category = categoryJpaRepository.findById(categoryId).orElseThrow(CategoryNotFoundException::new);
         category.update(params);
-
-        return category;
     }
 
     // 카테고리 삭제
@@ -45,4 +46,5 @@ public class CategoryService {
         Category category = categoryJpaRepository.findById(categoryId).orElseThrow(CategoryNotFoundException::new);
         categoryJpaRepository.delete(category);
     }
+
 }

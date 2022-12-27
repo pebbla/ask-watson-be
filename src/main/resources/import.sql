@@ -98,7 +98,7 @@ INSERT INTO faq(title,content) VALUES('자주묻는질문4','자주자주 묻는
 INSERT INTO faq(title,content) VALUES('자주묻는질문5','자주자주 묻는 질문들 자주자주 묻는 질문들 자주자주 묻는 질문들 자주자주 묻는 질문들 자주자주 묻는 질문들 ');
 INSERT INTO faq(title,content) VALUES('자주묻는질문ㅇ6','자주자주 묻는 질문들 자주자주 묻는 질문들 자주자주 묻는 질문들 자주자주 묻는 질문들 자주자주 묻는 질문들 자주자주 묻는 질문들 ');
 
-INSERT INTO escape_complete(user_id,theme_id,escape_complete_dt) VALUES(1,1,'2022-03-04');
+INSERT INTO checks(user_id,theme_id,check_dt) VALUES(1,1,'2022-03-04');
 
 INSERT INTO review(user_id,difficulty,time_taken,used_hint_num,rating,device_ratio,activity,content,theme_id) VALUES(1,3,45,7,2.3,4,4,"리뷰예시입니다ㅏㅏㅏㅏㅏㅏ",1);
 INSERT INTO review(user_id,difficulty,time_taken,used_hint_num,rating,device_ratio,activity,content,theme_id) VALUES(2,3,45,7,2.3,4,4,"리뷰예시~~~~입니다ㅏㅏㅏㅏㅏㅏ",2);
