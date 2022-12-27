@@ -7,21 +7,20 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
-import static java.util.stream.Collectors.toList;
-
 @Slf4j
 @Service
 @Transactional
 @RequiredArgsConstructor
 public class FaqService {
 
-    private final FaqJpaRepository faqJpaRepository;
+    private final FaqRepository faqRepository;
+    private final FaqQueryRepository faqQueryRepository;
 
     /**
      * 자주묻는질문 등록
      */
     public Long createFaq(FaqDto.Request params) {
-        return faqJpaRepository.save(Faq.create(params)).getId();
+        return faqRepository.save(Faq.create(params)).getId();
     }
 
 
@@ -30,11 +29,7 @@ public class FaqService {
      */
     @Transactional(readOnly = true)
     public List<Faq> getFaqs(String searchWord) {
-        List<Faq> faqs =  (searchWord == null)
-                ? faqJpaRepository.findAll()
-                : faqJpaRepository.findFaqsBySearchWord(searchWord);
-
-        return faqs;
+        return faqQueryRepository.findFaqsBySearchWord(searchWord);
     }
 
 
@@ -43,7 +38,7 @@ public class FaqService {
      */
     @Transactional(readOnly = true)
     public Faq getOneFaq(Long faqId) {
-        return faqJpaRepository.findById(faqId).orElseThrow(FaqNotFoundException::new);
+        return faqRepository.findById(faqId).orElseThrow(FaqNotFoundException::new);
     }
 
 
@@ -51,7 +46,7 @@ public class FaqService {
      * 자주묻는질문 수정
      */
     public void modifyFaq(Long faqId, FaqDto.Request params) {
-        Faq faq = faqJpaRepository.findById(faqId).orElseThrow(FaqNotFoundException::new);
+        Faq faq = faqRepository.findById(faqId).orElseThrow(FaqNotFoundException::new);
         faq.update(params);
     }
 
@@ -60,8 +55,8 @@ public class FaqService {
      * 자주묻는질문 삭제
      */
     public void deleteFaq(Long faqId) {
-        Faq faq = faqJpaRepository.findById(faqId).orElseThrow(FaqNotFoundException::new);
-        faqJpaRepository.delete(faq);
+        Faq faq = faqRepository.findById(faqId).orElseThrow(FaqNotFoundException::new);
+        faqRepository.delete(faq);
     }
 
 }
