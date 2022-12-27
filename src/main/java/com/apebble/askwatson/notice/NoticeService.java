@@ -15,13 +15,15 @@ import java.util.List;
 @RequiredArgsConstructor
 public class NoticeService {
 
-    private final NoticeJpaRepository noticeJpaRepository;
+    private final NoticeRepository noticeRepository;
+    private final NoticeQueryRepository noticeQueryRepository;
+
 
     /**
      * 공지사항 등록
      */
     public Long createNotice(NoticeDto.Request request) {
-        return noticeJpaRepository.save(Notice.create(request)).getId();
+        return noticeRepository.save(Notice.create(request)).getId();
     }
 
 
@@ -30,10 +32,7 @@ public class NoticeService {
      */
     @Transactional(readOnly = true)
     public List<Notice> getNotices(String searchWord) {
-        List<Notice> notices = (searchWord == null)
-                ? noticeJpaRepository.findAll()
-                : noticeJpaRepository.findNoticesBySearchWord(searchWord);
-        return notices;
+        return noticeQueryRepository.findNoticesBySearchWord(searchWord);
     }
 
 
@@ -42,7 +41,7 @@ public class NoticeService {
      */
     @Transactional(readOnly = true)
     public NoticeDto.Response getOneNotice(Long noticeId) {
-        Notice notice = noticeJpaRepository.findById(noticeId).orElseThrow(NoticeNotFoundException::new);
+        Notice notice = noticeRepository.findById(noticeId).orElseThrow(NoticeNotFoundException::new);
         return new NoticeDto.Response(notice);
     }
 
@@ -51,7 +50,7 @@ public class NoticeService {
      * 공지사항 수정
      */
     public void modifyNotice(Long noticeId, NoticeDto.Request params) {
-        Notice notice = noticeJpaRepository.findById(noticeId).orElseThrow(NoticeNotFoundException::new);
+        Notice notice = noticeRepository.findById(noticeId).orElseThrow(NoticeNotFoundException::new);
         notice.update(params);
     }
 
@@ -60,8 +59,8 @@ public class NoticeService {
      * 공지사항 삭재
      */
     public void deleteNotice(Long noticeId) {
-        Notice notice = noticeJpaRepository.findById(noticeId).orElseThrow(NoticeNotFoundException::new);
-        noticeJpaRepository.delete(notice);
+        Notice notice = noticeRepository.findById(noticeId).orElseThrow(NoticeNotFoundException::new);
+        noticeRepository.delete(notice);
     }
 
 }
