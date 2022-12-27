@@ -2,7 +2,7 @@ package com.apebble.askwatson.check;
 
 import com.apebble.askwatson.comm.exception.*;
 import com.apebble.askwatson.review.Review;
-import com.apebble.askwatson.review.ReviewJpaRepository;
+import com.apebble.askwatson.review.ReviewRepository;
 import com.apebble.askwatson.theme.Theme;
 import com.apebble.askwatson.theme.ThemeJpaRepository;
 import com.apebble.askwatson.user.User;
@@ -26,7 +26,7 @@ public class CheckService {
     private final UserJpaRepository userJpaRepository;
     private final ThemeJpaRepository themeJpaRepository;
     private final CheckRepository checkRepository;
-    private final ReviewJpaRepository reviewJpaRepository;
+    private final ReviewRepository reviewRepository;
 
 
     /**
@@ -78,7 +78,7 @@ public class CheckService {
     }
 
     private boolean doesReviewExists(Check check) {
-        Optional<Review> review = reviewJpaRepository.findByUserAndTheme(check.getUser(), check.getTheme());
+        Optional<Review> review = reviewRepository.findByUserAndTheme(check.getUser(), check.getTheme());
 
         if(review.isPresent())
             throw new CheckUndeletableException();

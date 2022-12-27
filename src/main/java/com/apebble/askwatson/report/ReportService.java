@@ -2,7 +2,7 @@ package com.apebble.askwatson.report;
 
 import com.apebble.askwatson.comm.exception.*;
 import com.apebble.askwatson.review.Review;
-import com.apebble.askwatson.review.ReviewJpaRepository;
+import com.apebble.askwatson.review.ReviewRepository;
 import com.apebble.askwatson.user.User;
 import com.apebble.askwatson.user.UserJpaRepository;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +21,7 @@ public class ReportService {
 
     private final ReportRepository reportRepository;
     private final UserJpaRepository userJpaRepository;
-    private final ReviewJpaRepository reviewJpaRepository;
+    private final ReviewRepository reviewRepository;
 
 
     /**
@@ -29,7 +29,7 @@ public class ReportService {
      */
     public Long createReport(Long reporterId, Long reviewId, ReportDto.Request params) {
         User reporter = userJpaRepository.findById(reporterId).orElseThrow(UserNotFoundException::new);
-        Review review = reviewJpaRepository.findByIdWithUser(reviewId).orElseThrow(ReviewNotFoundException::new);
+        Review review = reviewRepository.findByIdWithUser(reviewId).orElseThrow(ReviewNotFoundException::new);
         return reportRepository.save(Report.create(reporter, review, params)).getId();
     }
 

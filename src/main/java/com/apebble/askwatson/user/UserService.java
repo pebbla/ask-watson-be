@@ -8,7 +8,7 @@ import com.apebble.askwatson.check.CheckService;
 import com.apebble.askwatson.report.Report;
 import com.apebble.askwatson.report.ReportRepository;
 import com.apebble.askwatson.review.Review;
-import com.apebble.askwatson.review.ReviewJpaRepository;
+import com.apebble.askwatson.review.ReviewRepository;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -38,7 +38,7 @@ public class UserService {
 
     private final UserJpaRepository userJpaRepository;
     private final ReportRepository reportRepository;
-    private final ReviewJpaRepository reviewJpaRepository;
+    private final ReviewRepository reviewRepository;
     private final CheckRepository checkRepository;
     private final CheckService checkService;
 
@@ -163,7 +163,7 @@ public class UserService {
     }
 
     private int getUserReviewCount(User user) {
-        return reviewJpaRepository.countByUser(user);
+        return reviewRepository.countByUser(user);
     }
 
     private int getUserCheckCount(User user) {
@@ -206,7 +206,7 @@ public class UserService {
     }
 
     private void setReviewsUserNull(User user) {
-        List<Review> reviews = reviewJpaRepository.findByUser(user);
+        List<Review> reviews = reviewRepository.findByUser(user);
         reviews.forEach(Review::deleteUser);
     }
 
@@ -217,7 +217,7 @@ public class UserService {
     }
 
     private void setReviewsCheckNull(User user) {
-        List<Review> reviews = reviewJpaRepository.findByUser(user);
+        List<Review> reviews = reviewRepository.findByUser(user);
         reviews.forEach(Review::deleteCheck);
     }
 

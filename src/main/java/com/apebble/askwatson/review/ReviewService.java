@@ -34,7 +34,7 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class ReviewService {
 
-    private final ReviewJpaRepository reviewJpaRepository;
+    private final ReviewRepository reviewRepository;
     private final UserJpaRepository userJpaRepository;
     private final ThemeJpaRepository themeJpaRepository;
     private final CheckRepository checkRepository;
@@ -66,7 +66,7 @@ public class ReviewService {
         Theme theme = themeJpaRepository.findById(themeId).orElseThrow(ThemeNotFoundException::new);
         addReviewToCafeAndTheme(params, theme);
         updateCheckDt(check, params.getCheckDate());
-        return reviewJpaRepository.save(Review.create(user, theme, check, params)).getId();
+        return reviewRepository.save(Review.create(user, theme, check, params)).getId();
     }
 
     private void addReviewToCafeAndTheme(ReviewDto.Request review, Theme theme) {
@@ -108,15 +108,16 @@ public class ReviewService {
     @Transactional(readOnly = true)
     public List<Review> getReviewsByUserId(Long userId) {
         User user = userJpaRepository.findById(userId).orElseThrow(UserNotFoundException::new);
-        return reviewJpaRepository.findByUser(user);
+        return reviewRepository.findByUser(user);
     }
+
 
     /**
      * 테마별 리뷰 리스트 조회
      */
     @Transactional(readOnly = true)
     public List<Review> getReviewsByThemeId(Long themeId) {
-        return reviewJpaRepository.findByThemeId(themeId);
+        return reviewRepository.findByThemeId(themeId);
     }
 
 
@@ -125,7 +126,7 @@ public class ReviewService {
      */
     @Transactional(readOnly = true)
     public Review getOneReview(Long reviewId) {
-        return reviewJpaRepository.findById(reviewId).orElseThrow(ReviewNotFoundException::new);
+        return reviewRepository.findById(reviewId).orElseThrow(ReviewNotFoundException::new);
     }
 
 
@@ -133,7 +134,7 @@ public class ReviewService {
      * 리뷰 수정
      */
     public void modifyReview(Long reviewId, ReviewDto.Request params) {
-        Review review = reviewJpaRepository.findById(reviewId).orElseThrow(ReviewNotFoundException::new);
+        Review review = reviewRepository.findById(reviewId).orElseThrow(ReviewNotFoundException::new);
         updateCafeAndTheme(review, params, review.getTheme());
         review.update(params);
     }
@@ -148,10 +149,10 @@ public class ReviewService {
      * 리뷰 삭제
      */
     public void deleteReview(Long reviewId) {
-        Review review = reviewJpaRepository.findById(reviewId).orElseThrow(ReviewNotFoundException::new);
+        Review review = reviewRepository.findById(reviewId).orElseThrow(ReviewNotFoundException::new);
         deleteReviewInCafeAndTheme(review);
         deleteReviewInReport(review);
-        reviewJpaRepository.delete(review);
+        reviewRepository.delete(review);
     }
 
     private void deleteReviewInCafeAndTheme(Review review) {
