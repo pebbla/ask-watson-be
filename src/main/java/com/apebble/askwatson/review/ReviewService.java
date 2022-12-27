@@ -18,7 +18,7 @@ import com.apebble.askwatson.comm.exception.ThemeNotFoundException;
 import com.apebble.askwatson.comm.exception.UserNotFoundException;
 import com.apebble.askwatson.comm.util.DateConverter;
 import com.apebble.askwatson.check.Check;
-import com.apebble.askwatson.check.CheckJpaRepository;
+import com.apebble.askwatson.check.CheckRepository;
 import com.apebble.askwatson.theme.Theme;
 import com.apebble.askwatson.theme.ThemeJpaRepository;
 import com.apebble.askwatson.user.User;
@@ -37,7 +37,7 @@ public class ReviewService {
     private final ReviewJpaRepository reviewJpaRepository;
     private final UserJpaRepository userJpaRepository;
     private final ThemeJpaRepository themeJpaRepository;
-    private final CheckJpaRepository checkJpaRepository;
+    private final CheckRepository checkRepository;
     private final CheckService checkService;
     private final ReportJpaRepository reportJpaRepository;
 
@@ -51,13 +51,13 @@ public class ReviewService {
     }
 
     private Check findOrCreateCheck(Long userId, Long themeId) {
-        Optional<Check> check = checkJpaRepository.findByUserIdAndThemeId(userId, themeId);
+        Optional<Check> check = checkRepository.findByUserIdAndThemeId(userId, themeId);
         if(check.isPresent()) {
             return check.orElseThrow(CheckNotFoundException::new);
         }
         else {
             Long id = checkService.createCheck(userId, themeId);
-            return checkJpaRepository.findById(id).orElseThrow(CheckNotFoundException::new);
+            return checkRepository.findById(id).orElseThrow(CheckNotFoundException::new);
         }
     }
 

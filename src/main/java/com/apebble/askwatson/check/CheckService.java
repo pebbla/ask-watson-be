@@ -25,7 +25,7 @@ public class CheckService {
 
     private final UserJpaRepository userJpaRepository;
     private final ThemeJpaRepository themeJpaRepository;
-    private final CheckJpaRepository checkJpaRepository;
+    private final CheckRepository checkRepository;
     private final ReviewJpaRepository reviewJpaRepository;
 
 
@@ -36,7 +36,7 @@ public class CheckService {
         User user = userJpaRepository.findById(userId).orElseThrow(UserNotFoundException::new);
         Theme theme = themeJpaRepository.findById(themeId).orElseThrow(ThemeNotFoundException::new);
         theme.incEscapeCount();
-        return checkJpaRepository.save(Check.create(user, theme)).getId();
+        return checkRepository.save(Check.create(user, theme)).getId();
     }
 
 
@@ -45,15 +45,16 @@ public class CheckService {
      */
     @Transactional(readOnly = true)
     public List<Check> getChecksByUserId(Long userId) {
-        return checkJpaRepository.findByUserId(userId);
+        return checkRepository.findByUserId(userId);
     }
+
 
     /**
      * 탈출완료 단건 조회
      */
     @Transactional(readOnly = true)
     public Check findOneWithTheme(Long checkId) {
-        return checkJpaRepository.findById(checkId).orElseThrow(CheckNotFoundException::new);
+        return checkRepository.findById(checkId).orElseThrow(CheckNotFoundException::new);
     }
 
 
@@ -61,7 +62,7 @@ public class CheckService {
      * 탈출 완료 일시 수정
      */
     public void modifyCheckDt(Long checkId, LocalDate newEcDt) {
-        Check check = checkJpaRepository.findById(checkId).orElseThrow(CheckNotFoundException::new);
+        Check check = checkRepository.findById(checkId).orElseThrow(CheckNotFoundException::new);
         check.update(newEcDt);
     }
 
@@ -70,7 +71,7 @@ public class CheckService {
      * 탈출 완료 취소(리뷰 여부 확인)
      */
     public void deleteCheckIfNoReview(Long checkId) {
-        Check check = checkJpaRepository.findById(checkId).orElseThrow(CheckNotFoundException::new);
+        Check check = checkRepository.findById(checkId).orElseThrow(CheckNotFoundException::new);
 
         if(!doesReviewExists(check))
             deleteCheck(check);
@@ -87,7 +88,7 @@ public class CheckService {
 
     public void deleteCheck(Check check) {
         check.getTheme().decEscapeCount();
-        checkJpaRepository.delete(check);
+        checkRepository.delete(check);
     }
 
 }

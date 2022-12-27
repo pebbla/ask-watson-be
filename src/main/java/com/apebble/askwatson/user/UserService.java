@@ -3,7 +3,7 @@ package com.apebble.askwatson.user;
 import com.apebble.askwatson.comm.exception.ServerException;
 import com.apebble.askwatson.comm.exception.UserNotFoundException;
 import com.apebble.askwatson.check.Check;
-import com.apebble.askwatson.check.CheckJpaRepository;
+import com.apebble.askwatson.check.CheckRepository;
 import com.apebble.askwatson.check.CheckService;
 import com.apebble.askwatson.report.Report;
 import com.apebble.askwatson.report.ReportJpaRepository;
@@ -39,7 +39,7 @@ public class UserService {
     private final UserJpaRepository userJpaRepository;
     private final ReportJpaRepository reportJpaRepository;
     private final ReviewJpaRepository reviewJpaRepository;
-    private final CheckJpaRepository checkJpaRepository;
+    private final CheckRepository checkRepository;
     private final CheckService checkService;
 
 
@@ -167,7 +167,7 @@ public class UserService {
     }
 
     private int getUserCheckCount(User user) {
-        return checkJpaRepository.countByUser(user);
+        return checkRepository.countByUser(user);
     }
 
 
@@ -211,7 +211,7 @@ public class UserService {
     }
 
     private void deleteChecksHandlingReviews(User user) {
-        List<Check> checks = checkJpaRepository.findByUserId(user.getId());
+        List<Check> checks = checkRepository.findByUserId(user.getId());
         setReviewsCheckNull(user);
         checks.forEach(checkService::deleteCheck);
     }
