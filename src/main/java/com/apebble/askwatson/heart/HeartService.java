@@ -23,7 +23,7 @@ import com.apebble.askwatson.user.UserJpaRepository;
 @RequiredArgsConstructor
 public class HeartService {
 
-    private final HeartJpaRepository heartJpaRepository;
+    private final HeartRepository heartRepository;
     private final UserJpaRepository userJpaRepository;
     private final ThemeJpaRepository themeJpaRepository;
 
@@ -35,7 +35,7 @@ public class HeartService {
         User user = userJpaRepository.findById(userId).orElseThrow(UserNotFoundException::new);
         Theme theme = themeJpaRepository.findById(themeId).orElseThrow(ThemeNotFoundException::new);
         theme.incHeartCount();
-        return heartJpaRepository.save(Heart.create(user, theme)).getId();
+        return heartRepository.save(Heart.create(user, theme)).getId();
     }
 
 
@@ -43,9 +43,9 @@ public class HeartService {
      * 좋아요 해제
      */
     public void deleteHeart(Long heartId) {
-        Heart heart = heartJpaRepository.findById(heartId).orElseThrow(HeartNotFoundException::new);
+        Heart heart = heartRepository.findById(heartId).orElseThrow(HeartNotFoundException::new);
         heart.getTheme().decHeartCount();
-        heartJpaRepository.delete(heart);
+        heartRepository.delete(heart);
     }
 
 
@@ -54,7 +54,7 @@ public class HeartService {
      */
     @Transactional(readOnly = true)
     public Heart getOneHeartWithTheme(Long heartId){
-        return heartJpaRepository.findByIdWithTheme(heartId).orElseThrow(HeartNotFoundException::new);
+        return heartRepository.findByIdWithTheme(heartId).orElseThrow(HeartNotFoundException::new);
     }
 
 
@@ -63,7 +63,7 @@ public class HeartService {
      */
     @Transactional(readOnly = true)
     public List<Heart> getHeartsByUserId(Long userId){
-        return heartJpaRepository.findByUserIdWithCategory(userId);
+        return heartRepository.findByUserIdWithCategory(userId);
     }
 
 }

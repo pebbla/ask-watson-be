@@ -7,7 +7,7 @@ import com.apebble.askwatson.comm.exception.CategoryNotFoundException;
 import com.apebble.askwatson.comm.exception.ThemeNotFoundException;
 import com.apebble.askwatson.config.GoogleCloudConfig;
 import com.apebble.askwatson.heart.Heart;
-import com.apebble.askwatson.heart.HeartJpaRepository;
+import com.apebble.askwatson.heart.HeartRepository;
 import com.apebble.askwatson.check.Check;
 import com.apebble.askwatson.check.CheckRepository;
 import com.apebble.askwatson.theme.category.Category;
@@ -35,7 +35,7 @@ public class ThemeService {
     private final CafeRepository cafeRepository;
     private final CategoryJpaRepository categoryJpaRepository;
     private final ThemeJpaRepository themeJpaRepository;
-    private final HeartJpaRepository heartJpaRepository;
+    private final HeartRepository heartRepository;
     private final CheckRepository checkRepository;
     private final GoogleCloudConfig googleCloudConfig;
 
@@ -186,7 +186,7 @@ public class ThemeService {
     private boolean checkUserHeartedTheme(Long userId, Long themeId) {
         if(userId == null) return false;
 
-        Optional<Heart> heart = heartJpaRepository.findByUserIdAndThemeId(userId, themeId);
+        Optional<Heart> heart = heartRepository.findByUserIdAndThemeId(userId, themeId);
         return heart.isPresent();
     }
 
