@@ -6,6 +6,7 @@ import java.util.Optional;
 public interface HeartRepositoryCustom {
 
     List<Heart> findByUserIdWithCategory(Long userId);
+
     Optional<Heart> findByIdWithTheme(Long id);
 
 }

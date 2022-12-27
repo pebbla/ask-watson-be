@@ -6,7 +6,7 @@ import com.apebble.askwatson.check.Check;
 import com.apebble.askwatson.check.CheckRepository;
 import com.apebble.askwatson.check.CheckService;
 import com.apebble.askwatson.report.Report;
-import com.apebble.askwatson.report.ReportJpaRepository;
+import com.apebble.askwatson.report.ReportRepository;
 import com.apebble.askwatson.review.Review;
 import com.apebble.askwatson.review.ReviewJpaRepository;
 import com.google.gson.JsonElement;
@@ -37,7 +37,7 @@ import static java.util.stream.Collectors.toList;
 public class UserService {
 
     private final UserJpaRepository userJpaRepository;
-    private final ReportJpaRepository reportJpaRepository;
+    private final ReportRepository reportRepository;
     private final ReviewJpaRepository reviewJpaRepository;
     private final CheckRepository checkRepository;
     private final CheckService checkService;
@@ -159,7 +159,7 @@ public class UserService {
     }
 
     private int getUserReportedCount(User user) {
-        return reportJpaRepository.countByReportedUser(user);
+        return reportRepository.countByReportedUser(user);
     }
 
     private int getUserReviewCount(User user) {
@@ -222,12 +222,12 @@ public class UserService {
     }
 
     private void setReportsReporterNull(User user) {
-        List<Report> reports = reportJpaRepository.findByReporter(user);
+        List<Report> reports = reportRepository.findByReporter(user);
         reports.forEach(Report::deleteReporter);
     }
 
     private void setReportsReportedUserNull(User user) {
-        List<Report> reports = reportJpaRepository.findByReportedUser(user);
+        List<Report> reports = reportRepository.findByReportedUser(user);
         reports.forEach(Report::deleteReportedUser);
     }
 

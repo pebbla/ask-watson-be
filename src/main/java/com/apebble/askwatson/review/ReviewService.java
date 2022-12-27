@@ -9,7 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.apebble.askwatson.cafe.Cafe;
 import com.apebble.askwatson.check.CheckService;
 import com.apebble.askwatson.report.Report;
-import com.apebble.askwatson.report.ReportJpaRepository;
+import com.apebble.askwatson.report.ReportRepository;
 import org.springframework.stereotype.Service;
 
 import com.apebble.askwatson.comm.exception.CheckNotFoundException;
@@ -39,7 +39,7 @@ public class ReviewService {
     private final ThemeJpaRepository themeJpaRepository;
     private final CheckRepository checkRepository;
     private final CheckService checkService;
-    private final ReportJpaRepository reportJpaRepository;
+    private final ReportRepository reportRepository;
 
 
     /**
@@ -192,7 +192,7 @@ public class ReviewService {
     }
 
     private void deleteReviewInReport(Review review) {
-        List<Report> reports = reportJpaRepository.findByReview(review);
+        List<Report> reports = reportRepository.findByReview(review);
         reports.forEach(Report::deleteReview);
     }
 
