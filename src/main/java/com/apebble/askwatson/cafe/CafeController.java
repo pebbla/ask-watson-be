@@ -51,7 +51,7 @@ public class CafeController {
     // 방탈출 카페 단건 조회
     @GetMapping(value = "/cafes/{cafeId}")
     public SingleResponse<CafeDto.Response> getCafe(@PathVariable Long cafeId) {
-        return responseService.getSingleResponse(toDto(cafeService.getOneCafe(cafeId)));
+        return responseService.getSingleResponse(toDto(cafeService.findOne(cafeId)));
     }
 
     // 방탈출 카페 수정

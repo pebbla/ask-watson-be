@@ -1,7 +1,7 @@
 package com.apebble.askwatson.theme;
 
 import com.apebble.askwatson.cafe.Cafe;
-import com.apebble.askwatson.cafe.CafeJpaRepository;
+import com.apebble.askwatson.cafe.CafeRepository;
 import com.apebble.askwatson.comm.exception.CafeNotFoundException;
 import com.apebble.askwatson.comm.exception.CategoryNotFoundException;
 import com.apebble.askwatson.comm.exception.ThemeNotFoundException;
@@ -26,15 +26,13 @@ import java.util.Optional;
 
 import javax.annotation.Nullable;
 
-import static java.util.stream.Collectors.toList;
-
 @Slf4j
 @Service
 @Transactional
 @RequiredArgsConstructor
 public class ThemeService {
 
-    private final CafeJpaRepository cafeJpaRepository;
+    private final CafeRepository cafeRepository;
     private final CategoryJpaRepository categoryJpaRepository;
     private final ThemeJpaRepository themeJpaRepository;
     private final HeartJpaRepository heartJpaRepository;
@@ -46,7 +44,7 @@ public class ThemeService {
      * 방탈출 테마 등록
      */
     public Long createTheme(Long cafeId, ThemeDto.Request params, MultipartFile file) {
-        Cafe cafe = cafeJpaRepository.findById(cafeId).orElseThrow(CafeNotFoundException::new);
+        Cafe cafe = cafeRepository.findById(cafeId).orElseThrow(CafeNotFoundException::new);
         Category category = categoryJpaRepository.findById(params.getCategoryId()).orElseThrow(CategoryNotFoundException::new);
 
         Theme savedTheme = themeJpaRepository.save(Theme.create(cafe, category, params));
@@ -67,7 +65,7 @@ public class ThemeService {
      */
     @Transactional(readOnly = true)
     public List<Theme> getThemesByCafe(Long cafeId) {
-        Cafe cafe = cafeJpaRepository.findById(cafeId).orElseThrow(CafeNotFoundException::new);
+        Cafe cafe = cafeRepository.findById(cafeId).orElseThrow(CafeNotFoundException::new);
         return themeJpaRepository.findThemesByCafe(cafe);
     }
 

@@ -30,7 +30,7 @@ import org.locationtech.jts.io.ParseException;
 @RequiredArgsConstructor
 public class CafeService {
 
-    private final CafeJpaRepository cafeJpaRepository;
+    private final CafeRepository cafeRepository;
     private final LocationJpaRepository locationJpaRepository;
     private final GoogleCloudConfig googleCloudConfig;
 
@@ -42,7 +42,7 @@ public class CafeService {
         Location location = locationJpaRepository.findById(params.getLocationId()).orElseThrow(LocationNotFoundException::new);
         Point geography = GeographyConverter.strToPoint(params.getLongitude(), params.getLatitude());
 
-        Cafe savedCafe = cafeJpaRepository.save(Cafe.create(params, location, geography));
+        Cafe savedCafe = cafeRepository.save(Cafe.create(params, location, geography));
         if(file != null) savedCafe.updateImageUrl(addToGoogleStorage(savedCafe.getId(), file));
 
         return savedCafe.getId();
@@ -60,12 +60,7 @@ public class CafeService {
      */
     @Transactional(readOnly = true)
     public Page<Cafe> getCafes(CafeSearchOptions searchOptions, Pageable pageable) {
-        Page<Cafe> cafeList;
-        cafeList = (searchOptions == null)
-                ? cafeJpaRepository.findCafesByIsAvailable(true, pageable)
-                : cafeJpaRepository.findCafesByOptionsAndIsAvailable(searchOptions, true, pageable);
-
-        return cafeList;
+        return cafeRepository.findAvailableCafesByOptions(searchOptions, pageable);
     }
 
 
@@ -74,23 +69,13 @@ public class CafeService {
      */
     @Transactional(readOnly = true)
     public List<Cafe> getCafeList(String searchWord, Boolean sortByUpdateYn) {
-       List<Cafe> cafeList = (searchWord == null)
-                ? cafeJpaRepository.findAllCafes()
-                : cafeJpaRepository.findCafesBySearchWord(searchWord);
+       List<Cafe> cafeList = cafeRepository.findCafesBySearchWord(searchWord);
 
        if(sortByUpdateYn!=null && sortByUpdateYn) {
            cafeList = sortByUpdate(cafeList);
        }
 
         return cafeList;
-    }
-
-    /**
-     * 방탈출 카페 단건 조회
-     */
-    @Transactional(readOnly = true)
-    public Cafe findOne(Long cafeId) {
-        return cafeJpaRepository.findByIdWithLocation(cafeId).orElseThrow(CafeNotFoundException::new);
     }
 
     private List<Cafe> sortByUpdate(List<Cafe> cafeList) {
@@ -124,8 +109,8 @@ public class CafeService {
      * 방탈출 카페 단건 조회
      */
     @Transactional(readOnly = true)
-    public Cafe getOneCafe(Long cafeId) {
-        return cafeJpaRepository.findByIdWithLocation(cafeId).orElseThrow(CafeNotFoundException::new);
+    public Cafe findOne(Long cafeId) {
+        return cafeRepository.findByIdWithLocation(cafeId).orElseThrow(CafeNotFoundException::new);
     }
 
 
@@ -133,7 +118,7 @@ public class CafeService {
      * 방탈출 카페 수정
      */
     public void modifyCafe(Long cafeId, CafeDto.Request params, @Nullable MultipartFile file) throws ParseException {
-        Cafe cafe = cafeJpaRepository.findByIdWithLocation(cafeId).orElseThrow(CafeNotFoundException::new);
+        Cafe cafe = cafeRepository.findByIdWithLocation(cafeId).orElseThrow(CafeNotFoundException::new);
         Location location = locationJpaRepository.findById(params.getLocationId()).orElseThrow(LocationNotFoundException::new);
         Point geography = GeographyConverter.strToPoint(params.getLongitude(), params.getLatitude());
 
@@ -161,7 +146,7 @@ public class CafeService {
      * 방탈출 카페 삭제
      */
     public void deleteUselessCafeInfo(Long cafeId) {
-        Cafe cafe = cafeJpaRepository.findById(cafeId).orElseThrow(CafeNotFoundException::new);
+        Cafe cafe = cafeRepository.findById(cafeId).orElseThrow(CafeNotFoundException::new);
         setThemesUnavailable(cafe);
         cafe.deleteUselessInfo();
         googleCloudConfig.deleteObject("cafe/" + cafeId + "_cafe");

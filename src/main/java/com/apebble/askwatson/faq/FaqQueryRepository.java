@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 import javax.persistence.EntityManager;
 import java.util.List;
 
-import static com.apebble.askwatson.comm.util.QueryDslUtils.containsNullCheck;
+import static com.apebble.askwatson.comm.util.QueryDslUtils.stringCheck;
 import static com.apebble.askwatson.faq.QFaq.faq;
 
 @Repository
@@ -21,7 +21,7 @@ public class FaqQueryRepository {
     public List<Faq> findFaqsBySearchWord(String searchWord) {
         return queryFactory
                 .selectFrom(faq)
-                .where(containsNullCheck(
+                .where(stringCheck(
                         searchWord,
                         faqContains(searchWord)))
                 .fetch();
