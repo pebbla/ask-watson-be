@@ -83,6 +83,7 @@ public class Cafe extends BaseTime {
     //==수정 로직==//
     public void updateRating(double newRating) { this.rating = newRating; }
     public void updateImageUrl(String url) { this.imageUrl = url; }
+    public void updateAvailability(boolean isAvailable) { this.isAvailable = isAvailable; }
     public void incReviewCount() { this.reviewCount++; }
     public void decReviewCount() { this.reviewCount--; }
 
@@ -99,15 +100,4 @@ public class Cafe extends BaseTime {
     }
 
 
-    //==비즈니스 로직==//
-    public void deleteUselessInfo() {
-        this.isAvailable = false;
-        this.cafePhoneNum = null;
-        this.location = null;
-        this.website = null;
-        this.address = null;
-        this.imageUrl = null;
-        this.geography = null;
-        this.isEnglishPossible = null;
-    }
 }

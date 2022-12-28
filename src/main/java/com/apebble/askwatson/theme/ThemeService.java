@@ -172,7 +172,7 @@ public class ThemeService {
      */
     public void modifyThemeAvailability(Long themeId, Boolean isAvailable) {
         Theme theme = themeJpaRepository.findById(themeId).orElseThrow(ThemeNotFoundException::new);
-        theme.changeAvailability(isAvailable);
+        theme.updateAvailability(isAvailable);
     }
 
     //==DTO 변환 메서드==//

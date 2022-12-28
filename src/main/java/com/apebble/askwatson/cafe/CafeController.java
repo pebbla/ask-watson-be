@@ -63,10 +63,11 @@ public class CafeController {
         return responseService.getSingleResponse(toDto(cafeService.findOne(cafeId)));
     }
 
-    // 방탈출 카페 삭제
-    @PatchMapping(value = "/admin/cafes/{cafeId}/unavailable") 
-    public CommonResponse deleteUselessCafeInfo(@PathVariable Long cafeId) {
-        cafeService.deleteUselessCafeInfo(cafeId);
+    // 방탈출 카페 이용가능여부 수정
+    @PatchMapping(value = "/admin/cafes/{cafeId}")
+    public CommonResponse updateCafeAvailability(@PathVariable Long cafeId,
+                                                @RequestParam Boolean isAvailable) {
+        cafeService.modifyCafeAvailability(cafeId, isAvailable);
         return responseService.getSuccessResponse();
     }
 

@@ -4,6 +4,7 @@ import com.apebble.askwatson.cafe.location.Location;
 import com.apebble.askwatson.cafe.location.LocationJpaRepository;
 import com.apebble.askwatson.comm.exception.CafeNotFoundException;
 import com.apebble.askwatson.comm.exception.LocationNotFoundException;
+import com.apebble.askwatson.theme.Theme;
 import org.locationtech.jts.geom.Point;
 import com.apebble.askwatson.comm.util.GeographyConverter;
 import com.apebble.askwatson.config.GoogleCloudConfig;
@@ -123,7 +124,7 @@ public class CafeService {
         Point geography = GeographyConverter.strToPoint(params.getLongitude(), params.getLatitude());
 
         if(file != null) params.setImageUrl(updateGoogleStorage(cafeId, file));
-        updateThemesAvailability(cafe, params.getIsAvailable());
+        updateThemesAvailability(cafe.getThemeList(), params.getIsAvailable());
 
         cafe.update(params, location, geography);
     }
@@ -135,26 +136,22 @@ public class CafeService {
         return imageUrl;
     }
 
-    private void updateThemesAvailability(Cafe cafe, Boolean isCafeAvailable) {
-        if(isCafeAvailable != null && !isCafeAvailable) {
-            setThemesUnavailable(cafe);
+
+    /**
+     * 방탈출 카페 이용가능여부 수정
+     */
+    public void modifyCafeAvailability(Long cafeId, boolean isAvailable) {
+        Cafe cafe = cafeRepository.findById(cafeId).orElseThrow(CafeNotFoundException::new);
+        cafe.updateAvailability(isAvailable);
+        updateThemesAvailability(cafe.getThemeList(), isAvailable);
+    }
+
+    private void updateThemesAvailability(List<Theme> themes, Boolean isCafeAvailable) {
+        if(isCafeAvailable != null) {
+            themes.forEach(theme -> theme.updateAvailability(isCafeAvailable));
         }
     }
 
-
-    /**
-     * 방탈출 카페 삭제
-     */
-    public void deleteUselessCafeInfo(Long cafeId) {
-        Cafe cafe = cafeRepository.findById(cafeId).orElseThrow(CafeNotFoundException::new);
-        setThemesUnavailable(cafe);
-        cafe.deleteUselessInfo();
-        googleCloudConfig.deleteObject("cafe/" + cafeId + "_cafe");
-    }
-
-    private void setThemesUnavailable(Cafe cafe) {
-        cafe.getThemeList().forEach(theme -> theme.changeAvailability(false));
-    }
 }
 
 

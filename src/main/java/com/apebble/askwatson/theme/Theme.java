@@ -92,7 +92,7 @@ public class Theme extends BaseTime {
     public void decEscapeCount() { this.escapeCount--; }
     public void incReviewCount() { this.reviewCount++; }
     public void decReviewCount() { this.reviewCount--; }
-    public void changeAvailability(boolean value) {this.isAvailable = value;}
+    public void updateAvailability(boolean value) {this.isAvailable = value;}
     public void updateImageUrl(String url) { this.imageUrl = url; }
 
     public void update(ThemeDto.Request params, Category category) {
