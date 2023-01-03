@@ -24,9 +24,9 @@ public class CheckController {
 
     // 유저 탈출 완료
     @PostMapping(value = "/user/{userId}/themes/{themeId}/checks")
-    public SingleResponse<CheckDto.SimpleResponse> createCheck(@PathVariable Long userId, @PathVariable Long themeId) {
+    public SingleResponse<Long> createCheck(@PathVariable Long userId, @PathVariable Long themeId) {
         Long checkId = checkService.createCheck(userId, themeId);
-        return responseService.getSingleResponse(new CheckDto.SimpleResponse(checkService.findOneWithTheme(checkId)));
+        return responseService.getSingleResponse(checkId);
     }
 
     // 사용자별 탈출완료 목록 조회
