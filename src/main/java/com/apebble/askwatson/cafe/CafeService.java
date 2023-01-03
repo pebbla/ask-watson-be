@@ -11,13 +11,10 @@ import com.apebble.askwatson.config.GoogleCloudConfig;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Nullable;
@@ -53,56 +50,6 @@ public class CafeService {
         String gcsPath = "cafe/" + cafeId + "_cafe";
         String imageUrl = googleCloudConfig.uploadObject(gcsPath, file);
         return imageUrl;
-    }
-
-
-    /**
-     * 방탈출 카페 전체 조회
-     */
-    @Transactional(readOnly = true)
-    public Page<Cafe> getCafes(CafeSearchOptions searchOptions, Pageable pageable) {
-        return cafeRepository.findAvailableCafesByOptions(searchOptions, pageable);
-    }
-
-
-    /**
-     * 방탈출 카페 전체 조회(리스트 - 관리자웹 개발용)
-     */
-    @Transactional(readOnly = true)
-    public List<Cafe> getCafeList(String searchWord, Boolean sortByUpdateYn) {
-       List<Cafe> cafeList = cafeRepository.findCafesBySearchWord(searchWord);
-
-       if(sortByUpdateYn!=null && sortByUpdateYn) {
-           cafeList = sortByUpdate(cafeList);
-       }
-
-        return cafeList;
-    }
-
-    private List<Cafe> sortByUpdate(List<Cafe> cafeList) {
-        List<Cafe> nullModifiedAtList = new ArrayList<>();
-        List<Cafe> nullColumnList = new ArrayList<>();
-        List<Cafe> nonNullColumnList = new ArrayList<>();
-
-        cafeList.forEach(cafe -> {
-            if(cafe.getModifiedAt() == null)
-                nullModifiedAtList.add(cafe);
-            else if(cafe.getCafeName() == null || cafe.getCafeName().equals("") ||
-                    cafe.getCafePhoneNum() == null || cafe.getCafePhoneNum().equals("") ||
-                    cafe.getWebsite() == null || cafe.getWebsite().equals("") ||
-                    cafe.getAddress() == null || cafe.getAddress().equals("") ||
-                    cafe.getImageUrl() == null || cafe.getImageUrl().equals("") ||
-                    cafe.getLocation() == null)
-                nullColumnList.add(cafe);
-            else nonNullColumnList.add(cafe);
-        });
-
-        List<Cafe> result = new ArrayList<>();
-        result.addAll(nullModifiedAtList);
-        result.addAll(nullColumnList);
-        result.addAll(nonNullColumnList);
-
-        return result;
     }
 
 

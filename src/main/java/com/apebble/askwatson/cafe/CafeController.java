@@ -25,6 +25,7 @@ public class CafeController {
 
     private final CafeService cafeService;
     private final ResponseService responseService;
+    private final CafeQueryRepository cafeQueryRepository;
 
     // 방탈출 카페 등록
     @PostMapping(value="/admin/cafes", consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
@@ -36,16 +37,16 @@ public class CafeController {
 
     // 방탈출 카페 전체 조회
     @GetMapping(value="/cafes")
-    public PageResponse<CafeDto.Response> getCafes(CafeSearchOptions searchOptions,
+    public PageResponse<CafeQueryDto.Response> getCafes(CafeSearchOptions searchOptions,
                                                    @PageableDefault(size=20) Pageable pageable) {
-        return responseService.getPageResponse(toDtoPage(cafeService.getCafes(searchOptions, pageable)));
+        return responseService.getPageResponse(cafeQueryRepository.getCafePage(searchOptions, pageable));
     }
 
     // 방탈출 카페 전체 조회(리스트 - 관리자웹 개발용)
     @GetMapping(value="/admin/cafes")
-    public ListResponse<CafeDto.Response> getCafeList(@RequestParam(required = false) String searchWord,
+    public ListResponse<CafeQueryDto.Response> getCafeList(@RequestParam(required = false) String searchWord,
                                                       @RequestParam(required = false) Boolean sortByUpdateYn) {
-        return responseService.getListResponse(toDtoList(cafeService.getCafeList(searchWord, sortByUpdateYn)));
+        return responseService.getListResponse(cafeQueryRepository.getCafeList(searchWord, sortByUpdateYn));
     }
 
     // 방탈출 카페 단건 조회
@@ -72,15 +73,8 @@ public class CafeController {
     }
 
     //==DTO 변환 메서드==//
-    private Page<CafeDto.Response> toDtoPage(Page<Cafe> cafeList){
-        return cafeList.map(CafeDto.Response::new);
-    }
-
-    private List<CafeDto.Response> toDtoList(List<Cafe> cafeList){
-        return cafeList.stream().map(CafeDto.Response::new).collect(toList());
-    }
-
     private CafeDto.Response toDto(Cafe cafe){
         return new CafeDto.Response(cafe);
     }
+
 }
