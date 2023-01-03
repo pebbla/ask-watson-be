@@ -20,10 +20,9 @@ public class UserController {
 
     // 카카오 토큰으로 로그인
     @PostMapping(value = "/signin/kakao")
-    public SingleResponse<Map<String, Object>> signInByKakaoToken(String accessToken){
+    public SingleResponse<Map<String, Object>> signInByKakaoToken(@RequestBody HashMap<String, Object> map){
         //TODO : 회원가입 된 경우 access token, refresh token 전달
-        // 403리턴 값 전달
-        return responseService.getSingleResponse(userService.signInByKakaoToken(accessToken));
+        return responseService.getSingleResponse(userService.signInByKakaoToken(map.get("accessToken").toString()));
     }
 
 
