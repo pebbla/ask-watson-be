@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.util.List;
 import java.util.Optional;
 
 
@@ -41,16 +40,7 @@ public class CheckService {
 
 
     /**
-     * 사용자별 탈출완료 리스트 조회
-     */
-    @Transactional(readOnly = true)
-    public List<Check> getChecksByUserId(Long userId) {
-        return checkRepository.findByUserId(userId);
-    }
-
-
-    /**
-     * 탈출완료 단건 조회
+     * 탈출 완료 단건 조회
      */
     @Transactional(readOnly = true)
     public Check findOneWithTheme(Long checkId) {

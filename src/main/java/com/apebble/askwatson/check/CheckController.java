@@ -21,6 +21,7 @@ public class CheckController {
 
     private final ResponseService responseService;
     private final CheckService checkService;
+    private final CheckQueryRepository checkQueryRepository;
 
     // 유저 탈출 완료
     @PostMapping(value = "/user/{userId}/themes/{themeId}/checks")
@@ -31,8 +32,8 @@ public class CheckController {
 
     // 사용자별 탈출완료 목록 조회
     @GetMapping(value = "/user/{userId}/checks")
-    public ListResponse<CheckDto.Response> getChecksByUser(@PathVariable Long userId) {
-        return responseService.getListResponse(toDtoList(checkService.getChecksByUserId(userId)));
+    public ListResponse<CheckQueryDto.Response> getChecksByUser(@PathVariable Long userId) {
+        return responseService.getListResponse(checkQueryRepository.getChecksByUserId(userId));
     }
 
     // 탈출 완료 일시 수정
@@ -48,11 +49,6 @@ public class CheckController {
     public CommonResponse cancelCheck(@PathVariable Long checkId) {
         checkService.deleteCheckIfNoReview(checkId);
         return responseService.getSuccessResponse();
-    }
-
-    //==DTO 변환 메서드==//
-    private List<CheckDto.Response> toDtoList(List<Check> checkList){
-        return checkList.stream().map(CheckDto.Response::new).collect(toList());
     }
 
 }
