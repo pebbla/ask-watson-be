@@ -18,9 +18,14 @@ public class FaqQueryRepository {
         this.queryFactory = new JPAQueryFactory(em);
     }
 
-    public List<Faq> findFaqsBySearchWord(String searchWord) {
+    public List<FaqQueryDto.Response> findFaqsBySearchWord(String searchWord) {
         return queryFactory
-                .selectFrom(faq)
+                .select(new QFaqQueryDto_Response(
+                        faq.id,
+                        faq.title,
+                        faq.content
+                ))
+                .from(faq)
                 .where(searchWordCond(searchWord))
                 .fetch();
     }

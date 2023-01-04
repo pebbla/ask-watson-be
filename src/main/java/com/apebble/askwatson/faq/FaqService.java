@@ -5,7 +5,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import java.util.List;
 
 @Slf4j
 @Service
@@ -14,22 +13,12 @@ import java.util.List;
 public class FaqService {
 
     private final FaqRepository faqRepository;
-    private final FaqQueryRepository faqQueryRepository;
 
     /**
      * 자주묻는질문 등록
      */
     public Long createFaq(FaqDto.Request params) {
         return faqRepository.save(Faq.create(params)).getId();
-    }
-
-
-    /**
-     * 자주묻는질문 전체 조회
-     */
-    @Transactional(readOnly = true)
-    public List<Faq> getFaqs(String searchWord) {
-        return faqQueryRepository.findFaqsBySearchWord(searchWord);
     }
 
 
