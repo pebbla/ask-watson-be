@@ -147,31 +147,6 @@ public class UserService {
 
 
     /**
-     * 회원 전체 조회
-     */
-    @Transactional(readOnly = true)
-    public List<UserDto.Response> getAllUsers(String searchWord) {
-        List<User> users = (searchWord == null)
-                ? userJpaRepository.findAll()
-                : userJpaRepository.findUsersBySearchWord(searchWord);
-
-        return convertToDtoList(users);
-    }
-
-    private int getUserReportedCount(User user) {
-        return reportRepository.countByReportedUser(user);
-    }
-
-    private int getUserReviewCount(User user) {
-        return reviewRepository.countByUser(user);
-    }
-
-    private int getUserCheckCount(User user) {
-        return checkRepository.countByUser(user);
-    }
-
-
-    /**
      * 회원 단건 조회
      */
     @Transactional(readOnly = true)
@@ -233,10 +208,10 @@ public class UserService {
 
 
     //==DTO 변환 함수==//
-    private List<UserDto.Response> convertToDtoList(List<User> users){
-        return users.stream().map(user ->
-                new UserDto.Response(user, getUserReportedCount(user), getUserReviewCount(user), getUserCheckCount(user))
-        ).collect(toList());
-    }
+//    private List<UserDto.Response> convertToDtoList(List<User> users){
+//        return users.stream().map(user ->
+//                new UserDto.Response(user, getUserReportedCount(user), getUserReviewCount(user), getUserCheckCount(user))
+//        ).collect(toList());
+//    }
 
 }
