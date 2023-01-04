@@ -1,5 +1,4 @@
 package com.apebble.askwatson.theme;
-import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
 
 import com.apebble.askwatson.comm.response.*;
@@ -9,10 +8,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.util.List;
-
-import static java.util.stream.Collectors.toList;
 
 @Api(tags = {"테마"})
 @RestController
@@ -56,9 +51,9 @@ public class ThemeController {
     }
 
     // 카페별 테마 조회
-    @GetMapping(value = "/cafes/{cafeId}/themes")
-    public ListResponse<ThemeDto.Response> getThemesByCafe(@PathVariable Long cafeId) {
-        return responseService.getListResponse(toDtoList(themeService.getThemesByCafe(cafeId)));
+    @GetMapping(value = "/user/{userId}/cafes/{cafeId}/themes")
+    public ListResponse<ThemeQueryDto.Response> getThemesByCafe(@PathVariable Long userId, @PathVariable Long cafeId) {
+        return responseService.getListResponse(themeQueryRepository.getThemesByCafe(userId, cafeId));
     }
 
     // 테마 수정
@@ -75,15 +70,6 @@ public class ThemeController {
     public CommonResponse modifyThemeAvailability(@PathVariable Long themeId, @RequestParam boolean isAvailable) {
         themeService.modifyThemeAvailability(themeId, isAvailable);
         return responseService.getSuccessResponse();
-    }
-
-    //==DTO 변환 메서드==//
-    private Page<ThemeDto.Response> toDtoPage(Page<Theme> themeList){
-        return themeList.map(ThemeDto.Response::new);
-    }
-
-    private List<ThemeDto.Response> toDtoList(List<Theme> themeList){
-        return themeList.stream().map(ThemeDto.Response::new).collect(toList());
     }
 
 }

@@ -1,17 +1,11 @@
 package com.apebble.askwatson.check;
 
-import com.apebble.askwatson.comm.response.CommonResponse;
-import com.apebble.askwatson.comm.response.ListResponse;
-import com.apebble.askwatson.comm.response.ResponseService;
-import com.apebble.askwatson.comm.response.SingleResponse;
+import com.apebble.askwatson.comm.response.*;
 import com.apebble.askwatson.comm.util.DateConverter;
 import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-
-import static java.util.stream.Collectors.toList;
 
 @Api(tags = {"탈출완료"})
 @RestController
@@ -32,8 +26,8 @@ public class CheckController {
 
     // 사용자별 탈출완료 목록 조회
     @GetMapping(value = "/user/{userId}/checks")
-    public ListResponse<CheckQueryDto.Response> getChecksByUser(@PathVariable Long userId) {
-        return responseService.getListResponse(checkQueryRepository.getChecksByUserId(userId));
+    public PageResponse<CheckQueryDto.Response> getChecksByUser(@PathVariable Long userId, Pageable pageable) {
+        return responseService.getPageResponse(checkQueryRepository.getChecksByUserId(userId, pageable));
     }
 
     // 탈출 완료 일시 수정

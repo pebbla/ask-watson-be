@@ -1,18 +1,11 @@
 package com.apebble.askwatson.heart;
 
+import com.apebble.askwatson.comm.response.*;
 import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
-import com.apebble.askwatson.comm.response.CommonResponse;
-import com.apebble.askwatson.comm.response.ListResponse;
-import com.apebble.askwatson.comm.response.ResponseService;
-import com.apebble.askwatson.comm.response.SingleResponse;
-
-import java.util.List;
-
-import static java.util.stream.Collectors.toList;
-
 
 @Api(tags = {"좋아요"})
 @RestController
@@ -40,8 +33,8 @@ public class HeartController {
 
     // 좋아요 목록
     @GetMapping(value="/user/{userId}/hearts")
-    public ListResponse<HeartQueryDto.Response> getHeartByUserId(@PathVariable Long userId) {
-        return responseService.getListResponse(heartQueryRepository.getHeartsByUserId(userId));
+    public PageResponse<HeartQueryDto.Response> getHeartByUserId(@PathVariable Long userId, Pageable pageable) {
+        return responseService.getPageResponse(heartQueryRepository.getHeartsByUserId(userId, pageable));
     }
     
 }

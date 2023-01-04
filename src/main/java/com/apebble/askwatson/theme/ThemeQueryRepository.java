@@ -78,7 +78,49 @@ public class ThemeQueryRepository {
 
 
     /**
-     * [모바일앱] 유저 테마 검색 쿼리
+     * [모바일앱] 카페별 테마 목록 조회
+     */
+    public List<ThemeQueryDto.Response> getThemesByCafe(Long userId, Long cafeId) {
+        return queryFactory
+                .select(new QThemeQueryDto_Response(
+                        theme.id,
+                        theme.themeName,
+                        theme.themeExplanation,
+                        theme.category.id,
+                        theme.category.categoryName,
+                        theme.difficulty,
+                        theme.timeLimit,
+                        theme.minNumPeople,
+                        theme.price,
+                        theme.reservationUrl,
+                        theme.imageUrl,
+                        theme.heartCount,
+                        theme.escapeCount,
+                        theme.reviewCount,
+                        theme.rating,
+                        theme.deviceRatio,
+                        theme.activity,
+                        theme.isAvailable,
+                        theme.cafe.id,
+                        theme.cafe.cafeName,
+                        theme.cafe.cafePhoneNum,
+                        theme.cafe.location.id,
+                        heart.isNotNull(),
+                        check.isNotNull()
+                ))
+                .from(theme)
+                .join(theme.category, category)
+                .join(theme.cafe, cafe)
+                .join(cafe.location, location)
+                .leftJoin(heart).on(heart.user.id.eq(userId), heart.theme.id.eq(theme.id))
+                .leftJoin(check).on(check.user.id.eq(userId), check.theme.id.eq(theme.id))
+                .where(theme.cafe.id.eq(cafeId))
+                .fetch();
+    }
+
+
+    /**
+     * [모바일앱] 유저 테마 목록 검색 쿼리
      */
     public Page<ThemeQueryDto.Response> getThemePageByUser(Long userId, ThemeSearchOptions options, Pageable pageable) {
         return (options == null)

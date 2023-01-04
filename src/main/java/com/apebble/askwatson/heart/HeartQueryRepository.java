@@ -1,6 +1,11 @@
 package com.apebble.askwatson.heart;
 
+import com.querydsl.core.types.dsl.Wildcard;
+import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
@@ -29,8 +34,8 @@ public class HeartQueryRepository {
     /**
      * 회원별 좋아요 리스트 조회
      */
-    public List<HeartQueryDto.Response> getHeartsByUserId(Long userId) {
-        return queryFactory
+    public Page<HeartQueryDto.Response> getHeartsByUserId(Long userId, Pageable pageable) {
+        List<HeartQueryDto.Response> content = queryFactory
                 .select(new QHeartQueryDto_Response(
                         heart.id,
                         theme.id,
@@ -65,6 +70,13 @@ public class HeartQueryRepository {
                 .rightJoin(heart).on(heart.theme.id.eq(theme.id))
                 .where(heart.user.id.eq(userId))
                 .fetch();
+
+        JPAQuery<Long> countQuery = queryFactory
+                .select(Wildcard.count)
+                .from(heart)
+                .where(heart.user.id.eq(userId));
+
+        return PageableExecutionUtils.getPage(content, pageable, countQuery::fetchOne);
     }
 
 }
