@@ -12,7 +12,7 @@ import com.apebble.askwatson.comm.exception.HeartNotFoundException;
 import com.apebble.askwatson.comm.exception.ThemeNotFoundException;
 import com.apebble.askwatson.comm.exception.UserNotFoundException;
 import com.apebble.askwatson.theme.Theme;
-import com.apebble.askwatson.theme.ThemeJpaRepository;
+import com.apebble.askwatson.theme.ThemeRepository;
 import com.apebble.askwatson.user.User;
 import com.apebble.askwatson.user.UserJpaRepository;
 
@@ -25,7 +25,7 @@ public class HeartService {
 
     private final HeartRepository heartRepository;
     private final UserJpaRepository userJpaRepository;
-    private final ThemeJpaRepository themeJpaRepository;
+    private final ThemeRepository themeRepository;
 
 
     /**
@@ -33,7 +33,7 @@ public class HeartService {
      */
     public Long createHeart(Long userId, Long themeId) {
         User user = userJpaRepository.findById(userId).orElseThrow(UserNotFoundException::new);
-        Theme theme = themeJpaRepository.findById(themeId).orElseThrow(ThemeNotFoundException::new);
+        Theme theme = themeRepository.findById(themeId).orElseThrow(ThemeNotFoundException::new);
         theme.incHeartCount();
         return heartRepository.save(Heart.create(user, theme)).getId();
     }

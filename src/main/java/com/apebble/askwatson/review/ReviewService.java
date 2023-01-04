@@ -20,7 +20,7 @@ import com.apebble.askwatson.comm.util.DateConverter;
 import com.apebble.askwatson.check.Check;
 import com.apebble.askwatson.check.CheckRepository;
 import com.apebble.askwatson.theme.Theme;
-import com.apebble.askwatson.theme.ThemeJpaRepository;
+import com.apebble.askwatson.theme.ThemeRepository;
 import com.apebble.askwatson.user.User;
 import com.apebble.askwatson.user.UserJpaRepository;
 
@@ -36,7 +36,7 @@ public class ReviewService {
 
     private final ReviewRepository reviewRepository;
     private final UserJpaRepository userJpaRepository;
-    private final ThemeJpaRepository themeJpaRepository;
+    private final ThemeRepository themeRepository;
     private final CheckRepository checkRepository;
     private final CheckService checkService;
     private final ReportRepository reportRepository;
@@ -63,7 +63,7 @@ public class ReviewService {
 
     private Long createReview(Long userId, Long themeId, Check check, ReviewDto.Request params) {
         User user = userJpaRepository.findById(userId).orElseThrow(UserNotFoundException::new);
-        Theme theme = themeJpaRepository.findById(themeId).orElseThrow(ThemeNotFoundException::new);
+        Theme theme = themeRepository.findById(themeId).orElseThrow(ThemeNotFoundException::new);
         addReviewToCafeAndTheme(params, theme);
         updateCheckDt(check, params.getCheckDate());
         return reviewRepository.save(Review.create(user, theme, check, params)).getId();

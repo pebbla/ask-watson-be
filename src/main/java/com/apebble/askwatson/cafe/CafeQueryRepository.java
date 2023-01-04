@@ -114,7 +114,6 @@ public class CafeQueryRepository {
     }
 
 
-
     /**
      * [관리자웹] 카페 검색 쿼리
      */
@@ -158,8 +157,7 @@ public class CafeQueryRepository {
                 ))
                 .from(cafe)
                 .join(cafe.location, location)
-                .where(availableCon(true),
-                        searchWordCond(searchWord),
+                .where(searchWordCond(searchWord),
                         cafe.modifiedAt.isNull())
                 .fetch();
     }
@@ -184,8 +182,7 @@ public class CafeQueryRepository {
                 ))
                 .from(cafe)
                 .join(cafe.location, location)
-                .where(availableCon(true),
-                        searchWordCond(searchWord),
+                .where(searchWordCond(searchWord),
                         cafe.modifiedAt.isNotNull())
                 .fetch();
     }
@@ -232,8 +229,7 @@ public class CafeQueryRepository {
                 ))
                 .from(cafe)
                 .join(cafe.location, location)
-                .where(availableCon(true),
-                        searchWordCond(searchWord))
+                .where(searchWordCond(searchWord))
                 .fetch();
     }
 

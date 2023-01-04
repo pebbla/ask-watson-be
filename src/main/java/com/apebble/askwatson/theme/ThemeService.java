@@ -6,23 +6,15 @@ import com.apebble.askwatson.comm.exception.CafeNotFoundException;
 import com.apebble.askwatson.comm.exception.CategoryNotFoundException;
 import com.apebble.askwatson.comm.exception.ThemeNotFoundException;
 import com.apebble.askwatson.config.GoogleCloudConfig;
-import com.apebble.askwatson.heart.Heart;
-import com.apebble.askwatson.heart.HeartRepository;
-import com.apebble.askwatson.check.Check;
-import com.apebble.askwatson.check.CheckRepository;
 import com.apebble.askwatson.theme.category.Category;
 import com.apebble.askwatson.theme.category.CategoryJpaRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import javax.annotation.Nullable;
 
@@ -34,9 +26,7 @@ public class ThemeService {
 
     private final CafeRepository cafeRepository;
     private final CategoryJpaRepository categoryJpaRepository;
-    private final ThemeJpaRepository themeJpaRepository;
-    private final HeartRepository heartRepository;
-    private final CheckRepository checkRepository;
+    private final ThemeRepository themeRepository;
     private final GoogleCloudConfig googleCloudConfig;
 
     
@@ -47,7 +37,7 @@ public class ThemeService {
         Cafe cafe = cafeRepository.findById(cafeId).orElseThrow(CafeNotFoundException::new);
         Category category = categoryJpaRepository.findById(params.getCategoryId()).orElseThrow(CategoryNotFoundException::new);
 
-        Theme savedTheme = themeJpaRepository.save(Theme.create(cafe, category, params));
+        Theme savedTheme = themeRepository.save(Theme.create(cafe, category, params));
         if(file !=null) savedTheme.updateImageUrl(addToGoogleStorage(savedTheme.getId(), file));
 
         return savedTheme.getId();
@@ -66,76 +56,7 @@ public class ThemeService {
     @Transactional(readOnly = true)
     public List<Theme> getThemesByCafe(Long cafeId) {
         Cafe cafe = cafeRepository.findById(cafeId).orElseThrow(CafeNotFoundException::new);
-        return themeJpaRepository.findThemesByCafe(cafe);
-    }
-
-
-    /**
-     * 테마 목록 전체 조회
-     */
-    @Transactional(readOnly = true)
-    public Page<Theme> getThemes(ThemeSearchOptions searchOptions, Pageable pageable) {
-        Page<Theme> themeList;
-        themeList = (searchOptions == null)
-            ? themeJpaRepository.findThemesByIsAvailable(true, pageable)
-            : themeJpaRepository.findThemesByOptionsAndIsAvailable(searchOptions, true, pageable);
-
-        return themeList;
-    }
-
-
-    /**
-     * 방탈출 테마 전체 조회(리스트 - 관리자웹용)
-     */
-    @Transactional(readOnly = true)
-    public List<Theme> getThemeList(String searchWord, Boolean sortByUpdateYn) {
-        List<Theme> themeList = (searchWord == null)
-                ? themeJpaRepository.findAllThemes()
-                : themeJpaRepository.findThemesBySearchWord(searchWord);
-
-        if(sortByUpdateYn!=null && sortByUpdateYn) {
-            themeList = sortByUpdate(themeList);
-        }
-
-        return themeList;
-    }
-
-    private List<Theme> sortByUpdate(List<Theme> themeList) {
-        List<Theme> nullModifiedAtList = new ArrayList<>();
-        List<Theme> nullColumnList = new ArrayList<>();
-        List<Theme> nonNullColumnList = new ArrayList<>();
-
-        themeList.forEach(theme -> {
-                    if(theme.getModifiedAt() == null)
-                        nullModifiedAtList.add(theme);
-                    else if(theme.getThemeName() == null || theme.getThemeName().equals("") ||
-                            theme.getThemeExplanation() == null || theme.getThemeExplanation().equals("") ||
-                            theme.getTimeLimit() == null || theme.getTimeLimit().equals(0) ||
-                            theme.getMinNumPeople() == null || theme.getMinNumPeople().equals(0) ||
-                            theme.getPrice() == null || theme.getPrice().equals(0) ||
-                            theme.getImageUrl() == null || theme.getImageUrl().equals("") ||
-                            theme.getReservationUrl() == null || theme.getReservationUrl().equals("") ||
-                            theme.getCategory() == null)
-                        nullColumnList.add(theme);
-                    else nonNullColumnList.add(theme);
-                });
-
-        List<Theme> result = new ArrayList<>();
-        result.addAll(nullModifiedAtList);
-        result.addAll(nullColumnList);
-        result.addAll(nonNullColumnList);
-
-        return result;
-    }
-
-
-    /**
-     * 테마 단건 조회(회원 하트 같이)
-     */
-    @Transactional(readOnly = true)
-    public OneThemeDto.Response getOneThemeWithUserHearted(Long themeId, Long userId) {
-        Theme theme = themeJpaRepository.findByIdWithCategory(themeId).orElseThrow(ThemeNotFoundException::new);
-        return convertToOneThemeDto(theme, userId);
+        return themeRepository.findThemesByCafe(cafe);
     }
 
 
@@ -144,7 +65,7 @@ public class ThemeService {
      */
     @Transactional(readOnly = true)
     public Theme findOne(Long themeId) {
-        return themeJpaRepository.findByIdWithCategory(themeId).orElseThrow(ThemeNotFoundException::new);
+        return themeRepository.findByIdWithCategory(themeId).orElseThrow(ThemeNotFoundException::new);
     }
 
 
@@ -152,7 +73,7 @@ public class ThemeService {
      * 테마 정보 수정
      */
     public void modifyTheme(Long themeId, ThemeDto.Request params, @Nullable MultipartFile file) {
-        Theme theme = themeJpaRepository.findByIdWithCategory(themeId).orElseThrow(ThemeNotFoundException::new);
+        Theme theme = themeRepository.findByIdWithCategory(themeId).orElseThrow(ThemeNotFoundException::new);
         Category category = categoryJpaRepository.findById(params.getCategoryId()).orElseThrow(CategoryNotFoundException::new);
 
         if(file != null) params.setImageUrl(updateGoogleStorage(theme.getId(), file));
@@ -171,30 +92,8 @@ public class ThemeService {
      * 테마 이용가능여부 변경
      */
     public void modifyThemeAvailability(Long themeId, Boolean isAvailable) {
-        Theme theme = themeJpaRepository.findById(themeId).orElseThrow(ThemeNotFoundException::new);
+        Theme theme = themeRepository.findById(themeId).orElseThrow(ThemeNotFoundException::new);
         theme.updateAvailability(isAvailable);
-    }
-
-    //==DTO 변환 메서드==//
-    private OneThemeDto.Response convertToOneThemeDto(Theme theme, Long userId){
-        return new OneThemeDto.Response(
-                theme,
-                checkUserHeartedTheme(userId, theme.getId()),
-                checkUserCompletedTheme(userId, theme.getId()));
-    }
-
-    private boolean checkUserHeartedTheme(Long userId, Long themeId) {
-        if(userId == null) return false;
-
-        Optional<Heart> heart = heartRepository.findByUserIdAndThemeId(userId, themeId);
-        return heart.isPresent();
-    }
-
-    private boolean checkUserCompletedTheme(Long userId, Long themeId) {
-        if(userId == null) return false;
-
-        Optional<Check> check = checkRepository.findByUserIdAndThemeId(userId, themeId);
-        return check.isPresent();
     }
 
 }
