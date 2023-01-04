@@ -62,7 +62,7 @@ public class CheckQueryRepository {
                 .from(theme)
                 .join(theme.cafe, cafe)
                 .join(cafe.location, location)
-                .leftJoin(check).on(check.theme.id.eq(theme.id))
+                .rightJoin(check).on(check.theme.id.eq(theme.id))
                 .leftJoin(heart).on(heart.user.id.eq(userId), heart.theme.id.eq(theme.id))
                 .where(check.user.id.eq(userId))
                 .fetch();

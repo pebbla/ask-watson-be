@@ -1,13 +1,9 @@
-package com.apebble.askwatson.check;
+package com.apebble.askwatson.heart;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
 import java.util.List;
 
 import static com.apebble.askwatson.cafe.QCafe.cafe;
@@ -17,21 +13,26 @@ import static com.apebble.askwatson.comm.util.QueryDslUtils.alwaysTrue;
 import static com.apebble.askwatson.heart.QHeart.heart;
 import static com.apebble.askwatson.theme.QTheme.theme;
 
-@SpringBootTest
-@Transactional
-class CheckQueryRepositoryTest {
-    @PersistenceContext
-    EntityManager em;
-    JPAQueryFactory queryFactory;
 
-    @Test
-    public void getChecksByUser() {
-        queryFactory = new JPAQueryFactory(em);
-        Long userId = 1L;
-        List<CheckQueryDto.Response> content = queryFactory
-                .select(new QCheckQueryDto_Response(
-                        check.id,
-                        check.checkDt.stringValue(),
+/**
+ * 화면용 쿼리
+ */
+@Repository
+public class HeartQueryRepository {
+
+    private final JPAQueryFactory queryFactory;
+
+    public HeartQueryRepository(EntityManager em) {
+        this.queryFactory = new JPAQueryFactory(em);
+    }
+
+    /**
+     * 회원별 좋아요 리스트 조회
+     */
+    public List<HeartQueryDto.Response> getHeartsByUserId(Long userId) {
+        return queryFactory
+                .select(new QHeartQueryDto_Response(
+                        heart.id,
                         theme.id,
                         theme.themeName,
                         theme.themeExplanation,
@@ -54,18 +55,16 @@ class CheckQueryRepositoryTest {
                         theme.cafe.cafeName,
                         theme.cafe.cafePhoneNum,
                         theme.cafe.location.id,
-                        heart.isNotNull(),
-                        alwaysTrue
+                        alwaysTrue,
+                        check.isNotNull()
                 ))
                 .from(theme)
-                .rightJoin(check).on(check.theme.id.eq(theme.id))
                 .join(theme.cafe, cafe)
                 .join(cafe.location, location)
-                .leftJoin(heart).on(heart.user.id.eq(userId), heart.theme.id.eq(theme.id))
-                .where(check.user.id.eq(userId))
+                .leftJoin(check).on(check.user.id.eq(userId), check.theme.id.eq(theme.id))
+                .rightJoin(heart).on(heart.theme.id.eq(theme.id))
+                .where(heart.user.id.eq(userId))
                 .fetch();
-
-        System.out.println(content);
-
     }
+
 }

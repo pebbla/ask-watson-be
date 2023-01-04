@@ -21,6 +21,7 @@ import static java.util.stream.Collectors.toList;
 public class HeartController {
 
     private final HeartService heartService;
+    private final HeartQueryRepository heartQueryRepository;
     private final ResponseService responseService;
 
     // 좋아요 등록
@@ -39,13 +40,8 @@ public class HeartController {
 
     // 좋아요 목록
     @GetMapping(value="/user/{userId}/hearts")
-    public ListResponse<HeartDto.Response> getHeartByUserId(@PathVariable Long userId) {
-        return responseService.getListResponse(toDtoList(heartService.getHeartsByUserId(userId)));
-    }
-
-    //==DTO 변환 메서드==//
-    private List<HeartDto.Response> toDtoList(List<Heart> heartList){
-        return heartList.stream().map(HeartDto.Response::new).collect(toList());
+    public ListResponse<HeartQueryDto.Response> getHeartByUserId(@PathVariable Long userId) {
+        return responseService.getListResponse(heartQueryRepository.getHeartsByUserId(userId));
     }
     
 }
