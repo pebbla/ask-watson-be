@@ -12,15 +12,21 @@ import static com.apebble.askwatson.notice.QNotice.notice;
 
 @Repository
 public class NoticeQueryRepository {
+
     private final JPAQueryFactory queryFactory;
 
     public NoticeQueryRepository(EntityManager em) {
         this.queryFactory = new JPAQueryFactory(em);
     }
 
-    public List<Notice> findNoticesBySearchWord(String searchWord) {
+    public List<NoticeQueryDto.Response> findNoticesBySearchWord(String searchWord) {
         return queryFactory
-                .selectFrom(notice)
+                .select(new QNoticeQueryDto_Response(
+                        notice.id,
+                        notice.title,
+                        notice.content
+                ))
+                .from(notice)
                 .where(searchWordCond(searchWord))
                 .fetch();
     }

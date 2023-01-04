@@ -6,8 +6,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-
 
 @Slf4j
 @Service
@@ -16,7 +14,6 @@ import java.util.List;
 public class NoticeService {
 
     private final NoticeRepository noticeRepository;
-    private final NoticeQueryRepository noticeQueryRepository;
 
 
     /**
@@ -28,21 +25,11 @@ public class NoticeService {
 
 
     /**
-     * 공지사항 전체 조회
-     */
-    @Transactional(readOnly = true)
-    public List<Notice> getNotices(String searchWord) {
-        return noticeQueryRepository.findNoticesBySearchWord(searchWord);
-    }
-
-
-    /**
      * 공지사항 단건 조회
      */
     @Transactional(readOnly = true)
-    public NoticeDto.Response getOneNotice(Long noticeId) {
-        Notice notice = noticeRepository.findById(noticeId).orElseThrow(NoticeNotFoundException::new);
-        return new NoticeDto.Response(notice);
+    public Notice getOneNotice(Long noticeId) {
+        return noticeRepository.findById(noticeId).orElseThrow(NoticeNotFoundException::new);
     }
 
 

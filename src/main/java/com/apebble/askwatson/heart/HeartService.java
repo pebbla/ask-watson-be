@@ -3,8 +3,6 @@ package com.apebble.askwatson.heart;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.List;
-
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -46,24 +44,6 @@ public class HeartService {
         Heart heart = heartRepository.findById(heartId).orElseThrow(HeartNotFoundException::new);
         heart.getTheme().decHeartCount();
         heartRepository.delete(heart);
-    }
-
-
-    /**
-     * 좋아요 단건 조회
-     */
-    @Transactional(readOnly = true)
-    public Heart getOneHeartWithTheme(Long heartId){
-        return heartRepository.findByIdWithTheme(heartId).orElseThrow(HeartNotFoundException::new);
-    }
-
-
-    /**
-     * 좋아요 목록 조회
-     */
-    @Transactional(readOnly = true)
-    public List<Heart> getHeartsByUserId(Long userId){
-        return heartRepository.findByUserIdWithCategory(userId);
     }
 
 }
