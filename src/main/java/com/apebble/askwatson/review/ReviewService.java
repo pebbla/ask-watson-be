@@ -103,25 +103,6 @@ public class ReviewService {
 
 
     /**
-     * 사용자별 리뷰 목록 조회
-     */
-    @Transactional(readOnly = true)
-    public List<Review> getReviewsByUserId(Long userId) {
-        User user = userJpaRepository.findById(userId).orElseThrow(UserNotFoundException::new);
-        return reviewRepository.findByUser(user);
-    }
-
-
-    /**
-     * 테마별 리뷰 리스트 조회
-     */
-    @Transactional(readOnly = true)
-    public List<Review> getReviewsByThemeId(Long themeId) {
-        return reviewRepository.findByThemeId(themeId);
-    }
-
-
-    /**
      * 리뷰 단건 조회
      */
     @Transactional(readOnly = true)
