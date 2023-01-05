@@ -20,7 +20,7 @@ import static com.apebble.askwatson.review.QReview.review;
 import static com.apebble.askwatson.user.QUser.user;
 
 /**
- * 화면용 쿼리
+ * 회원 화면용 쿼리
  */
 @Repository
 public class UserQueryRepository {
@@ -51,6 +51,8 @@ public class UserQueryRepository {
                 ))
                 .from(user)
                 .where(searchWordCond(searchWord))
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
                 .fetch();
 
         JPAQuery<Long> countQuery = queryFactory

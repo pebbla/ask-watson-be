@@ -10,6 +10,10 @@ import java.util.List;
 import static com.apebble.askwatson.comm.util.QueryDslUtils.alwaysTrue;
 import static com.apebble.askwatson.notice.QNotice.notice;
 
+
+/**
+ * 공지 화면용 쿼리
+ */
 @Repository
 public class NoticeQueryRepository {
 
@@ -19,6 +23,10 @@ public class NoticeQueryRepository {
         this.queryFactory = new JPAQueryFactory(em);
     }
 
+
+    /**
+     * 공지 목록 전체 조회
+     */
     public List<NoticeQueryDto.Response> findNoticesBySearchWord(String searchWord) {
         return queryFactory
                 .select(new QNoticeQueryDto_Response(

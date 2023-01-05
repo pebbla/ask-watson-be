@@ -19,7 +19,7 @@ import static com.apebble.askwatson.comm.util.QueryDslUtils.alwaysTrue;
 
 
 /**
- * 화면용 쿼리
+ * 카페 화면용 쿼리
  */
 @Repository
 public class CafeQueryRepository {

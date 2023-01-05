@@ -6,4 +6,5 @@ import lombok.Data;
 public class ReportParams {
 
     private String content;            // 신고 내용
+
 }

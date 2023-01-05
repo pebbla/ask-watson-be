@@ -23,7 +23,7 @@ import static com.apebble.askwatson.theme.category.QCategory.category;
 
 
 /**
- * 화면용 쿼리
+ * 테마 화면용 쿼리
  */
 @Repository
 public class ThemeQueryRepository {

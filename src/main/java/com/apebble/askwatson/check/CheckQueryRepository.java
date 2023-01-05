@@ -20,7 +20,7 @@ import static com.apebble.askwatson.theme.QTheme.theme;
 
 
 /**
- * 화면용 쿼리
+ * 탈출완료 화면용 쿼리
  */
 @Repository
 public class CheckQueryRepository {
@@ -70,6 +70,8 @@ public class CheckQueryRepository {
                 .rightJoin(check).on(check.theme.id.eq(theme.id))
                 .leftJoin(heart).on(heart.user.id.eq(userId), heart.theme.id.eq(theme.id))
                 .where(check.user.id.eq(userId))
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
                 .fetch();
 
         JPAQuery<Long> countQuery = queryFactory

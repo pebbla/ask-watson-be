@@ -10,8 +10,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-
 
 @Slf4j
 @Service
@@ -35,28 +33,11 @@ public class ReportService {
 
 
     /**
-     * 신고 전체 조회
-     */
-    @Transactional(readOnly = true)
-    public List<Report> getAllReports(String searchWord) {
-        return reportRepository.findReportsBySearchWord(searchWord);
-    }
-
-
-    /**
      * 신고 단건 조회
      */
     @Transactional(readOnly = true)
     public Report getOneReport(Long reportId) {
         return reportRepository.findByIdWithReporterReportedUserReview(reportId).orElseThrow(ReportNotFoundException::new);
-    }
-
-
-    /**
-     * 처리 여부에 따른 신고 목록 조정
-     */
-    public List<Report> getReportsByHandledYn(String searchWord, Boolean handledYn) {
-        return reportRepository.findReportsByHandledYnAndSearchWord(searchWord, handledYn);
     }
 
 

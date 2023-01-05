@@ -10,6 +10,9 @@ import java.util.List;
 import static com.apebble.askwatson.comm.util.QueryDslUtils.alwaysTrue;
 import static com.apebble.askwatson.faq.QFaq.faq;
 
+/**
+ * 자주묻는질문 화면용 쿼리
+ */
 @Repository
 public class FaqQueryRepository {
     private final JPAQueryFactory queryFactory;
@@ -18,6 +21,10 @@ public class FaqQueryRepository {
         this.queryFactory = new JPAQueryFactory(em);
     }
 
+
+    /**
+     * 자주묻는질문 목록 전체 조회
+     */
     public List<FaqQueryDto.Response> findFaqsBySearchWord(String searchWord) {
         return queryFactory
                 .select(new QFaqQueryDto_Response(

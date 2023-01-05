@@ -16,7 +16,7 @@ import static com.apebble.askwatson.review.QReview.review;
 import static com.apebble.askwatson.user.QUser.user;
 
 /**
- * 화면용 쿼리
+ * 리뷰 화면용 쿼리
  */
 @Repository
 public class ReviewQueryRepository {
@@ -29,7 +29,7 @@ public class ReviewQueryRepository {
 
 
     /**
-     * 회원별 리뷰목록 조회
+     * 회원별 리뷰 목록 조회
      */
     public Page<ReviewQueryDto.Response> getReviewsByUserId(Long userId, Pageable pageable) {
         List<ReviewQueryDto.Response> content = queryFactory
@@ -48,6 +48,8 @@ public class ReviewQueryRepository {
                 .from(review)
                 .join(review.user, user)
                 .where(review.user.id.eq(userId))
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
                 .fetch();
 
         JPAQuery<Long> countQuery = queryFactory
@@ -60,7 +62,7 @@ public class ReviewQueryRepository {
 
 
     /**
-     * 테마별 리뷰목록 조회
+     * 테마별 리뷰 목록 조회
      */
     public Page<ReviewQueryDto.Response> getReviewsByThemeId(Long themeId, Pageable pageable) {
         List<ReviewQueryDto.Response> content = queryFactory
@@ -79,6 +81,8 @@ public class ReviewQueryRepository {
                 .from(review)
                 .leftJoin(review.user, user)
                 .where(review.theme.id.eq(themeId))
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
                 .fetch();
 
         JPAQuery<Long> countQuery = queryFactory
@@ -88,4 +92,5 @@ public class ReviewQueryRepository {
 
         return PageableExecutionUtils.getPage(content, pageable, countQuery::fetchOne);
     }
+
 }
