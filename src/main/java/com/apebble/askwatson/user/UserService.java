@@ -3,12 +3,12 @@ package com.apebble.askwatson.user;
 import com.apebble.askwatson.comm.exception.ServerException;
 import com.apebble.askwatson.comm.exception.UserNotFoundException;
 import com.apebble.askwatson.check.Check;
-import com.apebble.askwatson.check.CheckJpaRepository;
+import com.apebble.askwatson.check.CheckRepository;
 import com.apebble.askwatson.check.CheckService;
 import com.apebble.askwatson.report.Report;
-import com.apebble.askwatson.report.ReportJpaRepository;
+import com.apebble.askwatson.report.ReportRepository;
 import com.apebble.askwatson.review.Review;
-import com.apebble.askwatson.review.ReviewJpaRepository;
+import com.apebble.askwatson.review.ReviewRepository;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -37,9 +37,9 @@ import static java.util.stream.Collectors.toList;
 public class UserService {
 
     private final UserJpaRepository userJpaRepository;
-    private final ReportJpaRepository reportJpaRepository;
-    private final ReviewJpaRepository reviewJpaRepository;
-    private final CheckJpaRepository checkJpaRepository;
+    private final ReportRepository reportRepository;
+    private final ReviewRepository reviewRepository;
+    private final CheckRepository checkRepository;
     private final CheckService checkService;
 
 
@@ -147,31 +147,6 @@ public class UserService {
 
 
     /**
-     * 회원 전체 조회
-     */
-    @Transactional(readOnly = true)
-    public List<UserDto.Response> getAllUsers(String searchWord) {
-        List<User> users = (searchWord == null)
-                ? userJpaRepository.findAll()
-                : userJpaRepository.findUsersBySearchWord(searchWord);
-
-        return convertToDtoList(users);
-    }
-
-    private int getUserReportedCount(User user) {
-        return reportJpaRepository.countByReportedUser(user);
-    }
-
-    private int getUserReviewCount(User user) {
-        return reviewJpaRepository.countByUser(user);
-    }
-
-    private int getUserCheckCount(User user) {
-        return checkJpaRepository.countByUser(user);
-    }
-
-
-    /**
      * 회원 단건 조회
      */
     @Transactional(readOnly = true)
@@ -206,37 +181,37 @@ public class UserService {
     }
 
     private void setReviewsUserNull(User user) {
-        List<Review> reviews = reviewJpaRepository.findByUser(user);
+        List<Review> reviews = reviewRepository.findByUser(user);
         reviews.forEach(Review::deleteUser);
     }
 
     private void deleteChecksHandlingReviews(User user) {
-        List<Check> checks = checkJpaRepository.findByUserId(user.getId());
+        List<Check> checks = checkRepository.findByUserId(user.getId());
         setReviewsCheckNull(user);
         checks.forEach(checkService::deleteCheck);
     }
 
     private void setReviewsCheckNull(User user) {
-        List<Review> reviews = reviewJpaRepository.findByUser(user);
+        List<Review> reviews = reviewRepository.findByUser(user);
         reviews.forEach(Review::deleteCheck);
     }
 
     private void setReportsReporterNull(User user) {
-        List<Report> reports = reportJpaRepository.findByReporter(user);
+        List<Report> reports = reportRepository.findByReporter(user);
         reports.forEach(Report::deleteReporter);
     }
 
     private void setReportsReportedUserNull(User user) {
-        List<Report> reports = reportJpaRepository.findByReportedUser(user);
+        List<Report> reports = reportRepository.findByReportedUser(user);
         reports.forEach(Report::deleteReportedUser);
     }
 
 
     //==DTO 변환 함수==//
-    private List<UserDto.Response> convertToDtoList(List<User> users){
-        return users.stream().map(user ->
-                new UserDto.Response(user, getUserReportedCount(user), getUserReviewCount(user), getUserCheckCount(user))
-        ).collect(toList());
-    }
+//    private List<UserDto.Response> convertToDtoList(List<User> users){
+//        return users.stream().map(user ->
+//                new UserDto.Response(user, getUserReportedCount(user), getUserReviewCount(user), getUserCheckCount(user))
+//        ).collect(toList());
+//    }
 
 }

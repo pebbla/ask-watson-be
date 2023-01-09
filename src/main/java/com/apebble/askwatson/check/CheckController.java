@@ -1,17 +1,11 @@
 package com.apebble.askwatson.check;
 
-import com.apebble.askwatson.comm.response.CommonResponse;
-import com.apebble.askwatson.comm.response.ListResponse;
-import com.apebble.askwatson.comm.response.ResponseService;
-import com.apebble.askwatson.comm.response.SingleResponse;
+import com.apebble.askwatson.comm.response.*;
 import com.apebble.askwatson.comm.util.DateConverter;
 import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-
-import static java.util.stream.Collectors.toList;
 
 @Api(tags = {"탈출완료"})
 @RestController
@@ -21,18 +15,19 @@ public class CheckController {
 
     private final ResponseService responseService;
     private final CheckService checkService;
+    private final CheckQueryRepository checkQueryRepository;
 
     // 유저 탈출 완료
     @PostMapping(value = "/user/{userId}/themes/{themeId}/checks")
-    public SingleResponse<CheckDto.SimpleResponse> createCheck(@PathVariable Long userId, @PathVariable Long themeId) {
+    public SingleResponse<Long> createCheck(@PathVariable Long userId, @PathVariable Long themeId) {
         Long checkId = checkService.createCheck(userId, themeId);
-        return responseService.getSingleResponse(new CheckDto.SimpleResponse(checkService.findOneWithTheme(checkId)));
+        return responseService.getSingleResponse(checkId);
     }
 
     // 사용자별 탈출완료 목록 조회
     @GetMapping(value = "/user/{userId}/checks")
-    public ListResponse<CheckDto.Response> getChecksByUser(@PathVariable Long userId) {
-        return responseService.getListResponse(toDtoList(checkService.getChecksByUserId(userId)));
+    public PageResponse<CheckQueryDto.Response> getChecksByUser(@PathVariable Long userId, Pageable pageable) {
+        return responseService.getPageResponse(checkQueryRepository.getChecksByUserId(userId, pageable));
     }
 
     // 탈출 완료 일시 수정
@@ -48,11 +43,6 @@ public class CheckController {
     public CommonResponse cancelCheck(@PathVariable Long checkId) {
         checkService.deleteCheckIfNoReview(checkId);
         return responseService.getSuccessResponse();
-    }
-
-    //==DTO 변환 메서드==//
-    private List<CheckDto.Response> toDtoList(List<Check> checkList){
-        return checkList.stream().map(CheckDto.Response::new).collect(toList());
     }
 
 }

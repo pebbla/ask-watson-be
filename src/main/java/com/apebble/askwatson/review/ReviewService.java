@@ -9,7 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.apebble.askwatson.cafe.Cafe;
 import com.apebble.askwatson.check.CheckService;
 import com.apebble.askwatson.report.Report;
-import com.apebble.askwatson.report.ReportJpaRepository;
+import com.apebble.askwatson.report.ReportRepository;
 import org.springframework.stereotype.Service;
 
 import com.apebble.askwatson.comm.exception.CheckNotFoundException;
@@ -18,9 +18,9 @@ import com.apebble.askwatson.comm.exception.ThemeNotFoundException;
 import com.apebble.askwatson.comm.exception.UserNotFoundException;
 import com.apebble.askwatson.comm.util.DateConverter;
 import com.apebble.askwatson.check.Check;
-import com.apebble.askwatson.check.CheckJpaRepository;
+import com.apebble.askwatson.check.CheckRepository;
 import com.apebble.askwatson.theme.Theme;
-import com.apebble.askwatson.theme.ThemeJpaRepository;
+import com.apebble.askwatson.theme.ThemeRepository;
 import com.apebble.askwatson.user.User;
 import com.apebble.askwatson.user.UserJpaRepository;
 
@@ -34,12 +34,12 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class ReviewService {
 
-    private final ReviewJpaRepository reviewJpaRepository;
+    private final ReviewRepository reviewRepository;
     private final UserJpaRepository userJpaRepository;
-    private final ThemeJpaRepository themeJpaRepository;
-    private final CheckJpaRepository checkJpaRepository;
+    private final ThemeRepository themeRepository;
+    private final CheckRepository checkRepository;
     private final CheckService checkService;
-    private final ReportJpaRepository reportJpaRepository;
+    private final ReportRepository reportRepository;
 
 
     /**
@@ -51,22 +51,22 @@ public class ReviewService {
     }
 
     private Check findOrCreateCheck(Long userId, Long themeId) {
-        Optional<Check> check = checkJpaRepository.findByUserIdAndThemeId(userId, themeId);
+        Optional<Check> check = checkRepository.findByUserIdAndThemeId(userId, themeId);
         if(check.isPresent()) {
             return check.orElseThrow(CheckNotFoundException::new);
         }
         else {
             Long id = checkService.createCheck(userId, themeId);
-            return checkJpaRepository.findById(id).orElseThrow(CheckNotFoundException::new);
+            return checkRepository.findById(id).orElseThrow(CheckNotFoundException::new);
         }
     }
 
     private Long createReview(Long userId, Long themeId, Check check, ReviewDto.Request params) {
         User user = userJpaRepository.findById(userId).orElseThrow(UserNotFoundException::new);
-        Theme theme = themeJpaRepository.findById(themeId).orElseThrow(ThemeNotFoundException::new);
+        Theme theme = themeRepository.findById(themeId).orElseThrow(ThemeNotFoundException::new);
         addReviewToCafeAndTheme(params, theme);
         updateCheckDt(check, params.getCheckDate());
-        return reviewJpaRepository.save(Review.create(user, theme, check, params)).getId();
+        return reviewRepository.save(Review.create(user, theme, check, params)).getId();
     }
 
     private void addReviewToCafeAndTheme(ReviewDto.Request review, Theme theme) {
@@ -103,29 +103,11 @@ public class ReviewService {
 
 
     /**
-     * 사용자별 리뷰 목록 조회
-     */
-    @Transactional(readOnly = true)
-    public List<Review> getReviewsByUserId(Long userId) {
-        User user = userJpaRepository.findById(userId).orElseThrow(UserNotFoundException::new);
-        return reviewJpaRepository.findByUser(user);
-    }
-
-    /**
-     * 테마별 리뷰 리스트 조회
-     */
-    @Transactional(readOnly = true)
-    public List<Review> getReviewsByThemeId(Long themeId) {
-        return reviewJpaRepository.findByThemeId(themeId);
-    }
-
-
-    /**
      * 리뷰 단건 조회
      */
     @Transactional(readOnly = true)
     public Review getOneReview(Long reviewId) {
-        return reviewJpaRepository.findById(reviewId).orElseThrow(ReviewNotFoundException::new);
+        return reviewRepository.findById(reviewId).orElseThrow(ReviewNotFoundException::new);
     }
 
 
@@ -133,7 +115,7 @@ public class ReviewService {
      * 리뷰 수정
      */
     public void modifyReview(Long reviewId, ReviewDto.Request params) {
-        Review review = reviewJpaRepository.findById(reviewId).orElseThrow(ReviewNotFoundException::new);
+        Review review = reviewRepository.findById(reviewId).orElseThrow(ReviewNotFoundException::new);
         updateCafeAndTheme(review, params, review.getTheme());
         review.update(params);
     }
@@ -148,10 +130,10 @@ public class ReviewService {
      * 리뷰 삭제
      */
     public void deleteReview(Long reviewId) {
-        Review review = reviewJpaRepository.findById(reviewId).orElseThrow(ReviewNotFoundException::new);
+        Review review = reviewRepository.findById(reviewId).orElseThrow(ReviewNotFoundException::new);
         deleteReviewInCafeAndTheme(review);
         deleteReviewInReport(review);
-        reviewJpaRepository.delete(review);
+        reviewRepository.delete(review);
     }
 
     private void deleteReviewInCafeAndTheme(Review review) {
@@ -192,7 +174,7 @@ public class ReviewService {
     }
 
     private void deleteReviewInReport(Review review) {
-        List<Report> reports = reportJpaRepository.findByReview(review);
+        List<Report> reports = reportRepository.findByReview(review);
         reports.forEach(Report::deleteReview);
     }
 

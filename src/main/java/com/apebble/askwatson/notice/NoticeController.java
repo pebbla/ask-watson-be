@@ -8,10 +8,6 @@ import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
-import static java.util.stream.Collectors.toList;
-
 @Api(tags = {"공지사항"})
 @RestController
 @RequiredArgsConstructor
@@ -19,25 +15,26 @@ import static java.util.stream.Collectors.toList;
 public class NoticeController {
 
     private final NoticeService noticeService;
+    private final NoticeQueryRepository noticeQueryRepository;
     private final ResponseService responseService;
 
     // 공지사항 등록
     @PostMapping(value="/admin/notices")
     public SingleResponse<NoticeDto.Response> createNotice(@RequestBody NoticeDto.Request request) {
         Long noticeId = noticeService.createNotice(request);
-        return responseService.getSingleResponse(noticeService.getOneNotice(noticeId));
+        return responseService.getSingleResponse(toDto(noticeService.getOneNotice(noticeId)));
     }
 
     // 공지사항 전제 조회
     @GetMapping(value="/notices")
-    public ListResponse<NoticeDto.Response> getNotices(@RequestParam(required = false) String searchWord) {
-        return responseService.getListResponse(toDtoList(noticeService.getNotices(searchWord)));
+    public ListResponse<NoticeQueryDto.Response> getNotices(@RequestParam(required = false) String searchWord) {
+        return responseService.getListResponse(noticeQueryRepository.findNoticesBySearchWord(searchWord));
     }
 
     // 공지사항 단건 조회
     @GetMapping(value="/notices/{noticeId}")
     public SingleResponse<NoticeDto.Response> getOneNotice(@PathVariable Long noticeId) {
-        return responseService.getSingleResponse(noticeService.getOneNotice(noticeId));
+        return responseService.getSingleResponse(toDto(noticeService.getOneNotice(noticeId)));
     }
 
     // 공지사항 수정
@@ -45,7 +42,7 @@ public class NoticeController {
     public SingleResponse<NoticeDto.Response> modifyNotice(@PathVariable Long noticeId,
                                                            @RequestBody NoticeDto.Request params) {
         noticeService.modifyNotice(noticeId, params);
-        return responseService.getSingleResponse(noticeService.getOneNotice(noticeId));
+        return responseService.getSingleResponse(toDto(noticeService.getOneNotice(noticeId)));
     }
 
     // 공지사항 삭제
@@ -55,9 +52,7 @@ public class NoticeController {
         return responseService.getSuccessResponse();
     }
 
-    //==DTO 변환 메서드==//
-    private List<NoticeDto.Response> toDtoList(List<Notice> notices){
-        return notices.stream().map(NoticeDto.Response::new).collect(toList());
+    private NoticeDto.Response toDto(Notice notice) {
+        return new NoticeDto.Response(notice);
     }
-
 }

@@ -1,18 +1,11 @@
 package com.apebble.askwatson.review;
 
+import com.apebble.askwatson.comm.response.*;
 import io.swagger.annotations.Api;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
-import com.apebble.askwatson.comm.response.CommonResponse;
-import com.apebble.askwatson.comm.response.ListResponse;
-import com.apebble.askwatson.comm.response.ResponseService;
-import com.apebble.askwatson.comm.response.SingleResponse;
-
 import lombok.*;
-
-import java.util.List;
-
-import static java.util.stream.Collectors.toList;
 
 @Api(tags = {"리뷰"})
 @RestController
@@ -21,6 +14,7 @@ import static java.util.stream.Collectors.toList;
 public class ReviewController {
 
     private final ReviewService reviewService;
+    private final ReviewQueryRepository reviewQueryRepository;
     private final ResponseService responseService;
 
     // 리뷰 등록
@@ -34,14 +28,14 @@ public class ReviewController {
 
     // 유저벌 리뷰 리스트 조회
     @GetMapping(value = "/user/{userId}/reviews")
-    public ListResponse<ReviewDto.Response> getReviewsByUserId(@PathVariable Long userId) {
-        return responseService.getListResponse(toDtoList(reviewService.getReviewsByUserId(userId)));
+    public PageResponse<ReviewQueryDto.Response> getReviewsByUserId(@PathVariable Long userId, Pageable pageable) {
+        return responseService.getPageResponse(reviewQueryRepository.getReviewsByUserId(userId, pageable));
     }
 
     // 테마별 리뷰 리스트 조회
     @GetMapping(value = "/themes/{themeId}/reviews")
-    public ListResponse<ReviewDto.Response> getReviewsByThemeId(@PathVariable Long themeId) {
-        return responseService.getListResponse(toDtoList(reviewService.getReviewsByThemeId(themeId)));
+    public PageResponse<ReviewQueryDto.Response> getReviewsByThemeId(@PathVariable Long themeId, Pageable pageable) {
+        return responseService.getPageResponse(reviewQueryRepository.getReviewsByThemeId(themeId, pageable));
     }
 
     // 리뷰 단건 조회
@@ -66,10 +60,6 @@ public class ReviewController {
     }
 
     //==DTO 변환 메서드==//
-    private List<ReviewDto.Response> toDtoList(List<Review> reviewList){
-        return reviewList.stream().map(ReviewDto.Response::new).collect(toList());
-    }
-
     private ReviewDto.Response toDto(Review review){
         return new ReviewDto.Response(review);
     }

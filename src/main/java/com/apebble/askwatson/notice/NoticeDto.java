@@ -24,4 +24,5 @@ public class NoticeDto {
             this.content = entity.getContent();
         }
     }
+
 }

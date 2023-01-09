@@ -1,18 +1,11 @@
 package com.apebble.askwatson.heart;
 
+import com.apebble.askwatson.comm.response.*;
 import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
-import com.apebble.askwatson.comm.response.CommonResponse;
-import com.apebble.askwatson.comm.response.ListResponse;
-import com.apebble.askwatson.comm.response.ResponseService;
-import com.apebble.askwatson.comm.response.SingleResponse;
-
-import java.util.List;
-
-import static java.util.stream.Collectors.toList;
-
 
 @Api(tags = {"좋아요"})
 @RestController
@@ -21,13 +14,14 @@ import static java.util.stream.Collectors.toList;
 public class HeartController {
 
     private final HeartService heartService;
+    private final HeartQueryRepository heartQueryRepository;
     private final ResponseService responseService;
 
     // 좋아요 등록
     @PostMapping(value="/user/{userId}/themes/{themeId}/hearts")
-    public SingleResponse<HeartDto.Response> createHeart(@PathVariable Long userId, @PathVariable Long themeId) {
+    public SingleResponse<Long> createHeart(@PathVariable Long userId, @PathVariable Long themeId) {
         Long heartId = heartService.createHeart(userId, themeId);
-        return responseService.getSingleResponse(new HeartDto.Response(heartService.getOneHeartWithTheme(heartId)));
+        return responseService.getSingleResponse(heartId);
     }
 
     // 좋아요 해제
@@ -39,13 +33,8 @@ public class HeartController {
 
     // 좋아요 목록
     @GetMapping(value="/user/{userId}/hearts")
-    public ListResponse<HeartDto.Response> getHeartByUserId(@PathVariable Long userId) {
-        return responseService.getListResponse(toDtoList(heartService.getHeartsByUserId(userId)));
-    }
-
-    //==DTO 변환 메서드==//
-    private List<HeartDto.Response> toDtoList(List<Heart> heartList){
-        return heartList.stream().map(HeartDto.Response::new).collect(toList());
+    public PageResponse<HeartQueryDto.Response> getHeartByUserId(@PathVariable Long userId, Pageable pageable) {
+        return responseService.getPageResponse(heartQueryRepository.getHeartsByUserId(userId, pageable));
     }
     
 }

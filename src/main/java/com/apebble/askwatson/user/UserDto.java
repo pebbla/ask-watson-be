@@ -14,7 +14,6 @@ public class UserDto {
         private Boolean marketingAgreeYn;
     }
 
-
     @Data
     public static class Response {
         private Long id;
@@ -22,23 +21,17 @@ public class UserDto {
         private String userPhoneNum;
         private String userBirth;
         private char userGender;
-        private Boolean marketingAgreeYn;
-        private int reportedCount;
-        private int reviewCount;
-        private int checkCount;
-        private String createdAt;
+        private String accessToken;
+        private String refreshToken;
 
-        public Response(User entity, int reportedCount, int reviewCount, int checkCount) {
+        public Response(User entity) {
             this.id = entity.getId();
             this.userNickname = entity.getUserNickname();
             this.userPhoneNum = entity.getUserPhoneNum();
             this.userBirth = entity.getUserBirth().toString();
             this.userGender = entity.getUserGender();
-            this.marketingAgreeYn = entity.getMarketingAgreeYn();
-            this.reportedCount = reportedCount;
-            this.reviewCount = reviewCount;
-            this.checkCount = checkCount;
-            this.createdAt = entity.getCreatedAt().toString();
+            this.accessToken = "accessToken";
+            this.refreshToken = "refreshToken";
         }
     }
 }

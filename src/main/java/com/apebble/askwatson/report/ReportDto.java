@@ -14,9 +14,10 @@ public class ReportDto {
     @Data
     public static class Response {
         private Long id;
-        private User reporter;
-        private User reportedUser;
+        private UserDto reporter;
+        private UserDto reportedUser;
         private String content;
+        private String reviewContent;
         private Long reviewId=null;
         private String cafeName=null;
         private String themeName=null;
@@ -25,9 +26,10 @@ public class ReportDto {
 
         public Response(Report entity) {
             this.id = entity.getId();
-            this.reporter = entity.getReporter();
-            this.reportedUser = entity.getReportedUser();
+            this.reporter = new UserDto(entity.getReporter());
+            this.reportedUser = new UserDto(entity.getReportedUser());
             this.content = entity.getContent();
+            this.reviewContent = entity.getReviewContent();
             if(!entity.isReviewNull()){
                 this.reviewId = entity.getReview().getId();
                 this.cafeName = entity.getReview().getTheme().getCafe().getCafeName();
@@ -35,6 +37,17 @@ public class ReportDto {
             }
             this.createdAt = entity.getCreatedAt().toString();
             this.handledYn = entity.isHandledYn();
+        }
+    }
+
+    @Data
+    private static class UserDto {
+        private Long id;
+        private String userNickname;
+
+        public UserDto(User entity) {
+            this.id = entity.getId();
+            this.userNickname = entity.getUserNickname();
         }
     }
 }

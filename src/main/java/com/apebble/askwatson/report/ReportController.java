@@ -1,16 +1,10 @@
 package com.apebble.askwatson.report;
 
-import com.apebble.askwatson.comm.response.CommonResponse;
-import com.apebble.askwatson.comm.response.ListResponse;
-import com.apebble.askwatson.comm.response.ResponseService;
-import com.apebble.askwatson.comm.response.SingleResponse;
+import com.apebble.askwatson.comm.response.*;
 import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
-import static java.util.stream.Collectors.toList;
 
 @Api(tags = {"신고"})
 @RestController
@@ -19,6 +13,7 @@ import static java.util.stream.Collectors.toList;
 public class ReportController {
 
     private final ResponseService responseService;
+    private final ReportQueryRepository reportQueryRepository;
     private final ReportService reportService;
 
     // 신고 등록
@@ -32,13 +27,9 @@ public class ReportController {
 
     // 신고 목록 조회
     @GetMapping(value = "/admin/reports")
-    public ListResponse<ReportDto.Response> getReports(@RequestParam(required = false) Boolean handledYn,
-                                                       @RequestParam(required = false) String searchWord) {
-        if(handledYn == null) {
-            return responseService.getListResponse(toDtoList(reportService.getAllReports(searchWord)));
-        } else {
-            return responseService.getListResponse(toDtoList(reportService.getReportsByHandledYn(searchWord, handledYn)));
-        }
+    public ListResponse<ReportQueryDto.Response> getReports(@RequestParam(required = false) String searchWord,
+                                                            @RequestParam(required = false) Boolean handledYn) {
+        return responseService.getListResponse(reportQueryRepository.getReports(searchWord, handledYn));
     }
 
     // 신고 처리 상태 변경
@@ -46,11 +37,6 @@ public class ReportController {
     public CommonResponse modifyReportHandledYn(@PathVariable Long reportId, @RequestParam Boolean handledYn) {
         reportService.modifyReportHandledYn(reportId, handledYn);
         return responseService.getSuccessResponse();
-    }
-
-    //== DTO 변환 메서드==//
-    private List<ReportDto.Response> toDtoList(List<Report> reportList){
-        return reportList.stream().map(ReportDto.Response::new).collect(toList());
     }
 
 }
