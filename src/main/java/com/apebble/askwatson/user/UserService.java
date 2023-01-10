@@ -9,6 +9,8 @@ import com.apebble.askwatson.report.Report;
 import com.apebble.askwatson.report.ReportRepository;
 import com.apebble.askwatson.review.Review;
 import com.apebble.askwatson.review.ReviewRepository;
+import com.apebble.askwatson.suggestion.Suggestion;
+import com.apebble.askwatson.suggestion.SuggestionRepository;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -28,17 +30,16 @@ import java.util.Map;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import static java.util.stream.Collectors.toList;
-
 @Slf4j
 @Service
 @Transactional
 @RequiredArgsConstructor
 public class UserService {
 
-    private final UserJpaRepository userJpaRepository;
+    private final UserRepository userRepository;
     private final ReportRepository reportRepository;
     private final ReviewRepository reviewRepository;
+    private final SuggestionRepository suggestionRepository;
     private final CheckRepository checkRepository;
     private final CheckService checkService;
 
@@ -84,7 +85,7 @@ public class UserService {
             throw new ServerException("kakao 로그인 시 문제 발생");
         }
 
-        User user = userJpaRepository.findByUserPhoneNum(phoneNum).orElseThrow(UserNotFoundException::new);
+        User user = userRepository.findByUserPhoneNum(phoneNum).orElseThrow(UserNotFoundException::new);
         resultMap.put("access_token", "access_token");
         resultMap.put("refresh_token", "refresh_token");
         return resultMap;
@@ -130,7 +131,7 @@ public class UserService {
             e.printStackTrace();
             throw new ServerException("naver 로그인 시 문제 발생");
         }
-        User user = userJpaRepository.findByUserPhoneNum(resultMap.get("phonenum").toString()).orElseThrow(UserNotFoundException::new);
+        User user = userRepository.findByUserPhoneNum(resultMap.get("phonenum").toString()).orElseThrow(UserNotFoundException::new);
         resultMap.put("access_token", "access_token");
         resultMap.put("refresh_token", "refresh_token");
         return resultMap;
@@ -142,7 +143,7 @@ public class UserService {
      * 회원 등록
      */
     public Long createUser(UserDto.Request params) {
-        return userJpaRepository.save(User.create(params)).getId();
+        return userRepository.save(User.create(params)).getId();
     }
 
 
@@ -151,7 +152,7 @@ public class UserService {
      */
     @Transactional(readOnly = true)
     public User findOne(Long userId) {
-        return userJpaRepository.findById(userId).orElseThrow(UserNotFoundException::new);
+        return userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
     }
 
 
@@ -159,7 +160,7 @@ public class UserService {
      * 회원정보 수정
      */
     public void modifyUser(Long userId, UserDto.Request params) {
-        User user = userJpaRepository.findById(userId).orElseThrow(UserNotFoundException::new);
+        User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
         user.update(params);
     }
 
@@ -168,9 +169,9 @@ public class UserService {
      * 회원 삭제
      */
     public void deleteUser(Long userId) {
-        User user = userJpaRepository.findById(userId).orElseThrow(UserNotFoundException::new);
+        User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
         handleUserAssociations(user);
-        userJpaRepository.delete(user);
+        userRepository.delete(user);
     }
 
     private void handleUserAssociations(User user) {
@@ -205,13 +206,5 @@ public class UserService {
         List<Report> reports = reportRepository.findByReportedUser(user);
         reports.forEach(Report::deleteReportedUser);
     }
-
-
-    //==DTO 변환 함수==//
-//    private List<UserDto.Response> convertToDtoList(List<User> users){
-//        return users.stream().map(user ->
-//                new UserDto.Response(user, getUserReportedCount(user), getUserReviewCount(user), getUserCheckCount(user))
-//        ).collect(toList());
-//    }
 
 }
