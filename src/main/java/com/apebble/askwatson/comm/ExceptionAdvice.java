@@ -104,6 +104,12 @@ public class ExceptionAdvice {
         return responseService.getErrorResponse(404, "위치를 찾을 수 없습니다.");
     }
 
+    @ExceptionHandler(SuggestionNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    protected CommonResponse suggestionNotFoundException(){
+        return responseService.getErrorResponse(404, "건의를 찾을 수 없습니다.");
+    }
+
     /**
      * 405 : Method not allowed
      */

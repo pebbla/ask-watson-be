@@ -51,7 +51,7 @@ public class UserService {
         String phoneNum = "";
         Map<String,Object> resultMap = new HashMap<>();
         String reqURL = "https://kapi.kakao.com/v2/user/me";
-         try {
+        try {
             URL url = new URL(reqURL);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("GET");
@@ -59,7 +59,7 @@ public class UserService {
             // header
             conn.setRequestProperty("Authorization", "Bearer " + accessToken);
             System.out.println(accessToken);
-            
+
             // 성공 : 200, 인증 실패 401
             int responseCode = conn.getResponseCode();
             BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
@@ -109,7 +109,7 @@ public class UserService {
             conn.setRequestProperty("Content-Type", "application/json");
             conn.setRequestProperty("X-Naver-Client-Id", "3gtvwzljbdRnobTbeKwG");
             conn.setRequestProperty("X-Naver-Client-Secret", "BbAjtY1kBe");
-    
+
             // 성공 : 200, 인증 실패 401
             int responseCode = conn.getResponseCode();
             BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
@@ -126,7 +126,7 @@ public class UserService {
             System.out.println(naverAccount.get("mobile").toString());
             resultMap.put("phonenum", naverAccount.get("mobile"));
             System.out.println(naverAccount);
-            
+
         } catch (IOException e) {
             e.printStackTrace();
             throw new ServerException("naver 로그인 시 문제 발생");
@@ -179,6 +179,7 @@ public class UserService {
         setReviewsUserNull(user);
         setReportsReporterNull(user);
         setReportsReportedUserNull(user);
+        setSuggestionsUserNull(user);
     }
 
     private void setReviewsUserNull(User user) {
@@ -205,6 +206,11 @@ public class UserService {
     private void setReportsReportedUserNull(User user) {
         List<Report> reports = reportRepository.findByReportedUser(user);
         reports.forEach(Report::deleteReportedUser);
+    }
+
+    private void setSuggestionsUserNull(User user) {
+        List<Suggestion> suggestions = suggestionRepository.findByUser(user);
+        suggestions.forEach(Suggestion::deleteUser);
     }
 
 }
