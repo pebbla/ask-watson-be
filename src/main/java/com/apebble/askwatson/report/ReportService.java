@@ -4,7 +4,7 @@ import com.apebble.askwatson.comm.exception.*;
 import com.apebble.askwatson.review.Review;
 import com.apebble.askwatson.review.ReviewRepository;
 import com.apebble.askwatson.user.User;
-import com.apebble.askwatson.user.UserJpaRepository;
+import com.apebble.askwatson.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -18,7 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class ReportService {
 
     private final ReportRepository reportRepository;
-    private final UserJpaRepository userJpaRepository;
+    private final UserRepository userRepository;
     private final ReviewRepository reviewRepository;
 
 
@@ -26,7 +26,7 @@ public class ReportService {
      * 신고 등록
      */
     public Long createReport(Long reporterId, Long reviewId, ReportDto.Request params) {
-        User reporter = userJpaRepository.findById(reporterId).orElseThrow(UserNotFoundException::new);
+        User reporter = userRepository.findById(reporterId).orElseThrow(UserNotFoundException::new);
         Review review = reviewRepository.findByIdWithUser(reviewId).orElseThrow(ReviewNotFoundException::new);
         return reportRepository.save(Report.create(reporter, review, params)).getId();
     }

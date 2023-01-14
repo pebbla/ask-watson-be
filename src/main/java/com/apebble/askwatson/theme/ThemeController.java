@@ -1,4 +1,6 @@
 package com.apebble.askwatson.theme;
+import com.apebble.askwatson.review.Review;
+import com.apebble.askwatson.review.ReviewDto;
 import org.springframework.http.MediaType;
 
 import com.apebble.askwatson.comm.response.*;
@@ -8,6 +10,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
+
+import static java.util.stream.Collectors.toList;
 
 @Api(tags = {"테마"})
 @RestController
@@ -50,10 +56,16 @@ public class ThemeController {
         return responseService.getSingleResponse(themeQueryRepository.getOneThemeByUser(userId, themeId));
     }
 
-    // 카페별 테마 조회
+    // [모바일앱] 카페별 테마 조회
     @GetMapping(value = "/user/{userId}/cafes/{cafeId}/themes")
     public ListResponse<ThemeQueryDto.Response> getThemesByCafe(@PathVariable Long userId, @PathVariable Long cafeId) {
         return responseService.getListResponse(themeQueryRepository.getThemesByCafe(userId, cafeId));
+    }
+
+    // [관리자웹] 카페별 테마 조회
+    @GetMapping(value = "/admin/cafes/{cafeId}/themes")
+    public ListResponse<ThemeDto.Response> getThemesByCafe(@PathVariable Long cafeId) {
+        return responseService.getListResponse(toDtoList(themeService.getThemesByCafe(cafeId)));
     }
 
     // 테마 수정
@@ -70,6 +82,11 @@ public class ThemeController {
     public CommonResponse modifyThemeAvailability(@PathVariable Long themeId, @RequestParam boolean isAvailable) {
         themeService.modifyThemeAvailability(themeId, isAvailable);
         return responseService.getSuccessResponse();
+    }
+
+    //==DTO 변환 메서드==//
+    private List<ThemeDto.Response> toDtoList(List<Theme> themes){
+        return themes.stream().map(ThemeDto.Response::new).collect(toList());
     }
 
 }

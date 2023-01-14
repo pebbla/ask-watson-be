@@ -22,7 +22,7 @@ import com.apebble.askwatson.check.CheckRepository;
 import com.apebble.askwatson.theme.Theme;
 import com.apebble.askwatson.theme.ThemeRepository;
 import com.apebble.askwatson.user.User;
-import com.apebble.askwatson.user.UserJpaRepository;
+import com.apebble.askwatson.user.UserRepository;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -35,7 +35,7 @@ import lombok.extern.slf4j.Slf4j;
 public class ReviewService {
 
     private final ReviewRepository reviewRepository;
-    private final UserJpaRepository userJpaRepository;
+    private final UserRepository userRepository;
     private final ThemeRepository themeRepository;
     private final CheckRepository checkRepository;
     private final CheckService checkService;
@@ -62,7 +62,7 @@ public class ReviewService {
     }
 
     private Long createReview(Long userId, Long themeId, Check check, ReviewDto.Request params) {
-        User user = userJpaRepository.findById(userId).orElseThrow(UserNotFoundException::new);
+        User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
         Theme theme = themeRepository.findById(themeId).orElseThrow(ThemeNotFoundException::new);
         addReviewToCafeAndTheme(params, theme);
         updateCheckDt(check, params.getCheckDate());

@@ -6,7 +6,7 @@ import com.apebble.askwatson.review.ReviewRepository;
 import com.apebble.askwatson.theme.Theme;
 import com.apebble.askwatson.theme.ThemeRepository;
 import com.apebble.askwatson.user.User;
-import com.apebble.askwatson.user.UserJpaRepository;
+import com.apebble.askwatson.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -22,7 +22,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class CheckService {
 
-    private final UserJpaRepository userJpaRepository;
+    private final UserRepository userRepository;
     private final ThemeRepository themeRepository;
     private final CheckRepository checkRepository;
     private final ReviewRepository reviewRepository;
@@ -32,7 +32,7 @@ public class CheckService {
      * 탈출 완료 등록
      */
     public Long createCheck(Long userId, Long themeId) {
-        User user = userJpaRepository.findById(userId).orElseThrow(UserNotFoundException::new);
+        User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
         Theme theme = themeRepository.findById(themeId).orElseThrow(ThemeNotFoundException::new);
         theme.incEscapeCount();
         return checkRepository.save(Check.create(user, theme)).getId();
