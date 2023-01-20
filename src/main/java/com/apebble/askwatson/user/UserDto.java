@@ -8,7 +8,6 @@ public class UserDto {
     @Data
     public static class Request {
         private String userNickname;
-        private String userPhoneNum;
         private String userBirth;
         private char userGender;
         private Boolean marketingAgreeYn;
@@ -17,8 +16,8 @@ public class UserDto {
     @Data
     public static class Response {
         private Long id;
+        private String userEmail;
         private String userNickname;
-        private String userPhoneNum;
         private String userBirth;
         private char userGender;
         private String accessToken;
@@ -26,8 +25,8 @@ public class UserDto {
 
         public Response(User entity) {
             this.id = entity.getId();
+            this.userEmail = entity.getUserEmail();
             this.userNickname = entity.getUserNickname();
-            this.userPhoneNum = entity.getUserPhoneNum();
             this.userBirth = entity.getUserBirth().toString();
             this.userGender = entity.getUserGender();
             this.accessToken = "accessToken";

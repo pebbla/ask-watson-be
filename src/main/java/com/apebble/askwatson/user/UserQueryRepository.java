@@ -40,7 +40,7 @@ public class UserQueryRepository {
                 .select(new QUserQueryDto_Response(
                         user.id,
                         user.userNickname,
-                        user.userPhoneNum,
+                        user.userEmail,
                         user.userBirth.stringValue(),
                         user.userGender,
                         user.marketingAgreeYn,
@@ -67,7 +67,7 @@ public class UserQueryRepository {
         return (searchWord == null || searchWord.equals(""))
                 ? alwaysTrue
                 : user.userNickname.contains(searchWord)
-                .or(user.userPhoneNum.contains(searchWord));
+                .or(user.userEmail.contains(searchWord));
     }
 
 }

@@ -5,6 +5,7 @@ import com.apebble.askwatson.comm.exception.UserNotFoundException;
 import com.apebble.askwatson.check.Check;
 import com.apebble.askwatson.check.CheckRepository;
 import com.apebble.askwatson.check.CheckService;
+import com.apebble.askwatson.oauth.SignInDto;
 import com.apebble.askwatson.report.Report;
 import com.apebble.askwatson.report.ReportRepository;
 import com.apebble.askwatson.review.Review;
@@ -42,54 +43,6 @@ public class UserService {
     private final SuggestionRepository suggestionRepository;
     private final CheckRepository checkRepository;
     private final CheckService checkService;
-
-
-    /**
-     * 로그인(카카오)
-     */
-    public Map<String,Object> signInByKakaoToken(String accessToken) {
-        String phoneNum = "";
-        Map<String,Object> resultMap = new HashMap<>();
-        String reqURL = "https://kapi.kakao.com/v2/user/me";
-        try {
-            URL url = new URL(reqURL);
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            conn.setRequestMethod("GET");
-
-            // header
-            conn.setRequestProperty("Authorization", "Bearer " + accessToken);
-            System.out.println(accessToken);
-
-            // 성공 : 200, 인증 실패 401
-            int responseCode = conn.getResponseCode();
-            BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-
-            String br_line = "";
-            StringBuilder result = new StringBuilder();
-
-            while ((br_line = br.readLine()) != null) {
-                result.append(br_line);
-            }
-            System.out.println("response:" + result);
-
-            JsonElement element = JsonParser.parseString(result.toString());
-            System.out.println("element:: " + element);
-            JsonObject kakaoAccount = element.getAsJsonObject().get("kakao_account").getAsJsonObject();
-            // TODO : 카카오 비즈니스 앱 등록 후 email -> phone num
-            phoneNum = kakaoAccount.getAsJsonObject().get("email").getAsString();
-            resultMap.put("phoneNum", phoneNum);
-            System.out.println(phoneNum);
-
-        } catch (IOException e) {
-            e.printStackTrace();
-            throw new ServerException("kakao 로그인 시 문제 발생");
-        }
-
-        User user = userRepository.findByUserPhoneNum(phoneNum).orElseThrow(UserNotFoundException::new);
-        resultMap.put("access_token", "access_token");
-        resultMap.put("refresh_token", "refresh_token");
-        return resultMap;
-    }
 
 
     /**
@@ -131,7 +84,7 @@ public class UserService {
             e.printStackTrace();
             throw new ServerException("naver 로그인 시 문제 발생");
         }
-        User user = userRepository.findByUserPhoneNum(resultMap.get("phonenum").toString()).orElseThrow(UserNotFoundException::new);
+        User user = userRepository.findByUserEmail(resultMap.get("phonenum").toString()).orElseThrow(UserNotFoundException::new);
         resultMap.put("access_token", "access_token");
         resultMap.put("refresh_token", "refresh_token");
         return resultMap;
@@ -142,7 +95,7 @@ public class UserService {
     /**
      * 회원 등록
      */
-    public Long createUser(UserDto.Request params) {
+    public Long createUser(SignInDto.Request params) {
         return userRepository.save(User.create(params)).getId();
     }
 
