@@ -147,6 +147,12 @@ public class ExceptionAdvice {
         return responseService.getErrorResponse(500, "카카오 로그인 도중 에러가 발생했습니다.");
     }
 
+    @ExceptionHandler(NaverSigninException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    protected CommonResponse naverSigninException(){
+        return responseService.getErrorResponse(500, "네이버 로그인 도중 에러가 발생했습니다.");
+    }
+
     /**
      * Custom Errors
      */

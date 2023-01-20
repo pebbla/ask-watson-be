@@ -1,7 +1,7 @@
-package com.apebble.askwatson.oauth.kakao;
+package com.apebble.askwatson.oauth.naver;
 
 
-import com.apebble.askwatson.comm.exception.KakaoSigninException;
+import com.apebble.askwatson.comm.exception.NaverSigninException;
 import com.apebble.askwatson.comm.exception.SignInPlatformNotEqualException;
 import com.apebble.askwatson.comm.exception.UserNotFoundException;
 import com.apebble.askwatson.oauth.OAuthAccessToken;
@@ -28,21 +28,21 @@ import java.net.URI;
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class KakaoService {
+public class NaverService {
 
     private final UserRepository userRepository;
     private final Gson gson;
 
     /**
-     * 카카오토큰으로 로그인 및 회원가입
+     * 네이버토큰으로 로그인 및 회원가입
      */
-    public SignInResponse signInByKakaoToken(OAuthAccessToken token) {
-        KakaoProfile userProfile;
+    public SignInResponse signInByNaverToken(OAuthAccessToken token) {
+        NaverProfile userProfile;
 
         try {
-            userProfile = getUserProfileFromKakao(token.getAccessToken());
+            userProfile = getUserProfileFromNaver(token.getAccessToken());
         } catch (Exception e) {
-            throw new KakaoSigninException();
+            throw new NaverSigninException();
         }
 
         try {
@@ -54,12 +54,12 @@ public class KakaoService {
         }
     }
 
-    private KakaoProfile getUserProfileFromKakao(String accessToken) {
+    private NaverProfile getUserProfileFromNaver(String accessToken) {
         RestTemplate restTemplate = new RestTemplate();
         HttpEntity<MultiValueMap<String, String>> restRequest = setHeader(accessToken);
-        URI uri = URI.create("https://kapi.kakao.com/v2/user/me");
-        ResponseEntity<String> response = restTemplate.postForEntity(uri, restRequest, String.class); //예외처리 추가 필요?
-        return gson.fromJson(response.getBody(), KakaoProfile.class);
+        URI uri = URI.create("https://openapi.naver.com/v1/nid/me");
+        ResponseEntity<String> response = restTemplate.postForEntity(uri, restRequest, String.class);
+        return gson.fromJson(response.getBody(), NaverProfile.class);
     }
 
     private HttpEntity<MultiValueMap<String, String>> setHeader(String accessToken){
@@ -71,21 +71,20 @@ public class KakaoService {
 
     private User findUser(String email) {
         User findUser = userRepository.findByUserEmail(email).orElseThrow(UserNotFoundException::new);
-        if(findUser.getPlatform() != SignInPlatform.KAKAO) {
-            throw new SignInPlatformNotEqualException(SignInPlatform.KAKAO.getValue());
+        if(findUser.getPlatform() != SignInPlatform.NAVER) {
+            throw new SignInPlatformNotEqualException(SignInPlatform.NAVER.getValue());
         }
         return findUser;
     }
 
-    private User createUser(KakaoProfile profile) {
-        String nickname=null, birth=null;
-        Character gender=null;
-
-        if(profile.hasNickname()) nickname = profile.getNickName();
-        if(profile.hasBirth()) birth = profile.getBirth();
-        if(profile.hasGender()) gender = (profile.getGender().equals("female")) ? 'F' : 'M';
-
-        return userRepository.save(User.create(profile.getEmail(), nickname, gender, birth, SignInPlatform.KAKAO));
+    private User createUser(NaverProfile profile) {
+        return userRepository.save(
+                User.create(
+                        profile.getEmail(),
+                        profile.getNickName(),
+                        profile.getGender(),
+                        profile.getBirth(),
+                        SignInPlatform.NAVER));
     }
 
     private SignInResponse makeResponse(User user, boolean isSignUp) {

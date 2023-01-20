@@ -2,7 +2,6 @@ package com.apebble.askwatson.user;
 
 import com.apebble.askwatson.comm.BaseTime;
 import com.apebble.askwatson.comm.util.DateConverter;
-import com.apebble.askwatson.oauth.SignInDto;
 import com.apebble.askwatson.oauth.SignInPlatform;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
@@ -30,15 +29,13 @@ public class User extends BaseTime {
 
 
     //==생성 메서드==//
-    public static User create(SignInDto.Request params) {
+    public static User create(String email, String nickname, Character gender, String birth, SignInPlatform platform) {
         User user = new User();
-        user.userEmail = params.getEmail();
-        user.userNickname = !params.getNickname().isEmpty()
-                ? params.getNickname()
-                : params.getEmail().substring(0, params.getEmail().indexOf('@'));
-        if(params.getGender() != null) user.userGender = params.getGender();
-        if(params.getBirth() != null) user.userBirth = DateConverter.strToLocalDate(params.getBirth());
-        if(params.getPlatform() != null) user.platform = params.getPlatform();
+        user.userEmail = email;
+        user.userNickname = !nickname.isEmpty() ? nickname : email.substring(0, email.indexOf('@'));
+        user.userGender = gender;
+        user.userBirth = DateConverter.strToLocalDate(birth);
+        user.platform = platform;
         return user;
     }
 
