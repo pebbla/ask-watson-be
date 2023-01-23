@@ -72,13 +72,13 @@ public class KakaoService {
     private User findUser(String email) {
         User findUser = userRepository.findByUserEmail(email).orElseThrow(UserNotFoundException::new);
         if(findUser.getPlatform() != SignInPlatform.KAKAO) {
-            throw new SignInPlatformNotEqualException(SignInPlatform.KAKAO.getValue());
+            throw new SignInPlatformNotEqualException(findUser.getPlatform().getValue());
         }
         return findUser;
     }
 
     private User createUser(KakaoProfile profile) {
-        String nickname=null, birth=null;
+        String nickname="", birth=null;
         Character gender=null;
 
         if(profile.hasNickname()) nickname = profile.getNickName();

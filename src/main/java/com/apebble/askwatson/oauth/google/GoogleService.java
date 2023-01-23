@@ -1,7 +1,7 @@
-package com.apebble.askwatson.oauth.naver;
+package com.apebble.askwatson.oauth.google;
 
 
-import com.apebble.askwatson.comm.exception.NaverSigninException;
+import com.apebble.askwatson.comm.exception.GoogleSigninException;
 import com.apebble.askwatson.comm.exception.SignInPlatformNotEqualException;
 import com.apebble.askwatson.comm.exception.UserNotFoundException;
 import com.apebble.askwatson.oauth.OAuthAccessToken;
@@ -28,21 +28,22 @@ import java.net.URI;
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class NaverService {
+public class GoogleService {
 
     private final UserRepository userRepository;
     private final Gson gson;
 
+
     /**
-     * 네이버토큰으로 로그인 및 회원가입
+     * 구글토큰으로 로그인 및 회원가입
      */
-    public SignInResponse signInByNaverToken(OAuthAccessToken token) {
-        NaverProfile userProfile;
+    public SignInResponse signInByGoogleToken(OAuthAccessToken token) {
+        GoogleProfile userProfile;
 
         try {
-            userProfile = getUserProfileFromNaver(token.getAccessToken());
+            userProfile = getUserProfileFromGoogle(token.getAccessToken());
         } catch (Exception e) {
-            throw new NaverSigninException();
+            throw new GoogleSigninException();
         }
 
         try {
@@ -54,12 +55,17 @@ public class NaverService {
         }
     }
 
-    private NaverProfile getUserProfileFromNaver(String accessToken) {
+    private GoogleProfile getUserProfileFromGoogle(String accessToken) {
         RestTemplate restTemplate = new RestTemplate();
         HttpEntity<MultiValueMap<String, String>> restRequest = setHeader(accessToken);
-        URI uri = URI.create("https://openapi.naver.com/v1/nid/me");
-        ResponseEntity<String> response = restTemplate.postForEntity(uri, restRequest, String.class);
-        return gson.fromJson(response.getBody(), NaverProfile.class);
+        URI uri = URI.create("https://www.googleapis.com/oauth2/v1/tokeninfo");
+        ResponseEntity<String> response;
+        try {
+            response = restTemplate.postForEntity(uri, restRequest, String.class);
+            return gson.fromJson(response.getBody(), GoogleProfile.class);
+        } catch (Exception e) {
+            throw new IllegalStateException(); //차후 에외처리 추가 필요
+        }
     }
 
     private HttpEntity<MultiValueMap<String, String>> setHeader(String accessToken){
@@ -71,20 +77,14 @@ public class NaverService {
 
     private User findUser(String email) {
         User findUser = userRepository.findByUserEmail(email).orElseThrow(UserNotFoundException::new);
-        if(findUser.getPlatform() != SignInPlatform.NAVER) {
+        if(findUser.getPlatform() != SignInPlatform.GOOGLE) {
             throw new SignInPlatformNotEqualException(findUser.getPlatform().getValue());
         }
         return findUser;
     }
 
-    private User createUser(NaverProfile profile) {
-        return userRepository.save(
-                User.create(
-                        profile.getEmail(),
-                        profile.getNickName(),
-                        profile.getGender(),
-                        profile.getBirth(),
-                        SignInPlatform.NAVER));
+    private User createUser(GoogleProfile profile) {
+        return userRepository.save(User.create(profile.getEmail(), "", null, null, SignInPlatform.GOOGLE));
     }
 
     private SignInResponse makeResponse(User user, boolean isSignUp) {

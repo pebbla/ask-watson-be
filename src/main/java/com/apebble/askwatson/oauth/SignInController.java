@@ -2,6 +2,7 @@ package com.apebble.askwatson.oauth;
 
 import com.apebble.askwatson.comm.response.ResponseService;
 import com.apebble.askwatson.comm.response.SingleResponse;
+import com.apebble.askwatson.oauth.google.GoogleService;
 import com.apebble.askwatson.oauth.kakao.KakaoService;
 import com.apebble.askwatson.oauth.naver.NaverService;
 import io.swagger.annotations.Api;
@@ -20,6 +21,7 @@ public class SignInController {
 
     private final KakaoService kakaoService;
     private final NaverService naverService;
+    private final GoogleService googleService;
     private final ResponseService responseService;
 
     // 카카오 토큰으로 로그인
@@ -35,4 +37,9 @@ public class SignInController {
     }
 
     // 구글 토큰으로 로그인
+    @PostMapping(value = "/signin/google")
+    public SingleResponse<SignInResponse> signInByGoogleToken(@RequestBody OAuthAccessToken token){
+        return responseService.getSingleResponse(googleService.signInByGoogleToken(token));
+    }
+
 }

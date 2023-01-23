@@ -24,7 +24,7 @@ public class SignInResponse {
         private Long id;
         private String email;
         private String nickname;
-        private char gender;
+        private Character gender;
         private LocalDate userBirth;
 
         public UserDto(User entity) {

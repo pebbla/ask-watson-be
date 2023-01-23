@@ -33,8 +33,8 @@ public class User extends BaseTime {
         User user = new User();
         user.userEmail = email;
         user.userNickname = !nickname.isEmpty() ? nickname : email.substring(0, email.indexOf('@'));
-        user.userGender = gender;
-        user.userBirth = DateConverter.strToLocalDate(birth);
+        if(gender != null) user.userGender = gender;
+        if(birth != null) user.userBirth = DateConverter.strToLocalDate(birth);
         user.platform = platform;
         return user;
     }
