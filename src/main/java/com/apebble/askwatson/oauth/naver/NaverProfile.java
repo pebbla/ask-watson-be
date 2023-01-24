@@ -11,18 +11,18 @@ public class NaverProfile {
     @Data
     public static class NaverResponse {
         private String id;
+        private String email;
         private String nickname;
         private Character gender;
-        private String email;
-        private String birthday;
         private String birthyear;
+        private String birthday;
     }
 
     public String getEmail(){
         return this.response.email;
     }
 
-    public String getNickName(){
+    public String getNickname(){
         return this.response.nickname;
     }
 
@@ -30,7 +30,23 @@ public class NaverProfile {
         return this.response.gender;
     }
 
-    public String getBirth(){
-        return this.response.birthyear + "-" + this.response.birthday;
+    public String getBirthyear(){
+        return this.response.birthyear;
+    }
+
+    public String getBirthday(){
+        return this.response.birthday;
+    }
+
+    public boolean isNicknameNull() {
+        return this.response.nickname == null;
+    }
+
+    public boolean isGenderNull() {
+        return this.response.gender == null;
+    }
+
+    public boolean isBirthYearOrDayNull() {
+        return this.response.birthyear == null || this.response.birthday == null;
     }
 }

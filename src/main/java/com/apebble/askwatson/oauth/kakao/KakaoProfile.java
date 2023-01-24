@@ -41,26 +41,29 @@ public class KakaoProfile {
     }
 
     public String getNickName(){
-        return this.kakao_account.profile.nickname;
+        return (properties != null)
+                ? this.kakao_account.profile.nickname
+                : "";
     }
 
     public String getGender(){
         return this.kakao_account.gender;
     }
 
-    public String getBirth(){
-        return "0000-" + this.kakao_account.birthday.substring(0,2) + "-" + this.kakao_account.birthday.substring(2,4);
+    public String getBirthday(){
+        return this.kakao_account.birthday;
     }
 
-    public boolean hasNickname() {
-        return this.properties != null;
+    public boolean isNicknameNull() {
+        return properties == null;
     }
 
-    public boolean hasGender() {
-        return this.kakao_account.has_gender;
+    public boolean isGenderNull() {
+        return this.kakao_account.gender == null;
     }
 
-    public boolean hasBirth() {
-        return this.kakao_account.has_birthday;
+    public boolean isBirthdayNull() {
+        return this.kakao_account.birthday == null;
     }
+
 }
