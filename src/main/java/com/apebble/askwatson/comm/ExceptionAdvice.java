@@ -153,6 +153,12 @@ public class ExceptionAdvice {
         return responseService.getErrorResponse(500, "네이버 로그인 도중 에러가 발생했습니다.");
     }
 
+    @ExceptionHandler(GoogleSigninException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    protected CommonResponse googleSigninException(){
+        return responseService.getErrorResponse(500, "구글 로그인 도중 에러가 발생했습니다.");
+    }
+
     /**
      * Custom Errors
      */
