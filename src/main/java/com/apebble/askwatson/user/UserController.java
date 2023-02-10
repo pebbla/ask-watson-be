@@ -5,9 +5,6 @@ import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
 
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,32 +17,6 @@ public class UserController {
     private final UserService userService;
     private final UserQueryRepository userQueryRepository;
     private final ResponseService responseService;
-
-    // 카카오 토큰으로 로그인
-    @PostMapping(value = "/signin/kakao")
-    public SingleResponse<Map<String, Object>> signInByKakaoToken(@RequestBody HashMap<String, Object> map){
-        //TODO : 회원가입 된 경우 access token, refresh token 전달
-        return responseService.getSingleResponse(userService.signInByKakaoToken(map.get("accessToken").toString()));
-    }
-
-
-    // 네이버 토큰으로 로그인
-    @PostMapping(value = "/signin/naver")
-    public SingleResponse<Map<String, Object>> signInByNaverToken(@RequestBody HashMap<String, Object> map){
-        System.out.println(map.get("accessToken"));
-        return responseService.getSingleResponse(userService.signInByNaverToken(map.get("accessToken").toString()));
-    }
-
-
-    // 구글 토큰으로 로그인
-
-
-    // 회원 등록
-    @PostMapping(value = "/users")
-    public SingleResponse<UserDto.Response> createUser(@RequestBody UserDto.Request params) {
-        Long userId = userService.createUser(params);
-        return responseService.getSingleResponse(new UserDto.Response(userService.findOne(userId)));
-    }
 
     // [관리자웹] 회원 전체 조회
     @GetMapping(value = "/admin/users")

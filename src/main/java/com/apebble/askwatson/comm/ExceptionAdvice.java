@@ -141,6 +141,32 @@ public class ExceptionAdvice {
         return responseService.getErrorResponse(500, "서버 에러입니다. 문제가 지속될 경우 고객센터로 문의해주세요!");
     }
 
+    @ExceptionHandler(KakaoSigninException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    protected CommonResponse kakaoSigninException(){
+        return responseService.getErrorResponse(500, "카카오 로그인 도중 에러가 발생했습니다.");
+    }
+
+    @ExceptionHandler(NaverSigninException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    protected CommonResponse naverSigninException(){
+        return responseService.getErrorResponse(500, "네이버 로그인 도중 에러가 발생했습니다.");
+    }
+
+    @ExceptionHandler(GoogleSigninException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    protected CommonResponse googleSigninException(){
+        return responseService.getErrorResponse(500, "구글 로그인 도중 에러가 발생했습니다.");
+    }
+
+    /**
+     * Custom Errors
+     */
+    @ExceptionHandler(SignInPlatformNotEqualException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    protected CommonResponse signInPlatformNotEqualException(String msg){
+        return responseService.getErrorResponse(-1000, msg);
+    }
 
     //TODO : 런칭 시 주석제거, -> 포스트맨, 스웨거에서 에러메세지 보기위함
 //    @ExceptionHandler({ Exception.class })
