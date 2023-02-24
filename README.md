@@ -41,6 +41,20 @@ You can search for 370 room escape cafes and 1,800 room escape theme information
 - AWS RDS MySQL
 - Google Cloud Storage
 
+<br/> 
+
+## 🛠 Features
+- 소셜 로그인/회원가입
+- 방탈출 카페 및 테마 검색
+  - 카페 필터: 검색어, 위치, 영어 가능 여부
+  - 테마 필터: 검색어, 위치, 카테고리, 최소 인원수, 난이도, 장치비율, 활동성, 시간제한
+- 좋아요 기능
+- 탈출 완료 기능
+- 자주 묻는 질문
+- 공지
+- 건의
+- 신고
+
 
 <br/> 
 
