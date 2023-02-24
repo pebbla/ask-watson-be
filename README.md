@@ -70,3 +70,13 @@ You can search for 370 room escape cafes and 1,800 room escape theme information
 
 
 <br/> 
+
+## 💪 Team
+|        **Pebbla**         |         이한슬         |         최아록         |                                                                                                               
+| :---------------------------------------------------------------------------------------------------------------------------------------------------: | :---------------------------------------------------------------------------------------------------------------------------------------------------: | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: | 
+|   <img width="200px" src="https://user-images.githubusercontent.com/51855129/221174938-aa96ac20-ee18-4e22-a845-a6f054152058.png" />    |                      <img width="160px" src="https://user-images.githubusercontent.com/51855129/219068013-42c555f0-220c-4345-bb4e-e7ac9a417925.png" />    |                   <img width="160px" src="https://user-images.githubusercontent.com/51855129/221175061-ca6f41c0-2d72-44af-a032-f54a35f82977.png"/>   |
+|   [![Github](https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=GitHub&logoColor=white)](https://github.com/pebbla)   |    [@hanslelee](https://github.com/hanslelee)  | [@arock1998](https://github.com/arock1998)  |
+|  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  | 2023 홍익대학교 컴퓨터공학과 졸업 | 국민대학교 정보보안암호수학과 재학 |
+
+
+<br/> 
