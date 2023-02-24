@@ -11,8 +11,8 @@
 <br/> <br/> 
 
 ## 💻 Ask Watson BACKEND
-해당 리포지토리는 "왓슨에게 물어보세요!(Ask Watson)" 프로젝트의 백엔드 개발에 관한 리포지토리입니다.<br/>
-[프런트엔드 관리자 웹 리포지토리 바로가기](https://github.com/pebbla/ask-watson-fe)
+해당 리포지터리는 "왓슨에게 물어보세요!(Ask Watson)" 프로젝트의 백엔드 개발에 관한 리포지토리입니다.<br/>
+[프런트엔드 관리자 웹 리포지터리 바로가기](https://github.com/pebbla/ask-watson-fe)
 
 <br/> 
 
@@ -31,11 +31,12 @@ You can search for 370 room escape cafes and 1,800 room escape theme information
 ## 🥞 Stacks
 ### FRONTEND
 - Flutter
+- React.js
 
 ### BACKEND
-- Spring Boot
-- JPA
-- QueryDSL
+- **Spring Boot**
+- **JPA**
+- **QueryDSL**
 
 ### DB
 - AWS RDS MySQL
@@ -44,16 +45,20 @@ You can search for 370 room escape cafes and 1,800 room escape theme information
 <br/> 
 
 ## 🛠 Features
+### 관리자 웹 
+[👉 관리자 웹 프리뷰 보러가기](https://github.com/pebbla/ask-watson-fe)
+- 방탈출 카페 & 테마 생성/조회/수정/삭제
+- 공지 & 자주 묻는 질문 관리
+- 회원/건의/신고 관리
+
+### 회원 모바일 앱
 - 소셜 로그인/회원가입
 - 방탈출 카페 및 테마 검색
   - 카페 필터: 검색어, 위치, 영어 가능 여부
   - 테마 필터: 검색어, 위치, 카테고리, 최소 인원수, 난이도, 장치비율, 활동성, 시간제한
 - 좋아요 기능
 - 탈출 완료 기능
-- 자주 묻는 질문
-- 공지
-- 건의
-- 신고
+- 공지/건의/신고/자주 묻는 질문
 
 
 <br/> 
