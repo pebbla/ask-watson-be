@@ -64,6 +64,9 @@ You can search for 370 room escape cafes and 1,800 room escape theme information
 <br/> 
 
 ## 🖌 Design
+### ER Diagram
+<img width="900" alt="Untitled" src="https://user-images.githubusercontent.com/51855129/225587670-6f396f1b-c5c2-4c16-9978-0e5e4bef19b3.png">
+
 ### Use Case Diagram
 <img width="900" alt="Untitled" src="https://user-images.githubusercontent.com/51855129/221171353-31c357a2-fe69-4190-a67e-5eaf0d95e044.png">
 
